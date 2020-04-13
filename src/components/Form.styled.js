@@ -1,29 +1,17 @@
-import styled from 'styled-components';
-import { Form, Button } from 'react-bootstrap';
+import styled from "styled-components";
+import { Form, Button } from "react-bootstrap";
 
 export const CONTAINER = styled.div`
-  background: #F7F9FA;
-  height: auto;
-  width: 90%;
-  margin: 5em auto;
-  color: snow;
-  -webkit-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.4);
-  -moz-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.4);
-  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.4);
-
-  @media(min-width: 786px) {
+  @media (min-width: 786px) {
     width: 60%;
+    margin: 0 auto;
+    margin-top: 50px;
   }
 
   label {
-    color: #24B9B6;
+    color: $primary;
     font-size: 1.2em;
     font-weight: 400;
-  }
-
-  h1 {
-    color: #24B9B6;
-    padding-top: .5em;
   }
 
   .form-group {
@@ -31,15 +19,15 @@ export const CONTAINER = styled.div`
   }
 
   .error {
-    border: 2px solid #FF6565;
+    border: 2px solid #ff6565;
   }
 
   .error-message {
-    color: #FF6565;
-    padding: .5em .2em;
+    color: #ff6565;
+    padding: 0.5em 0.2em;
     height: 1em;
     position: absolute;
-    font-size: .8em;
+    font-size: 0.8em;
   }
 `;
 
@@ -48,19 +36,10 @@ export const DEPOSITFORM = styled(Form)`
   text-align: left;
   padding-top: 2em;
   padding-bottom: 2em;
-
-  @media(min-width: 786px) {
-    width: 50%;
-  }
 `;
 
 export const BUTTON = styled(Button)`
-  background: #1863AB;
   border: none;
   font-size: 1.2em;
   font-weight: 400;
-
-  &:hover {
-    background: #1D3461;
-  }
 `;

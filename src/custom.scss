@@ -1,4 +1,11 @@
 // Override default variables before the import
-$body-bg: #FFF;
+$body-bg: #fff;
+/* make the customizations */
+$theme-colors: (
+  "info": orange,
+  "danger": tomato,
+  "primary": #ff3864,
+  "secondary": #ff3864,
+);
 // Import Bootstrap and its default variables
-@import '~bootstrap/scss/bootstrap.scss';
+@import "~bootstrap/scss/bootstrap.scss";

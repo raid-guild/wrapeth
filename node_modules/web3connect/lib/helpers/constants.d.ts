@@ -1,0 +1,17 @@
+export declare const WEB3_CONNECT_MODAL_ID = "WEB3_CONNECT_MODAL_ID";
+export declare const INJECTED_PROVIDER_ID = "injected";
+export declare const CACHED_PROVIDER_KEY = "WEB3_CONNECT_CACHED_PROVIDER";
+export declare const CONNECT_EVENT = "connect";
+export declare const ERROR_EVENT = "error";
+export declare const CLOSE_EVENT = "close";
+export declare const MODAL_LIGHTBOX_CLASSNAME = "web3connect-modal-lightbox";
+export declare const MODAL_CONTAINER_CLASSNAME = "web3connect-modal-container";
+export declare const MODAL_HITBOX_CLASSNAME = "web3connect-modal-hitbox";
+export declare const MODAL_CARD_CLASSNAME = "web3connect-modal-card";
+export declare const PROVIDER_WRAPPER_CLASSNAME = "web3connect-provider-wrapper";
+export declare const PROVIDER_CONTAINER_CLASSNAME = "web3connect-provider-container";
+export declare const PROVIDER_ICON_CLASSNAME = "web3connect-provider-icon";
+export declare const PROVIDER_NAME_CLASSNAME = "web3connect-provider-name";
+export declare const PROVIDER_DESCRIPTION_CLASSNAME = "web3connect-provider-description";
+export declare const CONNECT_BUTTON_CLASSNAME = "web3connect-connect-button";
+//# sourceMappingURL=constants.d.ts.map
