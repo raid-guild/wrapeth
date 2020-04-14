@@ -4,7 +4,6 @@ import { Web3SignIn } from "./components/account/Web3SignIn";
 import { CurrentUserContext } from "./contexts/Store";
 import { DepositForm } from "./components/DepositForm";
 import { WithdrawForm } from "./components/WithdrawForm";
-import { TokenInfo } from "./components/TokenInfo";
 import styled from "styled-components";
 import RaidLeft from "./assets/raid--left.png";
 import RaidRight from "./assets/raid--right.png";
@@ -57,6 +56,12 @@ const HeaderRow = styled(Row)`
   width: 100%;
   align-items: center;
   justify-content: space-between;
+  h1 {
+    color: #ff6565;
+  }
+  p {
+    color: rgba(255, 255, 255, 0.85);
+  }
 `;
 
 const BrandDiv = styled.div`
@@ -103,7 +108,6 @@ function App() {
           {currentUser && currentUser.username ? (
             <AccountDiv>
               <p>{currentUser.username}</p>
-              <TokenInfo />
             </AccountDiv>
           ) : (
             <AccountDiv>

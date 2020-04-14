@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 
 import { Formik } from "formik";
-import { Form } from "react-bootstrap";
+import { Form, InputGroup } from "react-bootstrap";
 
 import {
   Web3ConnectContext,
@@ -10,7 +10,8 @@ import {
 } from "../contexts/Store";
 
 import { DepositSchema } from "./Validation";
-import { CONTAINER, DEPOSITFORM, BUTTON } from "./Form.styled";
+import { CONTAINER, DEPOSITFORM, BUTTON, MaxButton } from "./Form.styled";
+import { TokenInfo } from "./TokenInfo";
 
 export const WithdrawForm = () => {
   const [web3Connect] = useContext(Web3ConnectContext);
@@ -21,7 +22,7 @@ export const WithdrawForm = () => {
     <CONTAINER>
       <Formik
         initialValues={{
-          amount: 0,
+          amount: "",
         }}
         validationSchema={DepositSchema}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -54,21 +55,29 @@ export const WithdrawForm = () => {
         }) => (
           <DEPOSITFORM onSubmit={handleSubmit} className="mx-auto">
             <Form.Group controlId="depositForm">
-              <Form.Label>Amount of wETH to Unwrap</Form.Label>
-              <Form.Control
-                type="number"
-                name="amount"
-                placeholder="Amount to wrap"
-                value={values.amount}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                size="lg"
-                className={touched.amount && errors.amount ? "error" : null}
-              />
+              <Form.Label>Amount of wETH to unwrap</Form.Label>
+              <TokenInfo />
+              <InputGroup>
+                <Form.Control
+                  type="number"
+                  name="amount"
+                  placeholder="Amount to unwrap"
+                  value={values.amount}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  size="lg"
+                  className={touched.amount && errors.amount ? "error" : null}
+                />
+                <InputGroup.Append>
+                  <BUTTON variant="outline-primary">Set Max</BUTTON>
+                </InputGroup.Append>
+              </InputGroup>
+
               {touched.amount && errors.amount ? (
                 <div className="error-message">{errors.amount}</div>
               ) : null}
             </Form.Group>
+
             <BUTTON
               variant="primary"
               type="submit"

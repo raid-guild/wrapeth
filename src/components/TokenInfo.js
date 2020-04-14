@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from "react";
+import styled from "styled-components";
 
 import {
   Web3ConnectContext,
@@ -6,18 +7,34 @@ import {
   ContractContext,
 } from "../contexts/Store.js";
 
-export const TokenInfo = () => {
+const TokenP = styled.p`
+  display: inline-block;
+  text-align: right;
+  width: 100%;
+  float: right;
+  margin-top: -32px;
+  color: rgba(255, 255, 255, 0.85);
+`;
+
+export const TokenInfo = (props) => {
   const [web3Connect] = useContext(Web3ConnectContext);
   const [currentUser, setCurrentUser] = useContext(CurrentUserContext);
   const [contract] = useContext(ContractContext);
 
   useEffect(() => {
     const getInfo = async () => {
+      // set wETH balance
       const wethBalanceInWei = await contract.methods
         .balanceOf(currentUser.username)
         .call();
       const wethBalance = web3Connect.web3.utils.fromWei("" + wethBalanceInWei);
-      setCurrentUser({ ...currentUser, ...{ wethBalance } });
+      // get Eth Balance
+      const ethBalanceInWei = await web3Connect.web3.eth.getBalance(
+        currentUser.username
+      );
+      const ethBalance = web3Connect.web3.utils.fromWei("" + ethBalanceInWei);
+
+      setCurrentUser({ ...currentUser, ...{ wethBalance, ethBalance } });
     };
     if (contract) {
       getInfo();
@@ -29,9 +46,14 @@ export const TokenInfo = () => {
     return number ? (+number).toFixed(4) : 0;
   };
 
-  return (
-    <p style={{ textAlign: "right" }}>
-      WETH Balance: {currentUser && forDisplay(currentUser.wethBalance)}
-    </p>
+  return currentUser && props.Eth ? (
+    <TokenP max={forDisplay(currentUser.ethBalance)}>
+      ETH Balance: {forDisplay(currentUser.ethBalance)}
+      {console.log(props.max)}
+    </TokenP>
+  ) : (
+    <TokenP max={forDisplay(currentUser.wethBalance)}>
+      wETH Balance: {forDisplay(currentUser.wethBalance)}
+    </TokenP>
   );
 };

@@ -3,13 +3,13 @@ import { Form, Button } from "react-bootstrap";
 
 export const CONTAINER = styled.div`
   @media (min-width: 786px) {
-    width: 60%;
     margin: 0 auto;
     margin-top: 50px;
+    max-width: 666px;
   }
 
   label {
-    color: $primary;
+    color: #ff6565;
     font-size: 1.2em;
     font-weight: 400;
   }
@@ -42,4 +42,10 @@ export const BUTTON = styled(Button)`
   border: none;
   font-size: 1.2em;
   font-weight: 400;
+`;
+
+export const MaxButton = styled(Button)`
+  position: absolute;
+  top: 0;
+  right: 0;
 `;
