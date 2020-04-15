@@ -10,7 +10,7 @@ import {
 } from "../contexts/Store";
 
 import { DepositSchema } from "./Validation";
-import { CONTAINER, DEPOSITFORM, BUTTON, MaxButton } from "./Form.styled";
+import { CONTAINER, DEPOSITFORM, BUTTON } from "./Form.styled";
 import { TokenInfo } from "./TokenInfo";
 
 export const WithdrawForm = () => {
@@ -34,7 +34,10 @@ export const WithdrawForm = () => {
               .send({ from: currentUser.username });
             setCurrentUser({
               ...currentUser,
-              ...{ wethBalance: +currentUser.wethBalance - values.amount },
+              ...{ 
+                wethBalance: +currentUser.wethBalance - values.amount,
+                ethBalance: +currentUser.wethBalance + values.amount
+               },
             });
           } catch (err) {
             console.log(err);
@@ -52,6 +55,7 @@ export const WithdrawForm = () => {
           handleBlur,
           handleSubmit,
           isSubmitting,
+          setFieldValue,
         }) => (
           <DEPOSITFORM onSubmit={handleSubmit} className="mx-auto">
             <Form.Group controlId="depositForm">
@@ -69,7 +73,14 @@ export const WithdrawForm = () => {
                   className={touched.amount && errors.amount ? "error" : null}
                 />
                 <InputGroup.Append>
-                  <BUTTON variant="outline-primary">Set Max</BUTTON>
+                  <BUTTON
+                    variant="outline-primary"
+                    onClick={() =>
+                      setFieldValue("amount", (+currentUser.wethBalance).toPrecision(4))
+                    }
+                  >
+                    Set Max
+                  </BUTTON>
                 </InputGroup.Append>
               </InputGroup>
 

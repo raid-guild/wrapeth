@@ -91,10 +91,10 @@ function App() {
   return (
     <AppDiv>
       <RaidLeftDiv>
-        <img src={RaidLeft} />
+        <img alt="" src={RaidLeft} />
       </RaidLeftDiv>
       <RaidRightDiv>
-        <img src={RaidRight} />
+        <img alt="" src={RaidRight} />
       </RaidRightDiv>
       <Container>
         <HeaderRow>

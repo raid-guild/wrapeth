@@ -49,7 +49,6 @@ export const TokenInfo = (props) => {
   return currentUser && props.Eth ? (
     <TokenP max={forDisplay(currentUser.ethBalance)}>
       ETH Balance: {forDisplay(currentUser.ethBalance)}
-      {console.log(props.max)}
     </TokenP>
   ) : (
     <TokenP max={forDisplay(currentUser.wethBalance)}>
