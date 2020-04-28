@@ -7,6 +7,7 @@ import { WithdrawForm } from "./components/WithdrawForm";
 import styled from "styled-components";
 import RaidLeft from "./assets/raid--left.png";
 import RaidRight from "./assets/raid--right.png";
+import logo from "./assets/wrapeth__logo.png";
 
 const AppDiv = styled.div`
   background-color: black;
@@ -66,6 +67,14 @@ const HeaderRow = styled(Row)`
 
 const BrandDiv = styled.div`
   max-width: 240px;
+  img {
+    width: 100%;
+    height: auto;
+  }
+  p {
+    font-size: 1.05em;
+    font-weight: bold;
+  }
 `;
 
 const AccountDiv = styled.div`
@@ -99,10 +108,8 @@ function App() {
       <Container>
         <HeaderRow>
           <BrandDiv>
-            <h1>
-              <span className="Outline">WRAP</span>ETH
-            </h1>
-            <p>No fees, no frills eth wrapper.</p>
+            <img src={logo} alt="wrapeth" />
+            <p>No fees, no frills eth wrapper</p>
           </BrandDiv>
 
           {currentUser && currentUser.username ? (
@@ -135,7 +142,7 @@ function App() {
                 color: !wrapEth ? "white" : "#ff3864",
               }}
             >
-              Unwrap ETH
+              Unwrap wETH
             </Button>
           </ButtonGroup>
         </CenteredRow>
