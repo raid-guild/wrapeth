@@ -55,7 +55,7 @@ export const DepositForm = (props) => {
         }) => (
           <DEPOSITFORM onSubmit={handleSubmit} className="mx-auto">
             <Form.Group controlId="depositForm">
-              <Form.Label>Amount of ETH to Wrap</Form.Label>
+              <Form.Label>ETH</Form.Label>
               <TokenInfo Eth />
               <InputGroup>
                 <Form.Control
@@ -69,7 +69,7 @@ export const DepositForm = (props) => {
                   className={touched.amount && errors.amount ? "error" : null}
                 />
                 <InputGroup.Append>
-                  <BUTTON variant="outline-primary">Set Max</BUTTON>
+                  <InputGroup.Text className="InputText">ETH</InputGroup.Text>
                 </InputGroup.Append>
               </InputGroup>
               {touched.amount && errors.amount ? (

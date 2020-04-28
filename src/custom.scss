@@ -7,5 +7,13 @@ $theme-colors: (
   "primary": #ff3864,
   "secondary": #ff3864,
 );
+
+$mobile: "600px";
 // Import Bootstrap and its default variables
 @import "~bootstrap/scss/bootstrap.scss";
+
+.input-group-text {
+  color: #ff3864;
+  background-color: transparent;
+  border: 1px solid #ff3864;
+}

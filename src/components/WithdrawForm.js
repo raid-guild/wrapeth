@@ -55,7 +55,7 @@ export const WithdrawForm = () => {
         }) => (
           <DEPOSITFORM onSubmit={handleSubmit} className="mx-auto">
             <Form.Group controlId="depositForm">
-              <Form.Label>Amount of wETH to unwrap</Form.Label>
+              <Form.Label>wETH</Form.Label>
               <TokenInfo />
               <InputGroup>
                 <Form.Control
@@ -69,7 +69,7 @@ export const WithdrawForm = () => {
                   className={touched.amount && errors.amount ? "error" : null}
                 />
                 <InputGroup.Append>
-                  <BUTTON variant="outline-primary">Set Max</BUTTON>
+                  <InputGroup.Text className="InputText">wETH</InputGroup.Text>
                 </InputGroup.Append>
               </InputGroup>
 
