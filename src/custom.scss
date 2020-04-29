@@ -11,9 +11,14 @@ $theme-colors: (
 $mobile: "600px";
 // Import Bootstrap and its default variables
 @import "~bootstrap/scss/bootstrap.scss";
+@import url("https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap");
 
 .input-group-text {
   color: #ff3864;
-  background-color: transparent;
+  background-color: black;
   border: 1px solid #ff3864;
+}
+
+body {
+  font-family: "Rubik Mono One", sans-serif;
 }

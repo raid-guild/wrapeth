@@ -58,6 +58,10 @@ const CenteredRow = styled(Row)`
 const CenteredCol = styled(Col)`
   align-items: center;
   justify-content: center;
+  p {
+    margin-top: 25px;
+    text-align: center;
+  }
 `;
 
 const HeaderRow = styled(Row)`
@@ -86,7 +90,7 @@ const BrandDiv = styled.div`
     height: auto;
   }
   p {
-    font-size: 1.05em;
+    font-size: 0.75em;
     font-weight: bold;
   }
   @media (max-width: 600px) {
