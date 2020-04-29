@@ -7,13 +7,17 @@ import {
   ContractContext,
 } from "../contexts/Store.js";
 
-const TokenP = styled.p`
+const TokenLink = styled.button`
   display: inline-block;
   text-align: right;
-  width: 100%;
+  max-width: 100%;
   float: right;
-  margin-top: -32px;
-  color: rgba(255, 255, 255, 0.85);
+  margin-top: 0px;
+  color: #ff3864;
+  background-color: transparent;
+  appearance: none;
+  outline: none;
+  border: none;
 `;
 
 export const TokenInfo = (props) => {
@@ -47,12 +51,13 @@ export const TokenInfo = (props) => {
   };
 
   return currentUser && props.Eth ? (
-    <TokenP max={forDisplay(currentUser.ethBalance)}>
+    <TokenLink max={forDisplay(currentUser.ethBalance)}>
       ETH Balance: {forDisplay(currentUser.ethBalance)}
-    </TokenP>
+      {console.log(props.max)}
+    </TokenLink>
   ) : (
-    <TokenP max={forDisplay(currentUser.wethBalance)}>
+    <TokenLink max={forDisplay(currentUser.wethBalance)}>
       wETH Balance: {forDisplay(currentUser.wethBalance)}
-    </TokenP>
+    </TokenLink>
   );
 };

@@ -59,7 +59,7 @@ export const DepositForm = () => {
         }) => (
           <DEPOSITFORM onSubmit={handleSubmit} className="mx-auto">
             <Form.Group controlId="depositForm">
-              <Form.Label>Amount of ETH to Wrap</Form.Label>
+              <Form.Label>ETH</Form.Label>
               <TokenInfo Eth />
               <InputGroup>
                 <Form.Control
@@ -84,6 +84,7 @@ export const DepositForm = () => {
                   >
                     Set Max
                   </BUTTON>
+                  <InputGroup.Text className="InputText">ETH</InputGroup.Text>
                 </InputGroup.Append>
               </InputGroup>
               {touched.amount && errors.amount ? (
