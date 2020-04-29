@@ -34,10 +34,10 @@ export const WithdrawForm = () => {
               .send({ from: currentUser.username });
             setCurrentUser({
               ...currentUser,
-              ...{ 
+              ...{
                 wethBalance: +currentUser.wethBalance - values.amount,
-                ethBalance: +currentUser.wethBalance + values.amount
-               },
+                ethBalance: +currentUser.wethBalance + values.amount,
+              },
             });
           } catch (err) {
             console.log(err);
@@ -76,7 +76,10 @@ export const WithdrawForm = () => {
                   <BUTTON
                     variant="outline-primary"
                     onClick={() =>
-                      setFieldValue("amount", (+currentUser.wethBalance).toPrecision(4))
+                      setFieldValue(
+                        "amount",
+                        (+currentUser.wethBalance).toPrecision(4)
+                      )
                     }
                   >
                     Set Max

@@ -34,9 +34,10 @@ export const DepositForm = () => {
               .send({ value: weiValue, from: currentUser.username });
             setCurrentUser({
               ...currentUser,
-              ...{ 
-                wethBalance: +currentUser.wethBalance + values.amount, 
-                ethBalance: +currentUser.ethBalance - values.amount},
+              ...{
+                wethBalance: +currentUser.wethBalance + values.amount,
+                ethBalance: +currentUser.ethBalance - values.amount,
+              },
             });
           } catch (err) {
             console.log(err);
@@ -75,7 +76,10 @@ export const DepositForm = () => {
                   <BUTTON
                     variant="outline-primary"
                     onClick={() =>
-                      setFieldValue("amount", (+currentUser.ethBalance).toPrecision(4))
+                      setFieldValue(
+                        "amount",
+                        (+currentUser.ethBalance).toPrecision(4)
+                      )
                     }
                   >
                     Set Max
