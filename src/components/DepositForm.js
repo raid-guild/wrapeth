@@ -13,7 +13,7 @@ import { DepositSchema } from "./Validation";
 import { CONTAINER, DEPOSITFORM, BUTTON } from "./Form.styled";
 import { TokenInfo } from "./TokenInfo";
 
-export const DepositForm = (props) => {
+export const DepositForm = () => {
   const [web3Connect] = useContext(Web3ConnectContext);
   const [currentUser, setCurrentUser] = useContext(CurrentUserContext);
   const [contract] = useContext(ContractContext);
@@ -34,7 +34,10 @@ export const DepositForm = (props) => {
               .send({ value: weiValue, from: currentUser.username });
             setCurrentUser({
               ...currentUser,
-              ...{ wethBalance: +currentUser.wethBalance + values.amount },
+              ...{
+                wethBalance: +currentUser.wethBalance + values.amount,
+                ethBalance: +currentUser.ethBalance - values.amount,
+              },
             });
           } catch (err) {
             console.log(err);
@@ -52,6 +55,7 @@ export const DepositForm = (props) => {
           handleBlur,
           handleSubmit,
           isSubmitting,
+          setFieldValue,
         }) => (
           <DEPOSITFORM onSubmit={handleSubmit} className="mx-auto">
             <Form.Group controlId="depositForm">
@@ -69,7 +73,17 @@ export const DepositForm = (props) => {
                   className={touched.amount && errors.amount ? "error" : null}
                 />
                 <InputGroup.Append>
-                  <InputGroup.Text className="InputText">ETH</InputGroup.Text>
+                  <BUTTON
+                    variant="outline-primary"
+                    onClick={() =>
+                      setFieldValue(
+                        "amount",
+                        (+currentUser.ethBalance).toPrecision(4)
+                      )
+                    }
+                  >
+                    Set Max
+                  </BUTTON>
                 </InputGroup.Append>
               </InputGroup>
               {touched.amount && errors.amount ? (
