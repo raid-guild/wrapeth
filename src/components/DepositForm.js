@@ -74,7 +74,7 @@ export const DepositForm = () => {
                 />
                 <InputGroup.Append>
                   <BUTTON
-                    variant="outline-primary"
+                    variant="primary"
                     onClick={() =>
                       setFieldValue(
                         "amount",

@@ -74,7 +74,7 @@ export const WithdrawForm = () => {
                 />
                 <InputGroup.Append>
                   <BUTTON
-                    variant="outline-primary"
+                    variant="primary"
                     onClick={() =>
                       setFieldValue(
                         "amount",
