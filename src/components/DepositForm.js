@@ -84,7 +84,6 @@ export const DepositForm = () => {
                   >
                     Set Max
                   </BUTTON>
-                  <InputGroup.Text className="InputText">ETH</InputGroup.Text>
                 </InputGroup.Append>
               </InputGroup>
               {touched.amount && errors.amount ? (

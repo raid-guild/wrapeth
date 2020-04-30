@@ -84,7 +84,6 @@ export const WithdrawForm = () => {
                   >
                     Set Max
                   </BUTTON>
-                  <InputGroup.Text className="InputText">wETH</InputGroup.Text>
                 </InputGroup.Append>
               </InputGroup>
 
