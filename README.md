@@ -3,6 +3,10 @@
 ## Use the app
 [https://wrapeth.com](https://wrapeth.com)
 
+Built by [Raid Guild](https://raidguild.org)
+
+--
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
