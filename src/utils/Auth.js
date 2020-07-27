@@ -38,18 +38,18 @@
   
     const web3 = new Web3(provider);
   
-    const injectedChainId = await web3.eth.getChainId();
+    // const injectedChainId = await web3.eth.getChainId();
   
-    if (injectedChainId !== +process.env.REACT_APP_CHAIN_ID) {
-      alert(
-        `Please switch Web3 to the correct network and try signing in again. Detected network: ${
-          getChainData(injectedChainId).network
-        }, Required network: ${getChainData(+process.env.REACT_APP_CHAIN_ID).network}`,
-      );
-      throw new Error(
-        `Injected web3 chainId: ${injectedChainId}, config: ${+process.env.REACT_APP_CHAIN_ID}`,
-      );
-    }
+    // if (injectedChainId !== +process.env.REACT_APP_CHAIN_ID) {
+    //   alert(
+    //     `Please switch Web3 to the correct network and try signing in again. Detected network: ${
+    //       getChainData(injectedChainId).network
+    //     }, Required network: ${getChainData(+process.env.REACT_APP_CHAIN_ID).network}`,
+    //   );
+    //   throw new Error(
+    //     `Injected web3 chainId: ${injectedChainId}, config: ${+process.env.REACT_APP_CHAIN_ID}`,
+    //   );
+    // }
   
     return { web3Connect, web3, provider };
   };
@@ -59,7 +59,7 @@
   
     console.log('+process.env.REACT_APP_CHAIN_ID: ', +process.env.REACT_APP_CHAIN_ID);
     const web3Connect = new Web3Connect.Core({
-      network: getChainData(+process.env.REACT_APP_CHAIN_ID).network, // optional
+      // network: getChainData(+process.env.REACT_APP_CHAIN_ID).network, // optional
       providerOptions, // required
     });
     console.log('web3Connect: ', web3Connect);
@@ -75,6 +75,8 @@
   
     const [account] = await web3.eth.getAccounts();
     console.log('account: ', account);
+
+    const network = getChainData(+injectedChainId)
   
     if (injectedChainId !== +process.env.REACT_APP_CHAIN_ID) {
       alert(
@@ -87,13 +89,14 @@
       );
     }
   
-    return { user: createWeb3User(account), provider };
+    return { user: createWeb3User(account, network), provider };
   };
 
-  export const createWeb3User = (accountAddress) => {
+  export const createWeb3User = (accountAddress, network) => {
     return {
       type: 'web3',
       attributes: { 'custom:account_address': accountAddress },
+      network: network,
       username: accountAddress,
     };
   };

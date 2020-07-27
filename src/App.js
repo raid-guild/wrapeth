@@ -164,7 +164,7 @@ function App() {
         <HeaderRow>
           <BrandDiv>
             <img src={logo} alt="wrapeth" />
-            <p>No fees, no frills eth wrapper</p>
+            <p>No fees, no frills <span>{currentUser && currentUser.network.chain}</span> wrapper</p>
           </BrandDiv>
 
           {currentUser && currentUser.username ? (
@@ -187,7 +187,7 @@ function App() {
                 color: wrapEth ? "white" : "#ff3864",
               }}
             >
-              Wrap ETH
+              Wrap <span>{currentUser && currentUser.network.chain}</span>
             </Button>
             <Button
               variant="outline-primary"
@@ -197,7 +197,7 @@ function App() {
                 color: !wrapEth ? "white" : "#ff3864",
               }}
             >
-              Unwrap wETH
+              Unwrap w<span>{currentUser && currentUser.network.chain}</span>
             </Button>
           </ButtonGroup>
         </CenteredRow>
@@ -206,7 +206,7 @@ function App() {
             {currentUser && currentUser.username ? (
               <DepositForm />
             ) : (
-              <p>Connect to Wrap Eth</p>
+              <p>Connect to Wrap <span>{currentUser && currentUser.network.chain}</span></p>
             )}
           </CenteredCol>
         )}
@@ -215,7 +215,7 @@ function App() {
             {currentUser && currentUser.username ? (
               <WithdrawForm />
             ) : (
-              <p>Connect to Unwrap Eth</p>
+              <p>Connect to Unwrap <span>{currentUser && currentUser.network.chain}</span></p>
             )}
           </CenteredCol>
         )}
