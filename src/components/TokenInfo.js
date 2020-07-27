@@ -52,12 +52,11 @@ export const TokenInfo = (props) => {
 
   return currentUser && props.Eth ? (
     <TokenLink max={forDisplay(currentUser.ethBalance)}>
-      ETH Balance: {forDisplay(currentUser.ethBalance)}
-      {console.log(props.max)}
+      <span>{currentUser && currentUser.network.chain}</span> Balance: {forDisplay(currentUser.ethBalance)}
     </TokenLink>
   ) : (
     <TokenLink max={forDisplay(currentUser.wethBalance)}>
-      wETH Balance: {forDisplay(currentUser.wethBalance)}
+      w<span>{currentUser && currentUser.network.chain}</span> Balance: {forDisplay(currentUser.wethBalance)}
     </TokenLink>
   );
 };
