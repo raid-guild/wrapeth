@@ -14,14 +14,20 @@ export const Web3ConnectContext = createContext();
 export const CurrentUserContext = createContext();
 export const ContractContext = createContext();
 
+const wethAddrs = {
+    mainnet: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    kovan: "0xd0a1e359811322d97991e03f863a0c30c2cf029c",
+    xdai: "0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d"
+}
 const Store = ({ children }) => {
 
     const [currentUser, setCurrentUser] = useState();
     const [contract, setContract] = useState();
+    const [network, setNetwork] = useState();
     const [loading, setLoading] = useState(false);
     const [web3Connect, setWeb3Connect] = useState(
         new Web3Connect.Core({
-            network: getChainData(+process.env.REACT_APP_CHAIN_ID).network, // optional
+            // network: getChainData(+process.env.REACT_APP_CHAIN_ID).network, // optional
             providerOptions, // required
             cacheProvider: true,
         }),
@@ -33,9 +39,12 @@ const Store = ({ children }) => {
                 const w3c = await w3connect(
                     web3Connect,
                 );
+                const injectedChainId = await w3c.web3.eth.getChainId();
+                console.log('chain id', injectedChainId);
+                setNetwork(injectedChainId)
                 const [account] = await w3c.web3.eth.getAccounts();
                 setWeb3Connect(w3c);
-                const user = createWeb3User(account);
+                const user = createWeb3User(account, getChainData(+injectedChainId));
                 setCurrentUser(user);
             } catch (e) {
                 console.error(
@@ -51,8 +60,10 @@ const Store = ({ children }) => {
 
     useEffect(() => {
         const initContract = async () => {
+
+            console.log('name', getChainData(+network).network);
             try {
-                const contract = new web3Connect.web3.eth.Contract(WethAbi, process.env.REACT_APP_CONTRACT_ADDR);
+                const contract = new web3Connect.web3.eth.Contract(WethAbi, wethAddrs[getChainData(+network).network]);
                 setContract(contract)
             } catch (e) {
                 console.error(
