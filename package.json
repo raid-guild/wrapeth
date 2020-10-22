@@ -16,7 +16,7 @@
     "react-scripts": "3.4.0",
     "styled-components": "^5.0.1",
     "web3": "^1.2.6",
-    "web3connect": "^1.0.0-beta.32",
+    "web3modal": "^1.9.1",
     "yup": "^0.28.1"
   },
   "scripts": {

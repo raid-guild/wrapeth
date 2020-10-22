@@ -1,6 +1,6 @@
 
   import Web3 from 'web3';
-  import Web3Connect from 'web3connect';
+  import Web3Modal from "web3modal";
   import WalletConnectProvider from '@walletconnect/web3-provider';
 
   import { getChainData } from './Chains';
@@ -33,8 +33,8 @@
     },
   };
   
-  export const w3connect = async (web3Connect) => {
-    const provider = await web3Connect.connect();
+  export const w3modal = async (web3Modal) => {
+    const provider = await web3Modal.connect();
   
     const web3 = new Web3(provider);
   
@@ -51,20 +51,20 @@
     //   );
     // }
   
-    return { web3Connect, web3, provider };
+    return { web3Modal, web3, provider };
   };
   
   export const signInWithWeb3 = async () => {
     // const infuraId = process.env.INFURA_URI.split('/').pop();
   
     console.log('+process.env.REACT_APP_CHAIN_ID: ', +process.env.REACT_APP_CHAIN_ID);
-    const web3Connect = new Web3Connect.Core({
+    const web3Modal = new Web3Modal({
       // network: getChainData(+process.env.REACT_APP_CHAIN_ID).network, // optional
       providerOptions, // required
     });
-    console.log('web3Connect: ', web3Connect);
+    console.log('web3Modal: ', web3Modal);
   
-    const provider = await web3Connect.connect();
+    const provider = await web3Modal.connect();
     console.log('provider: ', provider);
   
     const web3 = new Web3(provider);
