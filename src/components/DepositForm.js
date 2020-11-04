@@ -4,7 +4,7 @@ import { Formik } from "formik";
 import { Form, InputGroup } from "react-bootstrap";
 
 import {
-  Web3ConnectContext,
+  Web3ModalContext,
   CurrentUserContext,
   ContractContext,
 } from "../contexts/Store";
@@ -14,7 +14,7 @@ import { CONTAINER, DEPOSITFORM, BUTTON } from "./Form.styled";
 import { TokenInfo } from "./TokenInfo";
 
 export const DepositForm = () => {
-  const [web3Connect] = useContext(Web3ConnectContext);
+  const [web3Modal] = useContext(Web3ModalContext);
   const [currentUser, setCurrentUser] = useContext(CurrentUserContext);
   const [contract] = useContext(ContractContext);
 
@@ -28,7 +28,7 @@ export const DepositForm = () => {
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           setSubmitting(true);
           try {
-            const weiValue = web3Connect.web3.utils.toWei("" + values.amount);
+            const weiValue = web3Modal.web3.utils.toWei("" + values.amount);
             await contract.methods
               .deposit()
               .send({ value: weiValue, from: currentUser.username });

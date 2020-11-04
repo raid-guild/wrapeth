@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext } from 'react';
-import Web3Connect from 'web3connect';
+import Web3Modal from "web3modal";
 import {
-    w3connect,
+    w3modal,
     providerOptions,
     createWeb3User
 } from '../utils/Auth';
@@ -10,7 +10,7 @@ import { getChainData } from '../utils/Chains';
 import WethAbi from '../contracts/wethAbi.json';
 
 export const LoaderContext = createContext(false);
-export const Web3ConnectContext = createContext();
+export const Web3ModalContext = createContext();
 export const CurrentUserContext = createContext();
 export const ContractContext = createContext();
 
@@ -25,8 +25,8 @@ const Store = ({ children }) => {
     const [contract, setContract] = useState();
     const [network, setNetwork] = useState();
     const [loading, setLoading] = useState(false);
-    const [web3Connect, setWeb3Connect] = useState(
-        new Web3Connect.Core({
+    const [web3Modal, setWeb3Modal] = useState(
+        new Web3Modal({
             // network: getChainData(+process.env.REACT_APP_CHAIN_ID).network, // optional
             providerOptions, // required
             cacheProvider: true,
@@ -36,14 +36,14 @@ const Store = ({ children }) => {
     useEffect(() => {
         const onLoad = async () => {
             try {
-                const w3c = await w3connect(
-                    web3Connect,
+                const w3c = await w3modal(
+                    web3Modal,
                 );
                 const injectedChainId = await w3c.web3.eth.getChainId();
                 console.log('chain id', injectedChainId);
                 setNetwork(injectedChainId)
                 const [account] = await w3c.web3.eth.getAccounts();
-                setWeb3Connect(w3c);
+                setWeb3Modal(w3c);
                 const user = createWeb3User(account, getChainData(+injectedChainId));
                 setCurrentUser(user);
             } catch (e) {
@@ -52,7 +52,7 @@ const Store = ({ children }) => {
                 );
             }
         };
-        if (web3Connect.cachedProvider) {
+        if (web3Modal.cachedProvider) {
             onLoad();
         }
         // eslint-disable-next-line
@@ -63,7 +63,7 @@ const Store = ({ children }) => {
 
             console.log('name', getChainData(+network).network);
             try {
-                const contract = new web3Connect.web3.eth.Contract(WethAbi, wethAddrs[getChainData(+network).network]);
+                const contract = new web3Modal.web3.eth.Contract(WethAbi, wethAddrs[getChainData(+network).network]);
                 setContract(contract)
             } catch (e) {
                 console.error(
@@ -71,16 +71,16 @@ const Store = ({ children }) => {
                 );
             }
         };
-        if (web3Connect.web3) {
+        if (web3Modal.web3) {
             initContract();
         }
         // eslint-disable-next-line
-    }, [web3Connect.web3]);
+    }, [web3Modal.web3]);
 
 
     return (
         <LoaderContext.Provider value={[loading, setLoading]}>
-            <Web3ConnectContext.Provider value={[web3Connect, setWeb3Connect]}>
+            <Web3ModalContext.Provider value={[web3Modal, setWeb3Modal]}>
                 <CurrentUserContext.Provider
                     value={[currentUser, setCurrentUser]}
                 >
@@ -88,7 +88,7 @@ const Store = ({ children }) => {
                         {children}
                     </ContractContext.Provider>
                 </CurrentUserContext.Provider>
-            </Web3ConnectContext.Provider>
+            </Web3ModalContext.Provider>
         </LoaderContext.Provider>
     );
 };

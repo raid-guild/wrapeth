@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react";
 import styled from "styled-components";
 
 import {
-  Web3ConnectContext,
+  Web3ModalContext,
   CurrentUserContext,
   ContractContext,
 } from "../contexts/Store.js";
@@ -21,7 +21,7 @@ const TokenLink = styled.button`
 `;
 
 export const TokenInfo = (props) => {
-  const [web3Connect] = useContext(Web3ConnectContext);
+  const [web3Modal] = useContext(Web3ModalContext);
   const [currentUser, setCurrentUser] = useContext(CurrentUserContext);
   const [contract] = useContext(ContractContext);
 
@@ -31,12 +31,12 @@ export const TokenInfo = (props) => {
       const wethBalanceInWei = await contract.methods
         .balanceOf(currentUser.username)
         .call();
-      const wethBalance = web3Connect.web3.utils.fromWei("" + wethBalanceInWei);
+      const wethBalance = web3Modal.web3.utils.fromWei("" + wethBalanceInWei);
       // get Eth Balance
-      const ethBalanceInWei = await web3Connect.web3.eth.getBalance(
+      const ethBalanceInWei = await web3Modal.web3.eth.getBalance(
         currentUser.username
       );
-      const ethBalance = web3Connect.web3.utils.fromWei("" + ethBalanceInWei);
+      const ethBalance = web3Modal.web3.utils.fromWei("" + ethBalanceInWei);
 
       setCurrentUser({ ...currentUser, ...{ wethBalance, ethBalance } });
     };
