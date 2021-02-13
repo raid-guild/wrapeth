@@ -80,21 +80,30 @@ const supportedChains = [
       network_id: 1,
       rpc_url: 'https://dai.poa.network',
     },
+    {
+      name: 'Matic Network',
+      short_name: 'matic',
+      chain: 'Matic',
+      network: 'matic',
+      chain_id: 137,
+      network_id: 137,
+      rpc_url: 'https://rpc-mainnet.maticvigil.com',
+    },
   ];
   
   export function getChainData(chainId) {
-    
-    const chainData = supportedChains.filter(
+    let chainData = supportedChains[0];
+    chainData = supportedChains.filter(
       (chain) => chain.chain_id === +chainId,
     )[0];
   
-    if (!chainData) {
-      throw new Error('ChainId missing or not supported');
-    }
-  
+    // if (!chainData) {
+    //   throw new Error('ChainId missing or not supported');
+    // }
     const API_KEY = process.env.REACT_APP_INFURA_PROJECT_ID;
-  
+    
     if (
+      chainData &&
       chainData.rpc_url.includes('infura.io') &&
       chainData.rpc_url.includes('%API_KEY%') &&
       API_KEY

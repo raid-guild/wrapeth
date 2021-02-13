@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext } from 'react';
+import React, { useState, useEffect, createContext, useRef } from 'react';
 import Web3Modal from "web3modal";
 import {
     w3modal,
@@ -17,7 +17,8 @@ export const ContractContext = createContext();
 const wethAddrs = {
     mainnet: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
     kovan: "0xd0a1e359811322d97991e03f863a0c30c2cf029c",
-    xdai: "0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d"
+    xdai: "0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d",
+    matic: "",
 }
 const Store = ({ children }) => {
 
@@ -33,17 +34,19 @@ const Store = ({ children }) => {
         }),
     );
 
+    const hasListeners = useRef(null);
+
     useEffect(() => {
         const onLoad = async () => {
             try {
                 const w3c = await w3modal(
                     web3Modal,
                 );
+                const [account] = await w3c.web3.eth.getAccounts();
+                setWeb3Modal(w3c);
                 const injectedChainId = await w3c.web3.eth.getChainId();
                 console.log('chain id', injectedChainId);
                 setNetwork(injectedChainId)
-                const [account] = await w3c.web3.eth.getAccounts();
-                setWeb3Modal(w3c);
                 const user = createWeb3User(account, getChainData(+injectedChainId));
                 setCurrentUser(user);
             } catch (e) {
@@ -56,7 +59,37 @@ const Store = ({ children }) => {
             onLoad();
         }
         // eslint-disable-next-line
-    }, []);
+    }, [web3Modal?.cachedProvider]);
+
+    useEffect(() => {
+        const handleChainChange = async () => {
+          console.log('CHAIN CHANGE');
+          window.location.reload();
+        };
+        const accountsChanged = async () => {
+          console.log('ACCOUNT CHANGE');
+          window.location.reload();
+        };
+    
+        // const unsub = () => {
+        //   if (web3Modal?.cachedProvider) {
+        //     web3Modal?.web3?.currentProvider.removeListener(
+        //       'accountsChanged',
+        //       handleChainChange,
+        //     );
+        //     web3Modal?.web3?.currentProvider.removeListener(
+        //       'chainChanged',
+        //       accountsChanged,
+        //     );
+        //   }
+        // };
+    
+        if (web3Modal?.web3?.currentProvider && !hasListeners.current) {
+            return web3Modal?.web3?.currentProvider.on('accountsChanged', accountsChanged)
+            .on('chainChanged', handleChainChange);
+        };
+        // return () => unsub();
+      }, [web3Modal]);
 
     useEffect(() => {
         const initContract = async () => {
@@ -71,11 +104,12 @@ const Store = ({ children }) => {
                 );
             }
         };
-        if (web3Modal.web3) {
+        
+        if (web3Modal.web3 && network) {
             initContract();
         }
-        // eslint-disable-next-line
-    }, [web3Modal.web3]);
+        
+    }, [network, web3Modal.web3]);
 
 
     return (
