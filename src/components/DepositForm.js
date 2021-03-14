@@ -78,7 +78,7 @@ export const DepositForm = () => {
                     onClick={() =>
                       setFieldValue(
                         "amount",
-                        (+currentUser.ethBalance).toPrecision(4)
+                        currentUser.ethBalance
                       )
                     }
                   >

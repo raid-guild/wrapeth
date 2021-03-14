@@ -78,7 +78,7 @@ export const WithdrawForm = () => {
                     onClick={() =>
                       setFieldValue(
                         "amount",
-                        (+currentUser.wethBalance).toPrecision(4)
+                        currentUser.wethBalance
                       )
                     }
                   >
