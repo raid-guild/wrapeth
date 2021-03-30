@@ -29,26 +29,24 @@ const Store = ({ children }) => {
     })
   );
 
-  const hasListeners = useRef(null);
+  const connectWallet = async (web3Modal) => {
+    try {
+      const w3c = await w3modal(web3Modal);
+      const [account] = await w3c.web3.eth.getAccounts();
+      setWeb3Modal(w3c);
+      const injectedChainId = await w3c.web3.eth.getChainId();
+      console.log("chain id", injectedChainId);
+      setNetwork(injectedChainId);
+      const user = createWeb3User(account, getChainData(+injectedChainId));
+      setCurrentUser(user);
+      return { web3Modal: w3c, injectedChainId, currentUser: user };
+    } catch (e) {
+      console.error(`Could not log in with web3`);
+    }
+  };
 
   useEffect(() => {
-    const onLoad = async () => {
-      try {
-        const w3c = await w3modal(web3Modal);
-        const [account] = await w3c.web3.eth.getAccounts();
-        setWeb3Modal(w3c);
-        const injectedChainId = await w3c.web3.eth.getChainId();
-        console.log("chain id", injectedChainId);
-        setNetwork(injectedChainId);
-        const user = createWeb3User(account, getChainData(+injectedChainId));
-        setCurrentUser(user);
-      } catch (e) {
-        console.error(`Could not log in with web3`);
-      }
-    };
-    if (web3Modal.cachedProvider) {
-      onLoad();
-    }
+    web3Modal?.cachedProvider && connectWallet(web3Modal);
     // eslint-disable-next-line
   }, [web3Modal?.cachedProvider]);
 
@@ -104,8 +102,10 @@ const Store = ({ children }) => {
 
   return (
     <LoaderContext.Provider value={[loading, setLoading]}>
-      <Web3ModalContext.Provider value={[web3Modal, setWeb3Modal]}>
-        <CurrentUserContext.Provider value={[currentUser, setCurrentUser]}>
+      <Web3ModalContext.Provider value={[web3Modal, connectWallet]}>
+        <CurrentUserContext.Provider
+          value={[currentUser, setCurrentUser, setNetwork]}
+        >
           <ContractContext.Provider value={[contract, setContract]}>
             {children}
           </ContractContext.Provider>

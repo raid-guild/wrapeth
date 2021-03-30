@@ -2,7 +2,9 @@ import Web3 from "web3";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
-import { getChainData } from "./Chains";
+import { getChainData, getWalletConnectRPC } from "./Chains";
+
+const logError = (key, err) => console.error({ [key]: err.message });
 
 const getChainIdName = (chainId) => {
   switch (chainId) {
@@ -16,6 +18,8 @@ const getChainIdName = (chainId) => {
       return "Goerli";
     case 42:
       return "Kovan";
+    case 100:
+      return "xDAI";
     case 4447:
       return "Ganache";
     default:
@@ -28,14 +32,24 @@ export const providerOptions = {
     package: WalletConnectProvider, // required
     options: {
       infuraId: process.env.REACT_APP_INFURA_PROJECT_ID,
+      rpc: getWalletConnectRPC(),
     },
   },
 };
 
 export const w3modal = async (web3Modal) => {
-  const provider = await web3Modal.connect();
-
-  const web3 = new Web3(provider);
+  try {
+    const provider = await web3Modal.connect();
+    const web3 = new Web3(provider);
+    return { web3Modal, web3, provider };
+  } catch (err) {
+    logError("w3ModalError", err);
+    return {
+      web3Modal,
+      web3: null,
+      provider: null,
+    };
+  }
 
   // const injectedChainId = await web3.eth.getChainId();
 
@@ -49,8 +63,6 @@ export const w3modal = async (web3Modal) => {
   //     `Injected web3 chainId: ${injectedChainId}, config: ${+process.env.REACT_APP_CHAIN_ID}`,
   //   );
   // }
-
-  return { web3Modal, web3, provider };
 };
 
 export const signInWithWeb3 = async () => {
