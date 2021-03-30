@@ -59,7 +59,9 @@ export const DepositForm = () => {
         }) => (
           <DEPOSITFORM onSubmit={handleSubmit} className="mx-auto">
             <Form.Group controlId="depositForm">
-              <Form.Label><span>{currentUser && currentUser.network.chain}</span></Form.Label>
+              <Form.Label>
+                <span>{currentUser?.network.chain}</span>
+              </Form.Label>
               <TokenInfo Eth />
               <InputGroup>
                 <Form.Control
