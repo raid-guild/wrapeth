@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Container, Row, Col, Button, ButtonGroup } from "react-bootstrap";
-import { Web3SignIn } from "./components/account/Web3SignIn";
-import { CurrentUserContext } from "./contexts/Store";
+import { CurrentUserContext, Web3ModalContext } from "./contexts/Store";
 import { DepositForm } from "./components/DepositForm";
 import { WithdrawForm } from "./components/WithdrawForm";
 import styled from "styled-components";
@@ -149,7 +148,8 @@ const FooterDiv = styled.div`
 `;
 
 function App() {
-  const [currentUser, setCurrentUser] = useContext(CurrentUserContext);
+  const [currentUser] = useContext(CurrentUserContext);
+  const [web3Modal, connectWallet] = useContext(Web3ModalContext);
   const [wrapEth, setWrapEth] = useState(true);
 
   return (
@@ -176,7 +176,12 @@ function App() {
             </AccountDiv>
           ) : (
             <AccountDiv>
-              <Web3SignIn setCurrentUser={setCurrentUser} />
+              <Button
+                variant="outline-primary"
+                onClick={connectWallet.bind(this, web3Modal)}
+              >
+                Connect
+              </Button>
             </AccountDiv>
           )}
         </HeaderRow>
