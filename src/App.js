@@ -164,10 +164,13 @@ function App() {
         <HeaderRow>
           <BrandDiv>
             <img src={logo} alt="wrapeth" />
-            <p>No fees, no frills <span>{currentUser && currentUser.network.chain}</span> wrapper</p>
+            <p>
+              No fees, no frills <span>{currentUser?.network.chain}</span>{" "}
+              wrapper
+            </p>
           </BrandDiv>
 
-          {currentUser && currentUser.username ? (
+          {currentUser?.username ? (
             <AccountDiv>
               <p>{currentUser.username}</p>
             </AccountDiv>
@@ -187,7 +190,7 @@ function App() {
                 color: wrapEth ? "white" : "#ff3864",
               }}
             >
-              Wrap <span>{currentUser && currentUser.network.chain}</span>
+              Wrap <span>{currentUser?.network.chain}</span>
             </Button>
             <Button
               variant="outline-primary"
@@ -197,25 +200,29 @@ function App() {
                 color: !wrapEth ? "white" : "#ff3864",
               }}
             >
-              Unwrap w<span>{currentUser && currentUser.network.chain}</span>
+              Unwrap w<span>{currentUser?.network.chain}</span>
             </Button>
           </ButtonGroup>
         </CenteredRow>
         {wrapEth && (
           <CenteredCol>
-            {currentUser && currentUser.username ? (
+            {currentUser?.username ? (
               <DepositForm />
             ) : (
-              <p>Connect to Wrap <span>{currentUser && currentUser.network.chain}</span></p>
+              <p>
+                Connect to Wrap <span>{currentUser?.network.chain}</span>
+              </p>
             )}
           </CenteredCol>
         )}
         {!wrapEth && (
           <CenteredCol>
-            {currentUser && currentUser.username ? (
+            {currentUser?.username ? (
               <WithdrawForm />
             ) : (
-              <p>Connect to Unwrap <span>{currentUser && currentUser.network.chain}</span></p>
+              <p>
+                Connect to Unwrap <span>{currentUser?.network.chain}</span>
+              </p>
             )}
           </CenteredCol>
         )}

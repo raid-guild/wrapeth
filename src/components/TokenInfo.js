@@ -8,7 +8,6 @@ import {
 } from "../contexts/Store.js";
 
 const TokenLink = styled.button`
-  display: inline-block;
   text-align: right;
   max-width: 100%;
   float: right;
@@ -52,11 +51,13 @@ export const TokenInfo = (props) => {
 
   return currentUser && props.Eth ? (
     <TokenLink max={forDisplay(currentUser.ethBalance)}>
-      <span>{currentUser && currentUser.network.chain}</span> Balance: {forDisplay(currentUser.ethBalance)}
+      <span>{currentUser?.network.chain}</span> Balance:{" "}
+      {forDisplay(currentUser.ethBalance)}
     </TokenLink>
   ) : (
     <TokenLink max={forDisplay(currentUser.wethBalance)}>
-      w<span>{currentUser && currentUser.network.chain}</span> Balance: {forDisplay(currentUser.wethBalance)}
+      w<span>{currentUser?.network.chain}</span> Balance:{" "}
+      {forDisplay(currentUser.wethBalance)}
     </TokenLink>
   );
 };

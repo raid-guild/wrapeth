@@ -59,7 +59,9 @@ export const WithdrawForm = () => {
         }) => (
           <DEPOSITFORM onSubmit={handleSubmit} className="mx-auto">
             <Form.Group controlId="depositForm">
-              <Form.Label>w<span>{currentUser && currentUser.network.chain}</span></Form.Label>
+              <Form.Label>
+                w<span>{currentUser?.network.chain}</span>
+              </Form.Label>
               <TokenInfo />
               <InputGroup>
                 <Form.Control
