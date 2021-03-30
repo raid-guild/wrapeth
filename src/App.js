@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Container, Row, Col, Button, ButtonGroup } from "react-bootstrap";
-import { Web3SignIn } from "./components/account/Web3SignIn";
-import { CurrentUserContext } from "./contexts/Store";
+import { CurrentUserContext, Web3ModalContext } from "./contexts/Store";
 import { DepositForm } from "./components/DepositForm";
 import { WithdrawForm } from "./components/WithdrawForm";
 import styled from "styled-components";
@@ -149,7 +148,8 @@ const FooterDiv = styled.div`
 `;
 
 function App() {
-  const [currentUser, setCurrentUser] = useContext(CurrentUserContext);
+  const [currentUser] = useContext(CurrentUserContext);
+  const [web3Modal, connectWallet] = useContext(Web3ModalContext);
   const [wrapEth, setWrapEth] = useState(true);
 
   return (
@@ -164,16 +164,24 @@ function App() {
         <HeaderRow>
           <BrandDiv>
             <img src={logo} alt="wrapeth" />
-            <p>No fees, no frills <span>{currentUser && currentUser.network.chain}</span> wrapper</p>
+            <p>
+              No fees, no frills <span>{currentUser?.network.chain}</span>{" "}
+              wrapper
+            </p>
           </BrandDiv>
 
-          {currentUser && currentUser.username ? (
+          {currentUser?.username ? (
             <AccountDiv>
               <p>{currentUser.username}</p>
             </AccountDiv>
           ) : (
             <AccountDiv>
-              <Web3SignIn setCurrentUser={setCurrentUser} />
+              <Button
+                variant="outline-primary"
+                onClick={connectWallet.bind(this, web3Modal)}
+              >
+                Connect
+              </Button>
             </AccountDiv>
           )}
         </HeaderRow>
@@ -187,7 +195,7 @@ function App() {
                 color: wrapEth ? "white" : "#ff3864",
               }}
             >
-              Wrap <span>{currentUser && currentUser.network.chain}</span>
+              Wrap <span>{currentUser?.network.chain}</span>
             </Button>
             <Button
               variant="outline-primary"
@@ -197,25 +205,29 @@ function App() {
                 color: !wrapEth ? "white" : "#ff3864",
               }}
             >
-              Unwrap w<span>{currentUser && currentUser.network.chain}</span>
+              Unwrap w<span>{currentUser?.network.chain}</span>
             </Button>
           </ButtonGroup>
         </CenteredRow>
         {wrapEth && (
           <CenteredCol>
-            {currentUser && currentUser.username ? (
+            {currentUser?.username ? (
               <DepositForm />
             ) : (
-              <p>Connect to Wrap <span>{currentUser && currentUser.network.chain}</span></p>
+              <p>
+                Connect to Wrap <span>{currentUser?.network.chain}</span>
+              </p>
             )}
           </CenteredCol>
         )}
         {!wrapEth && (
           <CenteredCol>
-            {currentUser && currentUser.username ? (
+            {currentUser?.username ? (
               <WithdrawForm />
             ) : (
-              <p>Connect to Unwrap <span>{currentUser && currentUser.network.chain}</span></p>
+              <p>
+                Connect to Unwrap <span>{currentUser?.network.chain}</span>
+              </p>
             )}
           </CenteredCol>
         )}
