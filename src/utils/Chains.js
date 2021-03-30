@@ -117,4 +117,15 @@ export function getChainData(chainId) {
   return chainData;
 }
 
+export const getWalletConnectRPC = () =>
+  supportedChains.reduce((acc, { chain_id, rpc_url }) => {
+    const rpcURL = `${rpc_url}${
+      [1, 3, 4, 42].includes(chain_id)
+        ? process.env.REACT_APP_INFURA_PROJECT_ID
+        : ""
+    }`;
+    acc[chain_id] = rpcURL;
+    return acc;
+  }, {});
+
 export default supportedChains;
