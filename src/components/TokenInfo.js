@@ -46,7 +46,7 @@ export const TokenInfo = (props) => {
   }, [contract]);
 
   const forDisplay = (number) => {
-    return number ? (+number).toFixed(4) : 0;
+    return number ? (+number).toFixed(4) : "Fetching ...";
   };
 
   return currentUser && props.Eth ? (
