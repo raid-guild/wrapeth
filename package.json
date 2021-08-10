@@ -1,5 +1,5 @@
 {
-  "name": "create-raid-app-poc",
+  "name": "wrapeth-web",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -37,7 +37,6 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
