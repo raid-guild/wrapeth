@@ -51,7 +51,24 @@ export const CurrentUserContextProvider: React.FC<CurrentUserProps> = ({
   );
 };
 
-export const useCurrentUser = () => {
+const defaultUseCurrentUser = () => {
   const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
   return { currentUser, setCurrentUser };
+};
+
+let activeUseCurrentUser: Function = defaultUseCurrentUser;
+
+export const useCurrentUser = () => activeUseCurrentUser();
+
+export const setTestUseCurrentUser = (
+  testUseCurrentUser: Function,
+  reset: Boolean = false,
+) => {
+  if (reset) {
+    console.log('default userCurrent'); //eslint-disable-line
+    activeUseCurrentUser = defaultUseCurrentUser;
+  } else {
+    console.log('test userCurrent'); //eslint-disable-line
+    activeUseCurrentUser = testUseCurrentUser;
+  }
 };

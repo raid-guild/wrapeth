@@ -28,7 +28,7 @@ export interface AppContainerProps {
  */
 export const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
   const { currentUser } = useCurrentUser();
-
+  console.log('current user', currentUser); //eslint-disable-line
   const [deposit, setDeposit] = useState<boolean>(true);
 
   const onButtonSelection = (index: number) => {
