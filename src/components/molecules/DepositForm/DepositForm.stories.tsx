@@ -1,11 +1,6 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import {
-  loggedOutDecorator,
-  loggedInDecorator,
-} from '../../AppContainer/appContainer.stories';
-import { setTestUseCurrentUser } from '../../../contexts/currentUserContext';
-
+import { loggedOutDecorator, loggedInDecorator } from '../../storyHelper';
 import { DepositForm, DepositFormProps } from '.';
 
 export default {
