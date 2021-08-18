@@ -18,6 +18,16 @@ const mockGetter = () => {
   }
 };
 
+export const loggedOutDecorator = (StoryInst: Story) => {
+  setTestUseCurrentUser(mockGetter, true);
+  return <StoryInst />;
+};
+
+export const loggedInDecorator = (StoryInst: Story) => {
+  setTestUseCurrentUser(mockGetter, false);
+  return <StoryInst />;
+};
+
 export default {
   title: 'Components/App/AppContainer',
   component: AppContainer,
@@ -32,21 +42,11 @@ WalletConnected.args = {
   // backgroundColor: 'white',
 };
 
-WalletConnected.decorators = [
-  (Story) => {
-    setTestUseCurrentUser(mockGetter);
-    return <Story />
-  }
-]
+WalletConnected.decorators = [loggedInDecorator,];
 
 export const WalledDisconnected = Template.bind({});
 WalledDisconnected.args = {
   // backgroundColor: 'black',
 };
 
-WalledDisconnected.decorators = [
-  (Story) => {
-    setTestUseCurrentUser(mockGetter, true);
-    return <Story />
-  }
-]
+WalledDisconnected.decorators = [loggedOutDecorator,];

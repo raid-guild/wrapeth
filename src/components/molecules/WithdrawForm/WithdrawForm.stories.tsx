@@ -1,7 +1,9 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import { ArgsTable } from '@storybook/addon-docs/blocks';
-
+import {
+  loggedOutDecorator,
+  loggedInDecorator,
+} from '../../AppContainer/appContainer.stories';
 import { WithdrawForm, WithdrawFormProps } from '.';
 
 export default {
@@ -22,6 +24,8 @@ const Template: Story<WithdrawFormProps> = (args) => <WithdrawForm {...args} />;
 
 export const LoggedOut = Template.bind({});
 LoggedOut.args = {};
+LoggedOut.decorators = [loggedOutDecorator];
 
 export const LoggedIn = Template.bind({});
 LoggedIn.args = {};
+LoggedIn.decorators = [loggedInDecorator];

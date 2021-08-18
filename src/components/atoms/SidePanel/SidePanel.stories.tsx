@@ -1,7 +1,7 @@
 import React from 'react';
+import { Image, Flex, Spacer } from '@chakra-ui/react';
 import { Story, Meta } from '@storybook/react';
-import { ArgsTable } from '@storybook/addon-docs/blocks';
-
+import logo from '../../../assets/wrapeth_logo.png';
 import { SidePanel, SidePanelProps } from '.';
 
 export default {
@@ -16,12 +16,22 @@ const Template: Story<SidePanelProps> = (args) => <SidePanel {...args} />;
 
 export const WithLogoLeft = Template.bind({});
 WithLogoLeft.args = {
-  // position: 'left',
+  children: (
+    <Flex>
+      <Image src={logo} alt='wrapeth logo' max-width='240px' height='auto' />
+      <Spacer />
+    </Flex>
+  ),
 };
 
 export const WithLogoRight = Template.bind({});
 WithLogoRight.args = {
-  // position: 'right',
+  children: (
+    <Flex>
+      <Spacer />
+      <Image src={logo} alt='wrapeth logo' max-width='240px' height='auto' />
+    </Flex>
+  ),
 };
 
 export const Empty = Template.bind({});
