@@ -3,7 +3,7 @@
   "name": "WrapEth",
   "description": "No fees, no frills ETH wrapper",
   "iconPath": "logo192.png",
-  "providedBy": {"name": "Raid Guild", "url": "https://raidguild.org"},
+  "providedBy": { "name": "Raid Guild", "url": "https://raidguild.org" },
   "icons": [
     {
       "src": "favicon.ico",

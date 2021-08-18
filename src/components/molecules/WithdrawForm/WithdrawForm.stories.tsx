@@ -1,9 +1,6 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import {
-  loggedOutDecorator,
-  loggedInDecorator,
-} from '../../AppContainer/appContainer.stories';
+import { loggedOutDecorator, loggedInDecorator } from '../../storyHelper';
 import { WithdrawForm, WithdrawFormProps } from '.';
 
 export default {
