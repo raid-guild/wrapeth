@@ -65,10 +65,8 @@ export const setTestUseCurrentUser = (
   reset: Boolean = false,
 ) => {
   if (reset) {
-    console.log('default userCurrent'); //eslint-disable-line
     activeUseCurrentUser = defaultUseCurrentUser;
   } else {
-    console.log('test userCurrent'); //eslint-disable-line
     activeUseCurrentUser = testUseCurrentUser;
   }
 };

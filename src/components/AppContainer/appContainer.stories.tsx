@@ -1,17 +1,16 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Story, Meta } from '@storybook/react';
 import { AppContainer, AppContainerProps } from '.';
 import { setTestUseCurrentUser } from '../../contexts/currentUserContext';
 
 const mockGetter = () => {
-  console.log('mock Getter') //eslint-disable-line
   return {
     currentUser: {
       type: 'web3',
       attributes: { 'custom:account_address': '111' },
       network: { chain: 'demoETH' },
-      username: 'Demo',
+      username: '0x1234567',
       ethBalance: 1.1,
       wethBalance: 2.2,
     },
@@ -28,27 +27,25 @@ const ControlledTemplate: Story<AppContainerProps> = (args) => <AppContainer {..
 
 const Template: Story<AppContainerProps> = (args) => <AppContainer {...args} />;
 
-export const Light = ControlledTemplate.bind({});
-Light.args = {
+export const WalletConnected = ControlledTemplate.bind({});
+WalletConnected.args = {
   // backgroundColor: 'white',
 };
 
-Light.decorators = [
+WalletConnected.decorators = [
   (Story) => {
-    console.log('effect light'); //eslint-disable-line
     setTestUseCurrentUser(mockGetter);
     return <Story />
   }
 ]
 
-export const Dark = Template.bind({});
-Dark.args = {
+export const WalledDisconnected = Template.bind({});
+WalledDisconnected.args = {
   // backgroundColor: 'black',
 };
 
-Dark.decorators = [
+WalledDisconnected.decorators = [
   (Story) => {
-    console.log('effect dark'); //eslint-disable-line
     setTestUseCurrentUser(mockGetter, true);
     return <Story />
   }

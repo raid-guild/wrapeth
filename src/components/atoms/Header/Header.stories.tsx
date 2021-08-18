@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { Story, Meta } from '@storybook/react';
 
-import { Image, Spacer } from '@chakra-ui/react';
+import { Image, Spacer, Container } from '@chakra-ui/react';
 
 import { Header, HeaderProps } from '.';
 import { AccountButton } from '../../molecules/AccountButton';
@@ -13,7 +13,13 @@ export default {
   component: Header,
 } as Meta;
 
-const Template: Story<HeaderProps> = (args) => <Header {...args} />;
+const Template: Story<HeaderProps> = (args) => {
+  return (
+    <Container centerContent flexDirection='column' width='100%'>
+      <Header {...args} />
+    </Container>
+  );
+};
 
 export const WithButton = Template.bind({});
 WithButton.args = {
