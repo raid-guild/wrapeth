@@ -1,6 +1,11 @@
 import '@fontsource/mirza';
 import '@fontsource/uncial-antiqua';
 import { extendTheme } from '@chakra-ui/react';
+import { Button } from './components/Button';
+import { Form } from './components/Form';
+import { Input } from './components/Input';
+import { Modal } from './components/Modal';
+import { Text } from './components/Text';
 
 export const theme = extendTheme({
   colors: {
@@ -38,73 +43,10 @@ export const theme = extendTheme({
   },
 
   components: {
-    Button: {
-      defaultProps: {
-        colorScheme: 'primaryAlpha',
-        variant: 'solid',
-        fontWeight: '400',
-      },
-      variants: {
-        solid: () => ({
-          textTransform: 'uppercase',
-        }),
-        outline: () => ({
-          textTransform: 'uppercase',
-        }),
-      },
-    },
-
-    Form: {
-      defaultProps: {
-        width: '90%',
-        textAlign: 'left',
-        paddingTop: '2em',
-        paddingBottom: '2em',
-      },
-    },
-
-    Input: {
-      defaultProps: {
-        variant: 'rg',
-      },
-      parts: ['field'],
-      variants: {
-        rg: {
-          field: {
-            color: 'white',
-            bg: 'black',
-            border: '1px solid',
-            borderColor: 'primaryAlpha.500',
-            margin: '5px',
-          },
-        },
-      },
-    },
-
-    Text: {
-      defaultProps: {
-        variant: 'rg',
-      },
-      variants: {
-        rg: {
-          color: 'white',
-          bg: 'black',
-          margin: '5px',
-          textTransform: 'uppercase',
-        },
-      },
-    },
-
-    Modal: {
-      parts: ['dialog'],
-      baseStyle: {
-        dialog: {
-          bg: 'black',
-          color: 'primary.500',
-          border: '1px solid',
-          borderColor: 'primary.800',
-        },
-      },
-    },
+    Button,
+    Form,
+    Input,
+    Text,
+    Modal,
   },
 });
