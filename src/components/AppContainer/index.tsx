@@ -67,7 +67,7 @@ export const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
         </Header>
         <Container centerContent marginTop='10px'>
           <ButtonGroup
-            buttons={[`Wrap ${networkName}`, `Unwrap w${networkName}`]}
+            buttons={[`Wrap ${networkName}`, `Unwrap ${networkName}`]}
             defaultSelected={deposit ? 0 : 1}
             isAttached
             onSelect={onButtonSelection}
@@ -81,7 +81,7 @@ export const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
           ) : currentUser?.username ? (
             <WithdrawForm />
           ) : (
-            <Text>Connect to Unwrap w{networkName}</Text>
+            <Text>Connect to Unwrap {networkName}</Text>
           )}
         </Container>
 
