@@ -15,6 +15,7 @@ import logo from '../../assets/wrapeth_logo.png';
 import { useCurrentUser } from '../../contexts/currentUserContext';
 import { DepositForm } from '../molecules/DepositForm';
 import { WithdrawForm } from '../molecules/WithdrawForm';
+import { Card } from '../atoms/Card';
 
 export interface AppContainerProps {
   /**
@@ -66,23 +67,25 @@ export const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
           <AccountButton />
         </Header>
         <Container centerContent marginTop='10px'>
-          <ButtonGroup
-            buttons={[`Wrap ${networkName}`, `Unwrap ${networkName}`]}
-            defaultSelected={deposit ? 0 : 1}
-            isAttached
-            onSelect={onButtonSelection}
-          />
-          {deposit ? (
-            currentUser?.username ? (
-              <DepositForm />
+          <Card>
+            <ButtonGroup
+              buttons={[`Wrap ${networkName}`, `Unwrap ${networkName}`]}
+              defaultSelected={deposit ? 0 : 1}
+              isAttached
+              onSelect={onButtonSelection}
+            />
+            {deposit ? (
+              currentUser?.username ? (
+                <DepositForm />
+              ) : (
+                <Text bg='transparent'>Connect to Wrap {networkName}</Text>
+              )
+            ) : currentUser?.username ? (
+              <WithdrawForm />
             ) : (
-              <Text>Connect to Wrap {networkName}</Text>
-            )
-          ) : currentUser?.username ? (
-            <WithdrawForm />
-          ) : (
-            <Text>Connect to Unwrap {networkName}</Text>
-          )}
+              <Text bg='transparent'>Connect to Unwrap {networkName}</Text>
+            )}
+          </Card>
         </Container>
 
         <Spacer />

@@ -22,6 +22,7 @@ import {
 } from '@chakra-ui/react';
 import { User } from '../../../types';
 import { TokenInfo } from '../TokenInfo';
+import { Card } from '../../atoms/Card';
 
 export interface DepositFormProps {
   /**
