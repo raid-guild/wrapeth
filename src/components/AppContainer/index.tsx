@@ -50,7 +50,11 @@ export const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
       : '';
 
   return (
-    <Flex h='100vh' w='100vw'>
+    <Flex
+      minHeight='100vh'
+      minWidth='100vw'
+      bg='linear-gradient(157.1deg, #22002b 0%, #390418 29.17%, #48093A 61.98%, #1F0442 100%)'
+    >
       <SidePanel>
         <Image src={raidGuildLogoLeft} alt='Swords logo' maxH='75vh' />
       </SidePanel>
@@ -69,7 +73,7 @@ export const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
         <Container centerContent marginTop='10px'>
           <Card>
             <ButtonGroup
-              buttons={[`Wrap ${networkName}`, `Unwrap ${networkName}`]}
+              buttons={[`Wrap ${networkName}`, `Unwrap w${networkName}`]}
               defaultSelected={deposit ? 0 : 1}
               isAttached
               onSelect={onButtonSelection}
@@ -83,7 +87,7 @@ export const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
             ) : currentUser?.username ? (
               <WithdrawForm />
             ) : (
-              <Text bg='transparent'>Connect to Unwrap {networkName}</Text>
+              <Text bg='transparent'>Connect to Unwrap w{networkName}</Text>
             )}
           </Card>
         </Container>

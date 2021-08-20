@@ -14,7 +14,8 @@ export const WithHeading = Template.bind({});
 WithHeading.args = {
   children: (
     <Heading
-      variant='label'
+      variant='texturina'
+      textTransform='uppercase'
       fontSize={{ base: '16px' }}
       mb={5}
       textAlign='center'

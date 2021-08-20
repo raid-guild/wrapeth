@@ -13,12 +13,11 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  HStack,
-  Spacer,
   FormLabel,
   Container,
   InputGroup,
   InputRightAddon,
+  Flex,
 } from '@chakra-ui/react';
 import { User } from '../../../types';
 import { TokenInfo } from '../TokenInfo';
@@ -96,18 +95,21 @@ export const WithdrawForm: React.FC<WithdrawFormProps> = () => {
         }) => (
           <Form>
             <FormControl id='withdrawForm' isRequired>
-              <HStack>
+              <Flex
+                marginTop='5px'
+                alignItems='center'
+                justifyContent='space-between'
+                flexWrap='wrap'
+              >
                 <FormLabel>{currentUser?.network?.chain}</FormLabel>
-                <Spacer />
                 <TokenInfo deposit={false} />
-              </HStack>
-              <InputGroup marginBottom='5px'>
+              </Flex>
+              <InputGroup size='md' marginBottom='16px'>
                 <NumberInput
                   value={values.amount}
                   placeholder='Amount to unwrap'
                   precision={4}
                   variant='outline'
-                  width='80%'
                   onChange={(e) => setFieldValue('amount', e)}
                   onBlur={handleBlur}
                   min={0}
@@ -122,10 +124,8 @@ export const WithdrawForm: React.FC<WithdrawFormProps> = () => {
                 <InputRightAddon m={0} p={0}>
                   <Button
                     variant='solid'
-                    size='lg'
-                    h='100%'
-                    w='100%'
                     borderLeftRadius='none'
+                    size='lg'
                     onClick={() => {
                       if (currentUser?.wethBalance) {
                         setFieldValue(

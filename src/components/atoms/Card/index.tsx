@@ -7,13 +7,13 @@ export interface CardProps {
 
 export const Card: React.FC<CardProps> = ({ children }) => (
   <Flex
-    maxWidth='500px'
+    width='100%'
     direction='column'
     alignItems='center'
     justifyContent='space-evenly'
     py='2rem'
     px='1.5rem'
-    bg='blackLighter'
+    bg='black'
     borderTop='2px solid'
     borderColor='red'
   >

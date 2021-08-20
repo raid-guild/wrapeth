@@ -33,10 +33,11 @@ export const theme = extendTheme({
   },
 
   fonts: {
-    heading: `'Uncial Antiqua', cursive`,
-    label: `'Texturina', serif`,
-    body: 'Mirza',
-    mono: `'Inconsolata', monospace;`,
+    texturina: `'Texturina', serif`,
+    jetbrains: `'JetBrains Mono', monospace`,
+    rubik: `'Rubik Mono One', sans-serif`,
+    uncial: `'Uncial Antiqua', cursive`,
+    spaceMono: `'Space Mono', monospace;`,
   },
 
   styles: {

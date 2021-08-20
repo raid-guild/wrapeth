@@ -7,9 +7,10 @@ export const Button = {
   variants: {
     solid: () => ({
       textTransform: 'uppercase',
-      minWidth: '160px',
+      maxWidth: '100%',
+      width: 'auto',
       height: '40px',
-      color: 'black',
+      color: 'white',
       borderRadius: '2px',
       background:
         'linear-gradient(94.89deg, #FF5A00 0%, #D62789 70.2%, #AD17AD 100%)',
@@ -20,12 +21,13 @@ export const Button = {
           'linear-gradient(94.89deg, #f78040 0%, #dd459b 70.2%, #ad3bad 100%)',
       },
       _focus: {
-        outline: 'none',
+        boxShadow: 'none',
       },
     }),
     outline: () => ({
       textTransform: 'uppercase',
-      minWidth: '160px',
+      maxWidth: '100%',
+      width: 'auto',
       height: '40px',
       border: '2px solid',
       borderRadius: '3px',
@@ -44,6 +46,9 @@ export const Button = {
           'linear-gradient(96.18deg, #e26f88 0%, #a15ebe 53.65%, #6c77db 100%)',
         backgroundClip: 'text',
         color: { base: 'red', md: 'transparent' }, // added a media query to display RG red on mobile
+      },
+      _focus: {
+        boxShadow: 'none',
       },
     }),
   },
