@@ -15,6 +15,7 @@ import logo from '../../assets/wrapeth_logo.png';
 import { useCurrentUser } from '../../contexts/currentUserContext';
 import { DepositForm } from '../molecules/DepositForm';
 import { WithdrawForm } from '../molecules/WithdrawForm';
+import { Card } from '../atoms/Card';
 
 export interface AppContainerProps {
   /**
@@ -49,7 +50,11 @@ export const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
       : '';
 
   return (
-    <Flex h='100vh' w='100vw'>
+    <Flex
+      minHeight='100vh'
+      minWidth='100vw'
+      bg='linear-gradient(157.1deg, #22002b 0%, #390418 29.17%, #48093A 61.98%, #1F0442 100%)'
+    >
       <SidePanel>
         <Image src={raidGuildLogoLeft} alt='Swords logo' maxH='75vh' />
       </SidePanel>
@@ -66,23 +71,25 @@ export const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
           <AccountButton />
         </Header>
         <Container centerContent marginTop='10px'>
-          <ButtonGroup
-            buttons={[`Wrap ${networkName}`, `Unwrap w${networkName}`]}
-            defaultSelected={deposit ? 0 : 1}
-            isAttached
-            onSelect={onButtonSelection}
-          />
-          {deposit ? (
-            currentUser?.username ? (
-              <DepositForm />
+          <Card>
+            <ButtonGroup
+              buttons={[`Wrap ${networkName}`, `Unwrap w${networkName}`]}
+              defaultSelected={deposit ? 0 : 1}
+              isAttached
+              onSelect={onButtonSelection}
+            />
+            {deposit ? (
+              currentUser?.username ? (
+                <DepositForm />
+              ) : (
+                <Text bg='transparent'>Connect to Wrap {networkName}</Text>
+              )
+            ) : currentUser?.username ? (
+              <WithdrawForm />
             ) : (
-              <Text>Connect to Wrap {networkName}</Text>
-            )
-          ) : currentUser?.username ? (
-            <WithdrawForm />
-          ) : (
-            <Text>Connect to Unwrap w{networkName}</Text>
-          )}
+              <Text bg='transparent'>Connect to Unwrap w{networkName}</Text>
+            )}
+          </Card>
         </Container>
 
         <Spacer />

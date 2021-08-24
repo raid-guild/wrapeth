@@ -1,9 +1,25 @@
 import '@fontsource/mirza';
 import '@fontsource/uncial-antiqua';
 import { extendTheme } from '@chakra-ui/react';
+import { Button } from './components/Button';
+import { Form } from './components/Form';
+import { Input } from './components/Input';
+import { Modal } from './components/Modal';
+import { Text } from './components/Text';
 
 export const theme = extendTheme({
   colors: {
+    transparent: 'transparent',
+    blackDark: 'rgba(10, 10, 10, 0.960784)',
+    blackLight: '#2b2c34',
+    blackLighter: '#16161a',
+    greyLight: '#a7a9be',
+    greyDark: '#4a4a4a',
+    white: '#fffffe',
+    purple: '#822EA6',
+    purpleLight: '#B66AD6',
+    yellow: '#F2E857',
+    yellowDark: '#DCCF11',
     primaryAlpha: {
       // Base colour is at 500
       200: '#ff95ad',
@@ -17,9 +33,11 @@ export const theme = extendTheme({
   },
 
   fonts: {
-    heading: 'Uncial Antiqua',
-    body: 'Mirza',
-    mono: 'Inconsolata',
+    texturina: `'Texturina', serif`,
+    jetbrains: `'JetBrains Mono', monospace`,
+    rubik: `'Rubik Mono One', sans-serif`,
+    uncial: `'Uncial Antiqua', cursive`,
+    spaceMono: `'Space Mono', monospace;`,
   },
 
   styles: {
@@ -38,73 +56,10 @@ export const theme = extendTheme({
   },
 
   components: {
-    Button: {
-      defaultProps: {
-        colorScheme: 'primaryAlpha',
-        variant: 'solid',
-        fontWeight: '400',
-      },
-      variants: {
-        solid: () => ({
-          textTransform: 'uppercase',
-        }),
-        outline: () => ({
-          textTransform: 'uppercase',
-        }),
-      },
-    },
-
-    Form: {
-      defaultProps: {
-        width: '90%',
-        textAlign: 'left',
-        paddingTop: '2em',
-        paddingBottom: '2em',
-      },
-    },
-
-    Input: {
-      defaultProps: {
-        variant: 'rg',
-      },
-      parts: ['field'],
-      variants: {
-        rg: {
-          field: {
-            color: 'white',
-            bg: 'black',
-            border: '1px solid',
-            borderColor: 'primaryAlpha.500',
-            margin: '5px',
-          },
-        },
-      },
-    },
-
-    Text: {
-      defaultProps: {
-        variant: 'rg',
-      },
-      variants: {
-        rg: {
-          color: 'white',
-          bg: 'black',
-          margin: '5px',
-          textTransform: 'uppercase',
-        },
-      },
-    },
-
-    Modal: {
-      parts: ['dialog'],
-      baseStyle: {
-        dialog: {
-          bg: 'black',
-          color: 'primary.500',
-          border: '1px solid',
-          borderColor: 'primary.800',
-        },
-      },
-    },
+    Button,
+    Form,
+    Input,
+    Text,
+    Modal,
   },
 });

@@ -13,12 +13,11 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  HStack,
-  Spacer,
   FormLabel,
   Container,
   InputGroup,
   InputRightAddon,
+  Flex,
 } from '@chakra-ui/react';
 import { User } from '../../../types';
 import { TokenInfo } from '../TokenInfo';
@@ -94,19 +93,22 @@ export const DepositForm: React.FC<DepositFormProps> = () => {
         }) => (
           <Form>
             <FormControl id='depositForm' isRequired>
-              <HStack>
+              <Flex
+                marginTop='5px'
+                alignItems='center'
+                justifyContent='space-between'
+                flexWrap='wrap'
+              >
                 <FormLabel>{currentUser?.network?.chain}</FormLabel>
-                <Spacer />
                 <TokenInfo deposit />
-              </HStack>
-              <InputGroup marginBottom='5px'>
+              </Flex>
+              <InputGroup size='md' marginBottom='16px'>
                 <NumberInput
                   value={values.amount}
                   textColor='white'
                   placeholder='Amount to wrap'
                   precision={4}
                   variant='outline'
-                  width='80%'
                   onChange={(e) => {
                     console.log(e);
                     setFieldValue('amount', e);
@@ -124,10 +126,8 @@ export const DepositForm: React.FC<DepositFormProps> = () => {
                 <InputRightAddon m={0} p={0}>
                   <Button
                     variant='solid'
-                    size='lg'
-                    h='100%'
-                    w='100%'
                     borderLeftRadius='none'
+                    size='lg'
                     onClick={() => {
                       if (currentUser?.ethBalance) {
                         setFieldValue(

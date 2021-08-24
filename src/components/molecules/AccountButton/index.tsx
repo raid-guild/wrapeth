@@ -26,7 +26,8 @@ export const AccountButton: React.FC<AccountButtonProps> = ({ children }) => {
   return currentUser?.username ? (
     <Button
       textStyle='buttonLabel'
-      maxW='120px'
+      maxW='100%'
+      width='auto'
       variant={'outline'}
       onClick={() => disconnectDapp()}
     >
@@ -35,7 +36,13 @@ export const AccountButton: React.FC<AccountButtonProps> = ({ children }) => {
         onClick={() => disconnectDapp()}
         pr='5px'
       />
-      <Text overflow='hidden' textOverflow='ellipsis' isTruncated color='white'>
+      <Text
+        bg='transparent'
+        overflow='hidden'
+        textOverflow='ellipsis'
+        isTruncated
+        color='white'
+      >
         {currentUser.username}
       </Text>
     </Button>

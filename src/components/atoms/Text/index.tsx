@@ -31,7 +31,13 @@ export const Text: React.FC<TextProps> = ({
   ...props
 }) => {
   return (
-    <CText fontSize={size} isTruncated={truncated} color={color} {...props}>
+    <CText
+      bg='transparent'
+      fontSize={size}
+      isTruncated={truncated}
+      color={color}
+      {...props}
+    >
       {content}
     </CText>
   );

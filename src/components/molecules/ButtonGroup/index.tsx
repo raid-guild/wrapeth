@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { Button, ButtonGroup as CButtonGroup } from '@chakra-ui/button';
+import { Flex } from '@chakra-ui/react';
 
 export interface ButtonGroupProps {
   /**
@@ -32,7 +33,7 @@ export interface ButtonGroupProps {
 export const ButtonGroup: React.FC<ButtonGroupProps> = ({
   buttons,
   defaultSelected = 0,
-  size = 'md',
+  size = 'sm',
   isAttached = true,
   onSelect,
   ...props
@@ -51,6 +52,7 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({
           <Button
             key={i}
             variant={i === selected ? 'solid' : 'outline'}
+            color='white'
             size={size}
             onClick={() => handleSelection(i)}
             {...props}
