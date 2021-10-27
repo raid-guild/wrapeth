@@ -68,7 +68,7 @@ export const WithdrawForm: React.FC<WithdrawFormProps> = () => {
   };
 
   return (
-    <Container>
+    <Container mt={12}>
       <Formik
         enableReinitialize
         initialValues={{ amount: '' }}
@@ -101,7 +101,7 @@ export const WithdrawForm: React.FC<WithdrawFormProps> = () => {
                 <Spacer />
                 <TokenInfo deposit={false} />
               </HStack>
-              <InputGroup marginBottom='5px'>
+              <InputGroup marginBottom='32px'>
                 <NumberInput
                   value={values.amount}
                   placeholder='Amount to unwrap'
@@ -119,25 +119,26 @@ export const WithdrawForm: React.FC<WithdrawFormProps> = () => {
                     <NumberDecrementStepper />
                   </NumberInputStepper>
                 </NumberInput>
-                <InputRightAddon m={0} p={0}>
-                  <Button
-                    variant='solid'
-                    size='lg'
-                    h='100%'
-                    w='100%'
-                    borderLeftRadius='none'
-                    onClick={() => {
-                      if (currentUser?.wethBalance) {
-                        setFieldValue(
-                          'amount',
-                          (+currentUser.wethBalance).toPrecision(4),
-                        );
-                      }
-                    }}
-                  >
-                    Set Max
-                  </Button>
-                </InputRightAddon>
+
+                <Button
+                  textStyle='buttonLabel'
+                  maxW='120px'
+                  variant={'outline'}
+                  size='lg'
+                  h='100%'
+                  w='100%'
+                  borderRadius='none'
+                  onClick={() => {
+                    if (currentUser?.wethBalance) {
+                      setFieldValue(
+                        'amount',
+                        (+currentUser.wethBalance).toPrecision(4),
+                      );
+                    }
+                  }}
+                >
+                  Set Max
+                </Button>
               </InputGroup>
               {touched.amount && errors.amount ? (
                 <div className='error-message'>{errors.amount}</div>

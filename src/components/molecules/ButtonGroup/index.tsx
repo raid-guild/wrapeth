@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
-import { Button, ButtonGroup as CButtonGroup } from '@chakra-ui/button';
+import { ButtonGroup as CButtonGroup } from '@chakra-ui/button';
+import { Button } from '@raidguild/design-system';
 
 export interface ButtonGroupProps {
   /**

@@ -58,12 +58,12 @@ export const TokenInfo: React.FC<TokenInfoProps> = ({ deposit }) => {
   };
 
   return deposit ? (
-    <Button variant='ghost'>
+    <Button variant='ghost' pr={0}>
       {`${currentUser?.network?.chain} Balance:
       ${forDisplay(currentUser?.ethBalance)}`}
     </Button>
   ) : (
-    <Button variant='ghost'>
+    <Button variant='ghost' pr={0}>
       {`${'w' + currentUser?.network?.chain} Balance:
       ${forDisplay(currentUser?.wethBalance)}`}
     </Button>

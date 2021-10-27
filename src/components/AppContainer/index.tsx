@@ -77,12 +77,12 @@ export const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
             currentUser?.username ? (
               <DepositForm />
             ) : (
-              <Text>Connect to Wrap {networkName}</Text>
+              <Text mt={5}>Connect to Wrap {networkName}</Text>
             )
           ) : currentUser?.username ? (
             <WithdrawForm />
           ) : (
-            <Text>Connect to Unwrap w{networkName}</Text>
+            <Text mt={5}>Connect to Unwrap w{networkName}</Text>
           )}
         </Container>
 

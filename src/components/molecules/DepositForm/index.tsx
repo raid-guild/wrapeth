@@ -67,7 +67,7 @@ export const DepositForm: React.FC<DepositFormProps> = () => {
   };
 
   return (
-    <Container>
+    <Container mt={12}>
       <Formik
         enableReinitialize
         initialValues={{ amount: '' }}
@@ -99,7 +99,7 @@ export const DepositForm: React.FC<DepositFormProps> = () => {
                 <Spacer />
                 <TokenInfo deposit />
               </HStack>
-              <InputGroup marginBottom='5px'>
+              <InputGroup marginBottom='32px'>
                 <NumberInput
                   value={values.amount}
                   textColor='white'
@@ -115,31 +115,35 @@ export const DepositForm: React.FC<DepositFormProps> = () => {
                   min={0}
                   max={currentUser?.ethBalance ? +currentUser.ethBalance : 0}
                 >
-                  <NumberInputField name='amount' borderRightRadius='none' />
+                  <NumberInputField name='amount' borderRadius='none' />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
                     <NumberDecrementStepper />
                   </NumberInputStepper>
                 </NumberInput>
-                <InputRightAddon m={0} p={0}>
-                  <Button
-                    variant='solid'
-                    size='lg'
-                    h='100%'
-                    w='100%'
-                    borderLeftRadius='none'
-                    onClick={() => {
-                      if (currentUser?.ethBalance) {
-                        setFieldValue(
-                          'amount',
-                          (+currentUser.ethBalance).toPrecision(4),
-                        );
-                      }
-                    }}
-                  >
-                    Set Max
-                  </Button>
-                </InputRightAddon>
+
+                <Button
+                  textStyle='buttonLabel'
+                  maxW='120px'
+                  variant={'outline'}
+                  // background='transparent'
+                  // color='white'
+                  // variant='outline'
+                  size='lg'
+                  h='100%'
+                  w='100%'
+                  borderRadius='none'
+                  onClick={() => {
+                    if (currentUser?.ethBalance) {
+                      setFieldValue(
+                        'amount',
+                        (+currentUser.ethBalance).toPrecision(4),
+                      );
+                    }
+                  }}
+                >
+                  Set Max
+                </Button>
               </InputGroup>
 
               {touched.amount && errors.amount ? (
