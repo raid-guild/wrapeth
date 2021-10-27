@@ -3,14 +3,15 @@ import React from 'react';
 import { LoaderContextProvider } from './contexts/loaderContext';
 import { InjectedProvider } from './contexts/injectedProviderContext';
 import { AppContainer } from './components/AppContainer';
-import { ChakraProvider } from '@chakra-ui/react';
+import { RGThemeProvider } from '@raidguild/design-system';
 import { theme } from './theme';
+
 import { CurrentUserContextProvider } from './contexts/currentUserContext';
 import { ContractContextProvider } from './contexts/contractContext';
 
 const App = () => {
   return (
-    <ChakraProvider theme={theme} resetCSS>
+    <RGThemeProvider>
       <LoaderContextProvider>
         <InjectedProvider>
           <CurrentUserContextProvider>
@@ -20,7 +21,7 @@ const App = () => {
           </CurrentUserContextProvider>
         </InjectedProvider>
       </LoaderContextProvider>
-    </ChakraProvider>
+    </RGThemeProvider>
   );
 };
 
