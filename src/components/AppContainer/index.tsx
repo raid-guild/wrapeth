@@ -5,9 +5,17 @@ import { ButtonGroup } from '../molecules/ButtonGroup';
 import { Header } from '../atoms/Header';
 import { SidePanel } from '../atoms/SidePanel';
 
-import { Container, Flex, Spacer, Image, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Container,
+  Flex,
+  Heading,
+  Spacer,
+  Image,
+  Text,
+} from '@chakra-ui/react';
 
-import footerImage from '../../assets/raidguild_mark.png';
+import footerImage from '../../assets/raid-guild-logo.svg';
 import raidGuildLogoLeft from '../../assets/raid--left.png';
 import raidGuildLogoRight from '../../assets/raid--right.png';
 import { AccountButton } from '../molecules/AccountButton';
@@ -50,23 +58,40 @@ export const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
       : '';
 
   return (
-    <Flex h='100vh' w='100vw'>
-      <SidePanel>
+    <Flex h='100vh' w='100vw' maxW='100%'>
+      {/* <SidePanel>
         <Image src={raidGuildLogoLeft} alt='Swords logo' maxH='75vh' />
-      </SidePanel>
+      </SidePanel> */}
 
-      <Container centerContent flexDirection='column' width='100%'>
+      <Container centerContent maxW='80ch'>
         <Header>
-          <Image
+          {/* <Image
             src={logo}
             alt='wrapeth logo'
             max-width='240px'
             height='auto'
-          />
+          /> */}
           <Spacer />
           <AccountButton />
         </Header>
-        <Container centerContent marginTop='10px'>
+        <Box centerContent mt='10px'>
+          <Text
+            as='h1'
+            textTransform='uppercase'
+            fontSize={{ base: '72px' }}
+            textAlign='center'
+            fontFamily='Uncial Antiqua'
+          >
+            Wrap Eth
+          </Text>
+        </Box>
+        <Container
+          centerContent
+          mt='24px'
+          p='64px'
+          border='1px solid #FF3864'
+          maxW='80ch'
+        >
           <ButtonGroup
             buttons={[`Wrap ${networkName}`, `Unwrap w${networkName}`]}
             defaultSelected={deposit ? 0 : 1}
@@ -86,16 +111,29 @@ export const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
           )}
         </Container>
 
-        <Spacer />
-
-        <Footer>
-          <Image src={footerImage} alt='Created by Raid Guild' />
-        </Footer>
+        <Box width='100%' my='3'>
+          <Box>
+            <Text
+              as='p'
+              // textTransform='uppercase'
+              fontSize={{ base: '22px' }}
+              textAlign='right'
+              fontFamily='Uncial Antiqua'
+            >
+              Brought to you by:
+            </Text>
+            <Image
+              src={footerImage}
+              alt='Created by Raid Guild'
+              float='right'
+            />
+          </Box>
+        </Box>
       </Container>
 
-      <SidePanel>
+      {/* <SidePanel>
         <Image src={raidGuildLogoRight} alt='Swords logo' maxH='75vh' />
-      </SidePanel>
+      </SidePanel> */}
       {children}
     </Flex>
   );

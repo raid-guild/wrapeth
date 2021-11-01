@@ -3,6 +3,7 @@ import React from 'react';
 import { LoaderContextProvider } from './contexts/loaderContext';
 import { InjectedProvider } from './contexts/injectedProviderContext';
 import { AppContainer } from './components/AppContainer';
+import '@fontsource/uncial-antiqua';
 import { RGThemeProvider } from '@raidguild/design-system';
 import { theme } from './theme';
 
