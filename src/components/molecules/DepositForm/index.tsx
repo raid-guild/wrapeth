@@ -151,6 +151,7 @@ export const DepositForm: React.FC<DepositFormProps> = () => {
               ) : null}
             </FormControl>
             <Button
+              borderRadius='0'
               variant='solid'
               type='submit'
               size='lg'

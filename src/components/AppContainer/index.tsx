@@ -5,15 +5,9 @@ import { ButtonGroup } from '../molecules/ButtonGroup';
 import { Header } from '../atoms/Header';
 import { SidePanel } from '../atoms/SidePanel';
 
-import {
-  Box,
-  Container,
-  Flex,
-  Heading,
-  Spacer,
-  Image,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Container, Flex, Spacer, Image, Text } from '@chakra-ui/react';
+
+import { BuiltByRaidGuild, Heading, Card } from '@raidguild/design-system';
 
 import footerImage from '../../assets/raid-guild-logo.svg';
 import raidGuildLogoLeft from '../../assets/raid--left.png';
@@ -59,81 +53,55 @@ export const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
 
   return (
     <Flex h='100vh' w='100vw' maxW='100%'>
-      {/* <SidePanel>
-        <Image src={raidGuildLogoLeft} alt='Swords logo' maxH='75vh' />
-      </SidePanel> */}
-
       <Container centerContent maxW='80ch'>
         <Header>
-          {/* <Image
-            src={logo}
-            alt='wrapeth logo'
-            max-width='240px'
-            height='auto'
-          /> */}
           <Spacer />
           <AccountButton />
         </Header>
         <Box centerContent mt='10px'>
-          <Text
-            as='h1'
-            textTransform='uppercase'
-            fontSize={{ base: '72px' }}
-            textAlign='center'
-            fontFamily='Uncial Antiqua'
-          >
+          <Heading as='h1' size='4xl' variant='shadow'>
             Wrap Eth
-          </Text>
+          </Heading>
         </Box>
-        <Container
-          centerContent
-          mt='24px'
-          p='64px'
-          border='1px solid #FF3864'
-          maxW='80ch'
-        >
-          <ButtonGroup
-            buttons={[`Wrap ${networkName}`, `Unwrap w${networkName}`]}
-            defaultSelected={deposit ? 0 : 1}
-            isAttached
-            onSelect={onButtonSelection}
-          />
-          {deposit ? (
-            currentUser?.username ? (
-              <DepositForm />
+        <Container centerContent maxW='80ch'>
+          <Card mt='24px' p='64px' w='100%'>
+            <ButtonGroup
+              buttons={[`Wrap ${networkName}`, `Unwrap w${networkName}`]}
+              defaultSelected={deposit ? 0 : 1}
+              isAttached
+              onSelect={onButtonSelection}
+            />
+            {deposit ? (
+              currentUser?.username ? (
+                <DepositForm />
+              ) : (
+                <Text mt={5}>Connect to Wrap {networkName}</Text>
+              )
+            ) : currentUser?.username ? (
+              <WithdrawForm />
             ) : (
-              <Text mt={5}>Connect to Wrap {networkName}</Text>
-            )
-          ) : currentUser?.username ? (
-            <WithdrawForm />
-          ) : (
-            <Text mt={5}>Connect to Unwrap w{networkName}</Text>
-          )}
+              <Text as='p' mt={5} color='white'>
+                Connect to Unwrap w{networkName}
+              </Text>
+            )}
+          </Card>
         </Container>
 
-        <Box width='100%' my='3'>
-          <Box>
+        <Box width='100%' my='6' mr='48px'>
+          <Box float='right'>
             <Text
               as='p'
-              // textTransform='uppercase'
               fontSize={{ base: '22px' }}
               textAlign='right'
               fontFamily='Uncial Antiqua'
             >
               Brought to you by:
             </Text>
-            <Image
-              src={footerImage}
-              alt='Created by Raid Guild'
-              float='right'
-            />
+            <BuiltByRaidGuild width='227' height='60' />
           </Box>
         </Box>
       </Container>
 
-      {/* <SidePanel>
-        <Image src={raidGuildLogoRight} alt='Swords logo' maxH='75vh' />
-      </SidePanel> */}
       {children}
     </Flex>
   );

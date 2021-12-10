@@ -35,12 +35,19 @@ export const AccountButton: React.FC<AccountButtonProps> = ({ children }) => {
         onClick={() => disconnectDapp()}
         pr='5px'
       />
-      <Text overflow='hidden' textOverflow='ellipsis' isTruncated color='white'>
+      <Text
+        fontFamily='mono'
+        overflow='hidden'
+        textOverflow='ellipsis'
+        isTruncated
+        color='white'
+      >
         {currentUser.username}
       </Text>
     </Button>
   ) : (
     <Button
+      borderRadius='0'
       textStyle='buttonLabel'
       maxW='120px'
       variant={'solid'}

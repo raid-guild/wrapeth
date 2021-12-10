@@ -53,6 +53,7 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({
             key={i}
             variant={i === selected ? 'solid' : 'outline'}
             size={size}
+            borderRadius='0'
             onClick={() => handleSelection(i)}
             {...props}
           >
