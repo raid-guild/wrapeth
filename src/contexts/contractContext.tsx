@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useInjectedProvider } from './injectedProviderContext';
 import { Contract } from 'web3-eth-contract';
-import WethAbi from '../contracts/wethAbi.json';
+import { useInjectedProvider } from 'contexts/injectedProviderContext';
+import WethAbi from 'contracts/wethAbi.json';
 
 type ContractContextType = {
   contract?: Contract;
@@ -33,10 +33,6 @@ export const ContractContextProvider: React.FC<ContractProps> = ({
   const { injectedChain, web3Modal, injectedProvider } = useInjectedProvider();
 
   useEffect(() => {
-    console.log('Loading contract');
-    console.log('web3Modal', web3Modal);
-    console.log('injectedChain', injectedChain);
-
     const initContract = async () => {
       console.log('network name', injectedChain.network);
       try {

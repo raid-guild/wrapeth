@@ -6,15 +6,15 @@ import React, {
   useRef,
 } from 'react';
 import Web3 from 'web3';
-import { Network } from '../types';
+import { Network } from 'types';
 import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal';
 
-import { supportedChains } from '../utils/chain';
+import { supportedChains } from 'utils/chain';
 import {
   deriveChainId,
   deriveSelectedAddress,
   getProviderOptions,
-} from '../utils/web3Modal';
+} from 'utils/web3Modal';
 
 //TODO refactor to Ethers
 const defaultModal = new SafeAppWeb3Modal({
@@ -131,7 +131,6 @@ export const InjectedProvider: React.FC<InjectedProviderProps> = ({
         };
 
         if (injectedProvider?.currentProvider && !hasListeners.current) {
-          console.log('InjectedProvider: ', injectedProvider);
           injectedProvider.currentProvider
             .on('accountsChanged', accountsChanged)
             .on('chainChanged', handleChainChange);

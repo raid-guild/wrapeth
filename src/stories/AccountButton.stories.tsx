@@ -1,17 +1,19 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import { ArgsTable } from '@storybook/addon-docs/blocks';
+// import { ArgsTable } from '@storybook/addon-docs/blocks';
 
-import { TokenInfo, TokenInfoProps } from '.';
+import { AccountButton, AccountButtonProps } from 'components';
 
 export default {
-  title: 'Components/Molecules/TokenInfo',
-  component: TokenInfo,
+  title: 'Components/Molecules/AccountButton',
+  component: AccountButton,
 } as Meta;
 
-const Template: Story<TokenInfoProps> = (args) => <TokenInfo {...args} />;
+const Template: Story<AccountButtonProps> = (args) => (
+  <AccountButton {...args} />
+);
 
-// const mockUser: User = {
+// const mockUser: any = {
 //   type: 'web3',
 //   attributes: {
 //     'custom:account_address': '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B',
@@ -20,8 +22,8 @@ const Template: Story<TokenInfoProps> = (args) => <TokenInfo {...args} />;
 //   username: '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B',
 // };
 
-export const Fetching = Template.bind({});
-Fetching.args = {};
+export const LoggedOut = Template.bind({});
+LoggedOut.args = {};
 
 export const LoggedIn = Template.bind({});
 LoggedIn.args = {};

@@ -1,33 +1,30 @@
 import React from 'react';
 
 import { Formik, Form } from 'formik';
-import { useInjectedProvider } from '../../../contexts/injectedProviderContext';
-import { useCurrentUser } from '../../../contexts/currentUserContext';
-import { useContract } from '../../../contexts/contractContext';
-import { ValidAmount } from '../../../utils/validation';
-import { Button } from '@chakra-ui/button';
 import {
+  Button,
   FormControl,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  HStack,
-  Spacer,
-  FormLabel,
+  Flex,
   Container,
   InputGroup,
-  InputRightAddon,
-} from '@chakra-ui/react';
-import { User } from '../../../types';
+} from '@raidguild/design-system';
+import { useInjectedProvider } from 'contexts/injectedProviderContext';
+import { useCurrentUser } from 'contexts/currentUserContext';
+import { useContract } from 'contexts/contractContext';
+import { ValidAmount } from 'utils/validation';
+import { User } from 'types';
 import { TokenInfo } from '../TokenInfo';
 
-export interface DepositFormProps {
+export interface WrapperFormProps {
   /**
-   * Provide the address of the connected user
+   * Provide the current action selected by the user
    */
-  children?: any;
+  action: string;
 }
 
 interface Values {
@@ -37,7 +34,7 @@ interface Values {
 /**
  * Interface for depositing ETH and receiving wETH
  */
-export const DepositForm: React.FC<DepositFormProps> = () => {
+const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const { injectedProvider } = useInjectedProvider();
   const { currentUser, setCurrentUser } = useCurrentUser();
   const { contract } = useContract();
@@ -46,9 +43,17 @@ export const DepositForm: React.FC<DepositFormProps> = () => {
     const weiValue = injectedProvider.utils.toWei('' + values.amount);
     if (currentUser && contract) {
       try {
-        await contract.methods
-          .deposit()
-          .send({ value: weiValue, from: currentUser?.username });
+        if (action === 'deposit') {
+          await contract.methods[action]().send({
+            value: action === 'deposit' ? weiValue : 0,
+            from: currentUser?.username,
+          });
+        } else {
+          await contract.methods[action](weiValue).send({
+            value: action === 'deposit' ? weiValue : 0,
+            from: currentUser?.username,
+          });
+        }
 
         //TODO updating balances and typing
         const updatedUser: User = {
@@ -67,7 +72,7 @@ export const DepositForm: React.FC<DepositFormProps> = () => {
   };
 
   return (
-    <Container>
+    <Container mt={12}>
       <Formik
         enableReinitialize
         initialValues={{ amount: '' }}
@@ -94,52 +99,62 @@ export const DepositForm: React.FC<DepositFormProps> = () => {
         }) => (
           <Form>
             <FormControl id='depositForm' isRequired>
-              <HStack>
-                <FormLabel>{currentUser?.network?.chain}</FormLabel>
-                <Spacer />
-                <TokenInfo deposit />
-              </HStack>
-              <InputGroup marginBottom='5px'>
+              <Flex justify='end'>
+                <TokenInfo deposit={action === 'deposit'} />
+              </Flex>
+              <InputGroup marginBottom='32px'>
                 <NumberInput
                   value={values.amount}
-                  textColor='white'
+                  color='white'
                   placeholder='Amount to wrap'
-                  precision={4}
                   variant='outline'
                   width='80%'
                   onChange={(e) => {
-                    console.log(e);
                     setFieldValue('amount', e);
                   }}
                   onBlur={handleBlur}
                   min={0}
-                  max={currentUser?.ethBalance ? +currentUser.ethBalance : 0}
+                  max={
+                    action === 'deposit'
+                      ? currentUser?.ethBalance
+                        ? +currentUser.ethBalance
+                        : 0
+                      : currentUser?.wethBalance
+                      ? +currentUser.wethBalance
+                      : 0
+                  }
                 >
-                  <NumberInputField name='amount' borderRightRadius='none' />
+                  <NumberInputField name='amount' borderRadius='none' />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
                     <NumberDecrementStepper />
                   </NumberInputStepper>
                 </NumberInput>
-                <InputRightAddon m={0} p={0}>
-                  <Button
-                    variant='solid'
-                    size='lg'
-                    h='100%'
-                    w='100%'
-                    borderLeftRadius='none'
-                    onClick={() => {
-                      if (currentUser?.ethBalance) {
-                        setFieldValue(
-                          'amount',
-                          (+currentUser.ethBalance).toPrecision(4),
-                        );
-                      }
-                    }}
-                  >
-                    Set Max
-                  </Button>
-                </InputRightAddon>
+
+                <Button
+                  textStyle='buttonLabel'
+                  maxW='120px'
+                  variant='outline'
+                  // background='transparent'
+                  // color='white'
+                  // variant='outline'
+                  size='lg'
+                  h='100%'
+                  w='100%'
+                  borderRadius='none'
+                  onClick={() => {
+                    if (currentUser?.ethBalance) {
+                      setFieldValue(
+                        'amount',
+                        action === 'deposit'
+                          ? (+currentUser.ethBalance).toPrecision(18)
+                          : (+currentUser.wethBalance).toPrecision(18),
+                      );
+                    }
+                  }}
+                >
+                  Set Max
+                </Button>
               </InputGroup>
 
               {touched.amount && errors.amount ? (
@@ -149,8 +164,6 @@ export const DepositForm: React.FC<DepositFormProps> = () => {
             <Button
               variant='solid'
               type='submit'
-              size='lg'
-              block
               isLoading={isSubmitting}
               loadingText='Submitting'
               width='100%'
@@ -163,3 +176,5 @@ export const DepositForm: React.FC<DepositFormProps> = () => {
     </Container>
   );
 };
+
+export default WrapperForm;

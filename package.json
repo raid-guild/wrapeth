@@ -11,6 +11,7 @@
     "@fontsource/uncial-antiqua": "^4.4.5",
     "@gnosis.pm/safe-apps-sdk": "^4.0.0",
     "@gnosis.pm/safe-apps-web3modal": "^0.6.0",
+    "@raidguild/design-system": "^0.2.16",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",

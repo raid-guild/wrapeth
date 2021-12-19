@@ -1,15 +1,15 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import { ArgsTable } from '@storybook/addon-docs/blocks';
+// import { ArgsTable } from '@storybook/addon-docs/blocks';
 
-import { DepositForm, DepositFormProps } from '.';
+import { WrapperForm, WrapperFormProps } from 'components';
 
 export default {
   title: 'Components/Molecules/DepositForm',
-  component: DepositForm,
+  component: WrapperForm,
 } as Meta;
 
-const Template: Story<DepositFormProps> = (args) => <DepositForm {...args} />;
+const Template: Story<WrapperFormProps> = (args) => <WrapperForm {...args} />;
 
 // const mockUser: User = {
 //   type: 'web3',
