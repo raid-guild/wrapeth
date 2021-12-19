@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { Flex } from '@chakra-ui/react';
+import { Flex } from '@raidguild/design-system';
 
 export interface HeaderProps {
   children?: any;
 }
 
-export const Header: React.FC<HeaderProps> = ({ children }) => (
+const Header: React.FC<HeaderProps> = ({ children }) => (
   <Flex
     direction={['column', 'row']}
     align='center'
@@ -20,3 +20,5 @@ export const Header: React.FC<HeaderProps> = ({ children }) => (
     {children}
   </Flex>
 );
+
+export default Header;

@@ -1,12 +1,9 @@
 import React, { Fragment } from 'react';
 import { Story, Meta } from '@storybook/react';
 
-import { Image, Spacer } from '@chakra-ui/react';
-
-import { Header, HeaderProps } from '.';
-import { AccountButton } from '../../molecules/AccountButton';
-
-import logo from '../../../assets/wrapeth_logo.png';
+import { Image, Spacer } from '@raidguild/design-system';
+import { Header, HeaderProps, AccountButton } from 'components';
+import logo from 'assets/wrapeth_logo.png';
 
 export default {
   title: 'Components/Atoms/Header',

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Network, User } from '../types';
-import { useInjectedProvider } from './injectedProviderContext';
+import { Network, User } from 'types';
+import { useInjectedProvider } from 'contexts/injectedProviderContext';
 
 type CurrentUserContextType = {
   currentUser?: User;

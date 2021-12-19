@@ -1,11 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { RGThemeProvider } from '@raidguild/design-system';
+import { LoaderContextProvider } from 'contexts/loaderContext';
+import { InjectedProvider } from 'contexts/injectedProviderContext';
+import { CurrentUserContextProvider } from 'contexts/currentUserContext';
+import { ContractContextProvider } from 'contexts/contractContext';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <RGThemeProvider>
+      <LoaderContextProvider>
+        <InjectedProvider>
+          <CurrentUserContextProvider>
+            <ContractContextProvider>
+              <App />
+            </ContractContextProvider>
+          </CurrentUserContextProvider>
+        </InjectedProvider>
+      </LoaderContextProvider>
+    </RGThemeProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );
