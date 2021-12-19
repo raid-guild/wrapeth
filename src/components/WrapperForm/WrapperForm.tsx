@@ -1,33 +1,30 @@
 import React from 'react';
 
 import { Formik, Form } from 'formik';
-import { useInjectedProvider } from '../../../contexts/injectedProviderContext';
-import { useCurrentUser } from '../../../contexts/currentUserContext';
-import { useContract } from '../../../contexts/contractContext';
-import { ValidAmount } from '../../../utils/validation';
-import { Button } from '@chakra-ui/button';
 import {
+  Button,
   FormControl,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  HStack,
-  Spacer,
-  FormLabel,
+  Flex,
   Container,
   InputGroup,
-  InputRightAddon,
-} from '@chakra-ui/react';
-import { User } from '../../../types';
+} from '@raidguild/design-system';
+import { useInjectedProvider } from 'contexts/injectedProviderContext';
+import { useCurrentUser } from 'contexts/currentUserContext';
+import { useContract } from 'contexts/contractContext';
+import { ValidAmount } from 'utils/validation';
+import { User } from 'types';
 import { TokenInfo } from '../TokenInfo';
 
-export interface WithdrawFormProps {
+export interface WrapperFormProps {
   /**
-   * Provide the address of the connected user
+   * Provide the current action selected by the user
    */
-  children?: any;
+  action: string;
 }
 
 interface Values {
@@ -37,26 +34,33 @@ interface Values {
 /**
  * Interface for depositing ETH and receiving wETH
  */
-export const WithdrawForm: React.FC<WithdrawFormProps> = () => {
+const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const { injectedProvider } = useInjectedProvider();
   const { currentUser, setCurrentUser } = useCurrentUser();
   const { contract } = useContract();
 
   const onFormSubmit = async (values: Values) => {
     const weiValue = injectedProvider.utils.toWei('' + values.amount);
-    console.log('weiValue: ', weiValue);
     if (currentUser && contract) {
       try {
-        await contract.methods
-          .withdraw(weiValue)
-          .send({ from: currentUser?.username });
+        if (action === 'deposit') {
+          await contract.methods[action]().send({
+            value: action === 'deposit' ? weiValue : 0,
+            from: currentUser?.username,
+          });
+        } else {
+          await contract.methods[action](weiValue).send({
+            value: action === 'deposit' ? weiValue : 0,
+            from: currentUser?.username,
+          });
+        }
 
         //TODO updating balances and typing
         const updatedUser: User = {
           ...currentUser,
           ...{
-            wethBalance: (+currentUser.wethBalance - +values.amount).toString(),
-            ethBalance: (+currentUser.ethBalance + +values.amount).toString(),
+            wethBalance: (+currentUser.wethBalance + +values.amount).toString(),
+            ethBalance: (+currentUser.ethBalance - +values.amount).toString(),
           },
         };
 
@@ -74,7 +78,6 @@ export const WithdrawForm: React.FC<WithdrawFormProps> = () => {
         initialValues={{ amount: '' }}
         validationSchema={ValidAmount}
         onSubmit={async (values: Values, { setSubmitting, resetForm }) => {
-          console.log('values', values);
           setSubmitting(true);
           try {
             onFormSubmit(values);
@@ -95,25 +98,33 @@ export const WithdrawForm: React.FC<WithdrawFormProps> = () => {
           setFieldValue,
         }) => (
           <Form>
-            <FormControl id='withdrawForm' isRequired>
-              <HStack>
-                <FormLabel>{currentUser?.network?.chain}</FormLabel>
-                <Spacer />
-                <TokenInfo deposit={false} />
-              </HStack>
+            <FormControl id='depositForm' isRequired>
+              <Flex justify='end'>
+                <TokenInfo deposit={action === 'deposit'} />
+              </Flex>
               <InputGroup marginBottom='32px'>
                 <NumberInput
                   value={values.amount}
-                  placeholder='Amount to unwrap'
-                  precision={4}
+                  color='white'
+                  placeholder='Amount to wrap'
                   variant='outline'
                   width='80%'
-                  onChange={(e) => setFieldValue('amount', e)}
+                  onChange={(e) => {
+                    setFieldValue('amount', e);
+                  }}
                   onBlur={handleBlur}
                   min={0}
-                  max={currentUser?.wethBalance ? +currentUser.wethBalance : 0}
+                  max={
+                    action === 'deposit'
+                      ? currentUser?.ethBalance
+                        ? +currentUser.ethBalance
+                        : 0
+                      : currentUser?.wethBalance
+                      ? +currentUser.wethBalance
+                      : 0
+                  }
                 >
-                  <NumberInputField name='amount' borderRightRadius='none' />
+                  <NumberInputField name='amount' borderRadius='none' />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
                     <NumberDecrementStepper />
@@ -123,16 +134,21 @@ export const WithdrawForm: React.FC<WithdrawFormProps> = () => {
                 <Button
                   textStyle='buttonLabel'
                   maxW='120px'
-                  variant={'outline'}
+                  variant='outline'
+                  // background='transparent'
+                  // color='white'
+                  // variant='outline'
                   size='lg'
                   h='100%'
                   w='100%'
                   borderRadius='none'
                   onClick={() => {
-                    if (currentUser?.wethBalance) {
+                    if (currentUser?.ethBalance) {
                       setFieldValue(
                         'amount',
-                        (+currentUser.wethBalance).toPrecision(4),
+                        action === 'deposit'
+                          ? (+currentUser.ethBalance).toPrecision(18)
+                          : (+currentUser.wethBalance).toPrecision(18),
                       );
                     }
                   }}
@@ -140,6 +156,7 @@ export const WithdrawForm: React.FC<WithdrawFormProps> = () => {
                   Set Max
                 </Button>
               </InputGroup>
+
               {touched.amount && errors.amount ? (
                 <div className='error-message'>{errors.amount}</div>
               ) : null}
@@ -147,12 +164,11 @@ export const WithdrawForm: React.FC<WithdrawFormProps> = () => {
             <Button
               variant='solid'
               type='submit'
-              size='lg'
               isLoading={isSubmitting}
               loadingText='Submitting'
               width='100%'
             >
-              {isSubmitting ? 'Loading…' : 'Submit'}
+              Submit
             </Button>
           </Form>
         )}
@@ -160,3 +176,5 @@ export const WithdrawForm: React.FC<WithdrawFormProps> = () => {
     </Container>
   );
 };
+
+export default WrapperForm;
