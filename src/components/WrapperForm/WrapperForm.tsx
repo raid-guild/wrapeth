@@ -70,9 +70,9 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
             ...currentUser,
             ...{
               wethBalance: (
-                +currentUser.wethBalance + +values.amount
+                +currentUser.wethBalance - +values.amount
               ).toString(),
-              ethBalance: (+currentUser.ethBalance - +values.amount).toString(),
+              ethBalance: (+currentUser.ethBalance + +values.amount).toString(),
             },
           };
 
