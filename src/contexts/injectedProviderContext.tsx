@@ -51,8 +51,7 @@ export const InjectedProvider: React.FC<InjectedProviderProps> = ({
 
   const connectProvider = async () => {
     const providerOptions = getProviderOptions();
-
-    console.log('providerOption: ', providerOptions);
+    // console.log(providerOptions);
     if (!providerOptions) {
       setInjectedProvider(null);
       setAddress(null);
@@ -69,17 +68,16 @@ export const InjectedProvider: React.FC<InjectedProviderProps> = ({
     });
 
     const provider = await localWeb3Modal.requestProvider();
-    console.log('Provider: ', provider);
+    // console.log('Provider: ', provider);
     provider.selectedAddress = deriveSelectedAddress(provider);
     const chainId = deriveChainId(provider);
-
     const chain = {
       ...supportedChains[chainId],
       chainId,
     };
-    console.log('connecting provider');
+    // console.log('connecting provider');
     const web3: any = new Web3(provider);
-    console.log('Web3 instance: ', web3);
+    // console.log('Web3 instance: ', web3);
     if (
       web3?.currentProvider?.selectedAddress ||
       web3?.currentProvider?.safe?.safeAddress
