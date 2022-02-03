@@ -48,23 +48,36 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
             value: action === 'deposit' ? weiValue : 0,
             from: currentUser?.username,
           });
+
+          const updatedUser: User = {
+            ...currentUser,
+            ...{
+              wethBalance: (
+                +currentUser.wethBalance + +values.amount
+              ).toString(),
+              ethBalance: (+currentUser.ethBalance - +values.amount).toString(),
+            },
+          };
+
+          setCurrentUser(updatedUser);
         } else {
           await contract.methods[action](weiValue).send({
             value: action === 'deposit' ? weiValue : 0,
             from: currentUser?.username,
           });
+
+          const updatedUser: User = {
+            ...currentUser,
+            ...{
+              wethBalance: (
+                +currentUser.wethBalance - +values.amount
+              ).toString(),
+              ethBalance: (+currentUser.ethBalance + +values.amount).toString(),
+            },
+          };
+
+          setCurrentUser(updatedUser);
         }
-
-        //TODO updating balances and typing
-        const updatedUser: User = {
-          ...currentUser,
-          ...{
-            wethBalance: (+currentUser.wethBalance + +values.amount).toString(),
-            ethBalance: (+currentUser.ethBalance - +values.amount).toString(),
-          },
-        };
-
-        setCurrentUser(updatedUser);
       } catch (e) {
         console.log('Error: ', e);
       }
