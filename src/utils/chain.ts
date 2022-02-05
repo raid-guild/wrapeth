@@ -29,7 +29,7 @@ export const supportedChains: SupportedChains = {
     rpc_url: `https://rinkeby.infura.io/v3/${process.env.REACT_APP_RPC_KEY}`,
     block_explorer: 'https://rinkeby.etherscan.io',
   },
-  '0xA': {
+  '0xa': {
     name: 'Optimism',
     short_name: 'optimism',
     chain: 'ETH',
@@ -119,14 +119,14 @@ export const chainByNetworkId = (networkId: string): Network => {
   const idMapping: any = {
     1: supportedChains['0x1'],
     4: supportedChains['0x4'],
-    10: supportedChains['0xA'],
+    10: supportedChains['0xa'],
     42: supportedChains['0x2a'],
-    69: supportedChains[''],
+    69: supportedChains['0x45'],
     74: supportedChains['0x4a'],
     100: supportedChains['0x64'],
     137: supportedChains['0x89'],
     42161: supportedChains['0xa4b1'],
-    421611: supportedChains['0x66EEB'],
+    421611: supportedChains['0x66eeb'],
   };
 
   return idMapping[networkId];
