@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   Heading,
   Card,
-  Box,
   Container,
   Flex,
   Spacer,
@@ -54,9 +53,9 @@ const App: React.FC<AppProps> = ({ children }) => {
           <Spacer />
           <AccountButton />
         </Header>
-        <Box centerContent mt='10px'>
+        <Flex align='center' mt='10px'>
           <Heading as='h1' size='4xl' variant='shadow' content='Wrap Eth' />
-        </Box>
+        </Flex>
         <Container centerContent maxW='80ch'>
           <Card mt='24px' p='64px' w='100%'>
             <ButtonGroup
