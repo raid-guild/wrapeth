@@ -57,7 +57,7 @@ const App: React.FC<AppProps> = ({ children }) => {
           <Heading as='h1' size='4xl' variant='shadow' content='Wrap Eth' />
         </Flex>
         <Container centerContent maxW='80ch'>
-          <Card mt='24px' p='64px' w='100%'>
+          <Card mt='24px' p='64px' w='100%' background='gray.800'>
             <ButtonGroup
               buttons={[
                 `Wrap ${networkName || 'ETH'}`,

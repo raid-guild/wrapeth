@@ -27,7 +27,7 @@ const AccountButton: React.FC<AccountButtonProps> = ({ children }) => {
   return currentUser?.username ? (
     <Button maxW='200px' variant='outline' onClick={() => disconnectDapp()}>
       <HStack spacing={4}>
-        <LinkIcon color='primaryAlpha.500' onClick={() => disconnectDapp()} />
+        <LinkIcon color='primary.500' onClick={() => disconnectDapp()} />
         <Text fontFamily='mono'>{truncateAddress(currentUser.username)}</Text>
       </HStack>
     </Button>
