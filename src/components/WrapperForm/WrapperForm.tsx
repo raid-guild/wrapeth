@@ -109,82 +109,86 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
           handleBlur,
           isSubmitting,
           setFieldValue,
-        }) => (
-          <Form>
-            <FormControl id='depositForm' isRequired>
-              <Flex justify='end'>
-                <TokenInfo deposit={action === 'deposit'} />
-              </Flex>
-              <InputGroup marginBottom='32px'>
-                <NumberInput
-                  value={values.amount}
-                  color='white'
-                  placeholder='Amount to wrap'
-                  variant='outline'
-                  width='80%'
-                  onChange={(e) => {
-                    setFieldValue('amount', e);
-                  }}
-                  onBlur={handleBlur}
-                  min={0}
-                  max={
-                    action === 'deposit'
-                      ? currentUser?.ethBalance
-                        ? +currentUser.ethBalance
+        }) => {
+          const setMax = () => {
+            if (currentUser?.ethBalance) {
+              setFieldValue(
+                'amount',
+                action === 'deposit'
+                  ? (+currentUser.ethBalance).toPrecision(18)
+                  : (+currentUser.wethBalance).toPrecision(18),
+              );
+            }
+          };
+
+          return (
+            <Form>
+              <FormControl id='depositForm' isRequired>
+                <Flex justify='end' my={3}>
+                  <TokenInfo deposit={action === 'deposit'} setMax={setMax} />
+                </Flex>
+                <InputGroup marginBottom='32px'>
+                  <NumberInput
+                    value={values.amount}
+                    color='white'
+                    placeholder='Amount to wrap'
+                    variant='outline'
+                    width='80%'
+                    onChange={(e) => {
+                      setFieldValue('amount', e);
+                    }}
+                    onBlur={handleBlur}
+                    min={0}
+                    max={
+                      action === 'deposit'
+                        ? currentUser?.ethBalance
+                          ? +currentUser.ethBalance
+                          : 0
+                        : currentUser?.wethBalance
+                        ? +currentUser.wethBalance
                         : 0
-                      : currentUser?.wethBalance
-                      ? +currentUser.wethBalance
-                      : 0
-                  }
-                >
-                  <NumberInputField name='amount' borderRadius='none' />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-
-                <Button
-                  textStyle='buttonLabel'
-                  maxW='120px'
-                  variant='outline'
-                  // background='transparent'
-                  // color='white'
-                  // variant='outline'
-                  size='lg'
-                  h='100%'
-                  w='100%'
-                  borderRadius='none'
-                  onClick={() => {
-                    if (currentUser?.ethBalance) {
-                      setFieldValue(
-                        'amount',
-                        action === 'deposit'
-                          ? (+currentUser.ethBalance).toPrecision(18)
-                          : (+currentUser.wethBalance).toPrecision(18),
-                      );
                     }
-                  }}
-                >
-                  Set Max
-                </Button>
-              </InputGroup>
+                  >
+                    <NumberInputField name='amount' borderRadius='none' />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
 
-              {touched.amount && errors.amount ? (
-                <div className='error-message'>{errors.amount}</div>
-              ) : null}
-            </FormControl>
-            <Button
-              variant='solid'
-              type='submit'
-              isLoading={isSubmitting}
-              loadingText='Submitting'
-              width='100%'
-            >
-              Submit
-            </Button>
-          </Form>
-        )}
+                  <Button
+                    textStyle='buttonLabel'
+                    maxW='120px'
+                    variant='outline'
+                    // background='transparent'
+                    // color='white'
+                    // variant='outline'
+                    size='lg'
+                    h='100%'
+                    w='100%'
+                    borderRadius='none'
+                    onClick={setMax}
+                  >
+                    Set Max
+                  </Button>
+                </InputGroup>
+
+                {touched.amount && errors.amount ? (
+                  <div className='error-message'>{errors.amount}</div>
+                ) : null}
+              </FormControl>
+              <Button
+                variant='solid'
+                type='submit'
+                isLoading={isSubmitting}
+                loadingText='Submitting'
+                width='100%'
+              >
+                Submit
+              </Button>
+            </Form>
+          );
+        }}
       </Formik>
     </Container>
   );

@@ -11,12 +11,16 @@ export interface TokenInfoProps {
    * Deposit or withdraw form?
    */
   deposit: boolean;
+  /**
+   * Call set max function when token info clicked
+   */
+  setMax: () => void;
 }
 
 /**
  * Interface component for connecting web3 provider, getting account and displaying address in header
  */
-const TokenInfo: React.FC<TokenInfoProps> = ({ deposit }) => {
+const TokenInfo: React.FC<TokenInfoProps> = ({ deposit, setMax }) => {
   const { injectedProvider } = useInjectedProvider();
   const { currentUser, setCurrentUser } = useCurrentUser();
   const { contract } = useContract();
@@ -57,12 +61,12 @@ const TokenInfo: React.FC<TokenInfoProps> = ({ deposit }) => {
   };
 
   return deposit ? (
-    <Button variant='ghost' pr={0} justify='center'>
+    <Button variant='ghost' onClick={setMax}>
       {`${currentUser?.network?.chain} Balance:
       ${forDisplay(currentUser?.ethBalance)}`}
     </Button>
   ) : (
-    <Button variant='ghost' pr={0} justify='center'>
+    <Button variant='ghost' onClick={setMax}>
       {`${'w' + currentUser?.network?.chain} Balance:
       ${forDisplay(currentUser?.wethBalance)}`}
     </Button>
