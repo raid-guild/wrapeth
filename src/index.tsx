@@ -6,9 +6,9 @@ import { InjectedProvider } from 'contexts/injectedProviderContext';
 import { CurrentUserContextProvider } from 'contexts/currentUserContext';
 import { ContractContextProvider } from 'contexts/contractContext';
 import App from './App';
-// import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { chains, wagmiClient } from 'utils/wagmiClient';
 import { WagmiConfig } from 'wagmi';
-import client from 'utils/wagmiClient';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
@@ -18,10 +18,10 @@ ReactDOM.render(
         <InjectedProvider>
           <CurrentUserContextProvider>
             <ContractContextProvider>
-              <WagmiConfig client={client}>
-                {/* <RainbowKitProvider chains={chains}> */}
-                <App />
-                {/* </RainbowKitProvider> */}
+              <WagmiConfig client={wagmiClient}>
+                <RainbowKitProvider chains={chains}>
+                  <App />
+                </RainbowKitProvider>
               </WagmiConfig>
             </ContractContextProvider>
           </CurrentUserContextProvider>

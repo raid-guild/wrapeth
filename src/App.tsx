@@ -10,8 +10,10 @@ import {
 } from '@raidguild/design-system';
 
 import { AccountButton, WrapperForm, Header } from './components';
+import { ConnectWallet } from './components/ConnectWallet';
 import { useCurrentUser } from 'contexts/currentUserContext';
 import '@fontsource/uncial-antiqua';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export interface AppProps {
   /**
@@ -51,7 +53,8 @@ const App: React.FC<AppProps> = ({ children }) => {
       <Container centerContent maxW='80ch'>
         <Header>
           <Spacer />
-          <AccountButton />
+          {/* <AccountButton /> */}
+          <ConnectWallet />
         </Header>
         <Flex align='center' mt='10px'>
           <Heading as='h1' size='4xl' variant='shadow' content='Wrap Eth' />
