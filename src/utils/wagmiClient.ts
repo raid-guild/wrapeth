@@ -25,10 +25,7 @@ export const { chains, provider } = configureChains(
     chain.arbitrumGoerli,
     chain.arbitrumRinkeby,
   ],
-  [
-    // infuraProvider({ apiKey: process.env.REACT_APP_RPC_KEY }),
-    infuraProvider({ apiKey: '887f20f0a8494bdfbd0913f97f9e838b' }),
-  ],
+  [infuraProvider({ apiKey: process.env.REACT_APP_RPC_KEY })],
 );
 
 export const wagmiClient = createClient({
