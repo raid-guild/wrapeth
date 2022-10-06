@@ -8,7 +8,7 @@ import {
   ButtonGroup,
   BuiltByRaidGuildComponent,
 } from '@raidguild/design-system';
-
+import '@rainbow-me/rainbowkit/styles.css';
 import { AccountButton, WrapperForm, Header } from './components';
 import { ConnectWallet } from './components/ConnectWallet';
 import { useCurrentUser } from 'contexts/currentUserContext';

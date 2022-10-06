@@ -22,8 +22,8 @@ export interface ConnectWalletProps {
   //   showNetwork?: boolean;
 }
 
-const ConnectWallet: React.FC<ConnectWalletProps> = () => {
-  return <ConnectButton label='Connect' chainStatus='icon' />;
+export const ConnectWallet: React.FC<ConnectWalletProps> = () => {
+  return <ConnectButton />;
   //   const { address, isConnecting } = useAccount();
   //   const { disconnect } = useDisconnect();
   //   const { data: name } = useEnsName();

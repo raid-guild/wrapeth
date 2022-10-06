@@ -6,7 +6,7 @@ import {
 } from '@rainbow-me/rainbowkit';
 // import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { infuraProvider } from 'wagmi/providers/infura';
-// import { publicProvider } from 'wagmi/providers/public';
+import { publicProvider } from 'wagmi/providers/public';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
@@ -26,39 +26,23 @@ export const { chains, provider } = configureChains(
     chain.arbitrumRinkeby,
   ],
   [
-    // alchemyProvider({ apiKey: process.env.ALCHEMY_ID }),
-    infuraProvider({ apiKey: process.env.REACT_APP_RPC_KEY }),
-    // publicProvider(),
+    // infuraProvider({ apiKey: process.env.REACT_APP_RPC_KEY }),
+    infuraProvider({ apiKey: '887f20f0a8494bdfbd0913f97f9e838b' }),
   ],
 );
-
-export const { connectors } = getDefaultWallets({
-  appName: 'Wrap ETH',
-  chains,
-});
 
 export const wagmiClient = createClient({
   provider,
   autoConnect: true,
   connectors: [
-    new InjectedConnector({ chains }),
     new WalletConnectConnector({
       chains,
       options: {
         qrcode: true,
       },
     }),
-    new CoinbaseWalletConnector({
-      options: {
-        appName: 'wagmi.sh',
-        jsonRpcUrl: `https://eth-mainnet.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMYKEY}`,
-      },
-    }),
     new MetaMaskConnector({
       chains,
-      options: {
-        shimDisconnect: true,
-      },
     }),
   ],
 });
