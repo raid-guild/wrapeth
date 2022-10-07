@@ -1,45 +1,58 @@
 import { chain, configureChains, createClient } from 'wagmi';
 import {
   Chain,
-  getDefaultWallets,
-  RainbowKitProvider,
+  connectorsForWallets,
+  // getDefaultWallets,
+  // RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
-// import { alchemyProvider } from 'wagmi/providers/alchemy';
+import {
+  injectedWallet,
+  metaMaskWallet,
+  rainbowWallet,
+  walletConnectWallet,
+  argentWallet,
+  braveWallet,
+  coinbaseWallet,
+  ledgerWallet,
+} from '@rainbow-me/rainbowkit/wallets';
 import { infuraProvider } from 'wagmi/providers/infura';
-import { publicProvider } from 'wagmi/providers/public';
-import { InjectedConnector } from 'wagmi/connectors/injected';
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
 
 export const { chains, provider } = configureChains(
   [
     chain.mainnet,
-    chain.polygon,
     chain.optimism,
     chain.arbitrum,
-    chain.rinkeby,
+    chain.polygon,
     chain.kovan,
     chain.goerli,
-    chain.optimismKovan,
-    chain.arbitrumGoerli,
-    chain.arbitrumRinkeby,
+    chain.polygonMumbai,
   ],
   [infuraProvider({ apiKey: process.env.REACT_APP_RPC_KEY })],
 );
 
+const connectors = connectorsForWallets([
+  {
+    groupName: 'Popular',
+    wallets: [
+      injectedWallet({ chains }),
+      metaMaskWallet({ chains, shimDisconnect: false }),
+      walletConnectWallet({ chains }),
+      ledgerWallet({ chains }),
+    ],
+  },
+  {
+    groupName: 'Others',
+    wallets: [
+      rainbowWallet({ chains }),
+      coinbaseWallet({ chains, appName: 'Wrap Eth' }),
+      argentWallet({ chains }),
+      braveWallet({ chains }),
+    ],
+  },
+]);
+
 export const wagmiClient = createClient({
   provider,
-  autoConnect: true,
-  connectors: [
-    new WalletConnectConnector({
-      chains,
-      options: {
-        qrcode: true,
-      },
-    }),
-    new MetaMaskConnector({
-      chains,
-    }),
-  ],
+  connectors,
+  autoConnect: false,
 });
