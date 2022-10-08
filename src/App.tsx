@@ -53,7 +53,6 @@ const App: React.FC<AppProps> = ({ children }) => {
       <Container centerContent maxW='80ch'>
         <Header>
           <Spacer />
-          {/* <AccountButton /> */}
           <ConnectWallet />
         </Header>
         <Flex align='center' mt='10px'>

@@ -3,8 +3,6 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 import { useAccount, useDisconnect, useEnsName } from 'wagmi';
 import {
-  // Button,
-  Text,
   Menu,
   MenuButton,
   MenuList,
@@ -19,13 +17,9 @@ import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
 import { Button } from '@raidguild/design-system';
 import { truncateAddress } from 'utils/general';
 
-export interface ConnectWalletProps {
-  showNetwork?: boolean;
-}
+export interface ConnectWalletProps {}
 
-export const ConnectWallet: React.FC<ConnectWalletProps> = ({
-  showNetwork,
-}) => {
+export const ConnectWallet: React.FC<ConnectWalletProps> = () => {
   const { address, isConnecting } = useAccount();
   const { disconnect } = useDisconnect();
   const { data: name } = useEnsName();
@@ -55,8 +49,8 @@ export const ConnectWallet: React.FC<ConnectWalletProps> = ({
               {(() => {
                 if (!mounted || !account || !chain) {
                   return (
+                    // connect btn
                     <Button
-                      fontFamily='Texturina'
                       color='brand.primary.600'
                       backgroundColor='brand.primary.50'
                       transition='all 100ms ease-in-out'
@@ -65,7 +59,7 @@ export const ConnectWallet: React.FC<ConnectWalletProps> = ({
                         borderWidth: '2px',
                         borderColor: 'brand.primary.600',
                       }}
-                      // leftIcon={<FiKey />}
+                      leftIcon={<FiKey />}
                       disabled={isConnecting}
                       onClick={openConnectModal}
                       data-cy='connect-wallet'
@@ -90,14 +84,13 @@ export const ConnectWallet: React.FC<ConnectWalletProps> = ({
                         borderColor: 'brand.primary.600',
                       }}
                     >
-                      Wrong network
+                      Unsupported network
                     </Button>
                   );
                 }
 
                 return (
                   <Flex gap={3}>
-                    {/* {showNetwork && chain.hasIcon && chain.iconUrl && ( */}
                     <Menu
                       offset={[0, 4]}
                       placement='bottom-end'
@@ -107,26 +100,21 @@ export const ConnectWallet: React.FC<ConnectWalletProps> = ({
                       <Button
                         display='flex'
                         flexDirection='row'
-                        // rightIcon={
-                        //   <Icon as={FiChevronDown} color='brand.primary.600' />
-                        // }
                         color='brand.primary.600'
                         backgroundColor='brand.primary.50'
                         transition='all 100ms ease-in-out'
-                        // _hover={{ bgColor: 'brand.primary.100' }}
+                        _hover={{ bgColor: 'brand.primary.100' }}
                         width='fit'
                         onClick={openChainModal}
                       >
                         <Image
-                          alt={chain.name ?? 'Chain icon'}
+                          // alt={chain.name ?? 'Chain icon'}
                           src={chain.iconUrl}
                           width={25}
                           height={25}
                           mr={2}
                         />
-                        <Text color='white' fontSize='sm'>
-                          {chain.name}
-                        </Text>
+                        {chain.name}
                       </Button>
 
                       <MenuButton
@@ -139,17 +127,10 @@ export const ConnectWallet: React.FC<ConnectWalletProps> = ({
                         transition='all 100ms ease-in-out'
                         _hover={{ bgColor: 'brand.primary.100' }}
                         width='fit'
-                        // _hover={{
-                        //   bgColor: 'brand.primary.100',
-                        //   borderWidth: '2px',
-                        //   borderColor: 'brand.primary.600',
-                        // }}
                       >
-                        <Text color='white' fontSize='sm'>
-                          {account.ensName
-                            ? account.ensName
-                            : truncateAddress(account.address)}
-                        </Text>
+                        {account.ensName
+                          ? account.ensName
+                          : truncateAddress(account.address)}
                       </MenuButton>
                       <MenuList backgroundColor='gray.800' minWidth='none'>
                         <MenuItem

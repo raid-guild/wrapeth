@@ -7,7 +7,8 @@ import { CurrentUserContextProvider } from 'contexts/currentUserContext';
 import { ContractContextProvider } from 'contexts/contractContext';
 import App from './App';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { chains, wagmiClient } from 'utils/wagmiClient';
+import { wagmiClient } from 'utils/wagmiClient';
+import { chains } from 'utils/rainbowKit/chains';
 import { WagmiConfig } from 'wagmi';
 import reportWebVitals from './reportWebVitals';
 

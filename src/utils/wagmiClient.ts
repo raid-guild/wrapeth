@@ -1,10 +1,5 @@
-import { chain, configureChains, createClient } from 'wagmi';
-import {
-  Chain,
-  connectorsForWallets,
-  // getDefaultWallets,
-  // RainbowKitProvider,
-} from '@rainbow-me/rainbowkit';
+import { createClient } from 'wagmi';
+import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import {
   injectedWallet,
   metaMaskWallet,
@@ -15,20 +10,8 @@ import {
   coinbaseWallet,
   ledgerWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { infuraProvider } from 'wagmi/providers/infura';
 
-export const { chains, provider } = configureChains(
-  [
-    chain.mainnet,
-    chain.optimism,
-    chain.arbitrum,
-    chain.polygon,
-    chain.kovan,
-    chain.goerli,
-    chain.polygonMumbai,
-  ],
-  [infuraProvider({ apiKey: process.env.REACT_APP_RPC_KEY })],
-);
+import { chains, provider } from './rainbowKit/chains';
 
 const connectors = connectorsForWallets([
   {
