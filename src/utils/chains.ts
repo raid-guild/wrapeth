@@ -7,7 +7,7 @@ import logo from 'assets/gnosis-logo.png';
 const xdai: Chain = {
   id: 100,
   name: 'Gnosis Chain',
-  network: 'Gnosis Chain',
+  network: 'gnosis',
   iconUrl: logo,
   iconBackground: '#fff',
   nativeCurrency: {
@@ -28,12 +28,12 @@ export const { chains, provider } = configureChains(
   [
     chain.mainnet,
     xdai,
-    chain.optimism,
-    chain.arbitrum,
     chain.polygon,
+    chain.arbitrum,
+    chain.optimism,
+    chain.rinkeby,
     chain.kovan,
     chain.goerli,
-    chain.polygonMumbai,
   ],
   [
     jsonRpcProvider({

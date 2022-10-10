@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { RGThemeProvider } from '@raidguild/design-system';
 import { LoaderContextProvider } from 'contexts/loaderContext';
-// import { ContractContextProvider } from 'contexts/contractContext';
+import { ContractContextProvider } from 'contexts/contractContext';
 import App from './App';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { wagmiClient } from 'utils/wagmiClient';
-import { chains } from 'utils/rainbowKit/chains';
+import { chains } from 'utils/chains';
 import { WagmiConfig } from 'wagmi';
 import reportWebVitals from './reportWebVitals';
 
@@ -14,13 +14,13 @@ ReactDOM.render(
   <React.StrictMode>
     <RGThemeProvider>
       <LoaderContextProvider>
-        {/* <ContractContextProvider> */}
         <WagmiConfig client={wagmiClient}>
           <RainbowKitProvider chains={chains}>
-            <App />
+            <ContractContextProvider>
+              <App />
+            </ContractContextProvider>
           </RainbowKitProvider>
         </WagmiConfig>
-        {/* </ContractContextProvider> */}
       </LoaderContextProvider>
     </RGThemeProvider>
   </React.StrictMode>,

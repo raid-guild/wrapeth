@@ -24,9 +24,9 @@ export interface AppProps {
  * Primary UI component for user interaction
  */
 const App: React.FC<AppProps> = ({ children }) => {
+  const [deposit, setDeposit] = useState<boolean>(true);
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
-  const [deposit, setDeposit] = useState<boolean>(true);
 
   const onButtonSelection = (index: number) => {
     switch (index) {
@@ -45,27 +45,28 @@ const App: React.FC<AppProps> = ({ children }) => {
     chain?.network !== undefined ? chain?.network : '';
 
   return (
-    <Flex h='100vh' w='100vw' maxW='100%'>
-      <Container centerContent maxW='80ch'>
-        <Header>
-          <Spacer />
-          <ConnectWallet />
-        </Header>
-        <Flex align='center' mt='10px'>
-          <Heading as='h1' size='4xl' variant='shadow' content='Wrap Eth' />
-        </Flex>
+    <>
+      <Flex h='100vh' w='100vw' maxW='100%'>
         <Container centerContent maxW='80ch'>
-          <Card mt='24px' p='64px' w='100%' background='gray.800'>
-            <ButtonGroup
-              buttons={[
-                `Wrap ${networkName || 'ETH'}`,
-                `Unwrap w${networkName || 'ETH'}`,
-              ]}
-              defaultSelected={deposit ? 0 : 1}
-              isAttached
-              onSelect={onButtonSelection}
-            />
-            {/* {address ? (
+          <Header>
+            <Spacer />
+            <ConnectWallet />
+          </Header>
+          <Flex align='center' mt='10px'>
+            <Heading as='h1' size='4xl' variant='shadow' content='Wrap Eth' />
+          </Flex>
+          <Container centerContent maxW='80ch'>
+            <Card mt='24px' p='64px' w='100%' background='gray.800'>
+              <ButtonGroup
+                buttons={[
+                  `Wrap ${chain?.nativeCurrency?.symbol || 'ETH'}`,
+                  `Unwrap w${chain?.nativeCurrency?.symbol || 'ETH'}`,
+                ]}
+                defaultSelected={deposit ? 0 : 1}
+                isAttached
+                onSelect={onButtonSelection}
+              />
+              {/* {isConnected ? (
               deposit ? (
                 <WrapperForm action='deposit' />
               ) : (
@@ -82,15 +83,16 @@ const App: React.FC<AppProps> = ({ children }) => {
                 {networkName || deposit ? 'ETH' : 'WETH'}
               </Heading>
             )} */}
-          </Card>
-        </Container>
+            </Card>
+          </Container>
 
-        <Flex justify='flex-end' width='100%' my='6' mr='48px'>
-          <BuiltByRaidGuildComponent />
-        </Flex>
-      </Container>
-      {children}
-    </Flex>
+          <Flex justify='flex-end' width='100%' my='6' mr='48px'>
+            <BuiltByRaidGuildComponent />
+          </Flex>
+        </Container>
+        {children}
+      </Flex>
+    </>
   );
 };
 

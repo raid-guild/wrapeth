@@ -9,8 +9,6 @@ import {
   useContract,
   erc20ABI,
 } from 'wagmi';
-// import { useInjectedProvider } from 'contexts/injectedProviderContext';
-// import { useCurrentUser } from 'contexts/currentUserContext';
 // import { useContract } from 'contexts/contractContext';
 import BN from 'bn.js';
 
@@ -29,12 +27,6 @@ export interface TokenInfoProps {
  * Interface component for connecting web3 provider, getting account and displaying address in header
  */
 const TokenInfo: React.FC<TokenInfoProps> = ({ deposit, setMax }) => {
-  // const { injectedProvider } = useInjectedProvider();
-  // const { currentUser, setCurrentUser } = useCurrentUser();
-  /*
-  **
-  replaced currentUser with address. Double check for errors
-  */
   const { address, isConnected } = useAccount();
   const provider = useProvider();
   const { chain } = useNetwork();

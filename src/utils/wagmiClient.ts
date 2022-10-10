@@ -11,7 +11,7 @@ import {
   ledgerWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 
-import { chains, provider } from './rainbowKit/chains';
+import { chains, provider } from './chains';
 
 const connectors = connectorsForWallets([
   {

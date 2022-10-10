@@ -40,7 +40,6 @@ interface Values {
  * Interface for depositing ETH and receiving wETH
  */
 const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
-  // const { injectedProvider } = useInjectedProvider();
   const provider = useProvider();
   const { address, isConnected } = useAccount();
   const contract = useContract({

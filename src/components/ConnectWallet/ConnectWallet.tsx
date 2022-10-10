@@ -20,9 +20,9 @@ import { truncateAddress } from 'utils/general';
 export interface ConnectWalletProps {}
 
 export const ConnectWallet: React.FC<ConnectWalletProps> = () => {
-  const { address, isConnecting } = useAccount();
+  const { isConnecting } = useAccount();
   const { disconnect } = useDisconnect();
-  const { data: name } = useEnsName();
+  // const { data: name } = useEnsName();
 
   return (
     <>
