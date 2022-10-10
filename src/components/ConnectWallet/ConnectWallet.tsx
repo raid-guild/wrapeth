@@ -49,7 +49,6 @@ export const ConnectWallet: React.FC<ConnectWalletProps> = () => {
               {(() => {
                 if (!mounted || !account || !chain) {
                   return (
-                    // connect btn
                     <Button
                       color='brand.primary.600'
                       backgroundColor='brand.primary.50'
@@ -96,7 +95,6 @@ export const ConnectWallet: React.FC<ConnectWalletProps> = () => {
                       placement='bottom-end'
                       autoSelect={false}
                     >
-                      {/* chain dropdown btn */}
                       <Button
                         display='flex'
                         flexDirection='row'

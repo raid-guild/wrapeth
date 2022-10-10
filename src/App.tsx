@@ -9,11 +9,9 @@ import {
   BuiltByRaidGuildComponent,
 } from '@raidguild/design-system';
 import '@rainbow-me/rainbowkit/styles.css';
-import { AccountButton, WrapperForm, Header } from './components';
-import { ConnectWallet } from './components/ConnectWallet';
-import { useCurrentUser } from 'contexts/currentUserContext';
+import { useAccount, useNetwork } from 'wagmi';
+import { WrapperForm, Header, ConnectWallet } from './components';
 import '@fontsource/uncial-antiqua';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export interface AppProps {
   /**
@@ -26,8 +24,8 @@ export interface AppProps {
  * Primary UI component for user interaction
  */
 const App: React.FC<AppProps> = ({ children }) => {
-  const { currentUser } = useCurrentUser();
-
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
   const [deposit, setDeposit] = useState<boolean>(true);
 
   const onButtonSelection = (index: number) => {
@@ -44,9 +42,7 @@ const App: React.FC<AppProps> = ({ children }) => {
   };
 
   const networkName: string =
-    currentUser?.network?.chain !== undefined
-      ? currentUser?.network?.chain
-      : '';
+    chain?.network !== undefined ? chain?.network : '';
 
   return (
     <Flex h='100vh' w='100vw' maxW='100%'>
@@ -69,7 +65,7 @@ const App: React.FC<AppProps> = ({ children }) => {
               isAttached
               onSelect={onButtonSelection}
             />
-            {currentUser?.username ? (
+            {/* {address ? (
               deposit ? (
                 <WrapperForm action='deposit' />
               ) : (
@@ -85,7 +81,7 @@ const App: React.FC<AppProps> = ({ children }) => {
                 Connect to {deposit ? 'wrap' : 'unwrap'}{' '}
                 {networkName || deposit ? 'ETH' : 'WETH'}
               </Heading>
-            )}
+            )} */}
           </Card>
         </Container>
 
@@ -93,7 +89,6 @@ const App: React.FC<AppProps> = ({ children }) => {
           <BuiltByRaidGuildComponent />
         </Flex>
       </Container>
-
       {children}
     </Flex>
   );

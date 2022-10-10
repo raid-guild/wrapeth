@@ -13,9 +13,14 @@ import {
   Container,
   InputGroup,
 } from '@raidguild/design-system';
-import { useInjectedProvider } from 'contexts/injectedProviderContext';
-import { useCurrentUser } from 'contexts/currentUserContext';
-import { useContract } from 'contexts/contractContext';
+import {
+  useProvider,
+  useAccount,
+  useBalance,
+  useContract,
+  erc20ABI,
+} from 'wagmi';
+
 import { ValidAmount } from 'utils/validation';
 import { User } from 'types';
 import { TokenInfo } from '../TokenInfo';
@@ -35,54 +40,55 @@ interface Values {
  * Interface for depositing ETH and receiving wETH
  */
 const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
-  const { injectedProvider } = useInjectedProvider();
-  const { currentUser, setCurrentUser } = useCurrentUser();
-  const { contract } = useContract();
+  // const { injectedProvider } = useInjectedProvider();
+  const provider = useProvider();
+  const { address, isConnected } = useAccount();
+  const contract = useContract({
+    addressOrName: 'address',
+    contractInterface: erc20ABI,
+  });
+  const { data, isError, isLoading } = useBalance({ addressOrName: address });
 
+  /*
   const onFormSubmit = async (values: Values) => {
-    const weiValue = injectedProvider.utils.toWei('' + values.amount);
-    if (currentUser && contract) {
+    const weiValue = provider?.utils.toWei('' + values.amount);
+    if (isConnected && contract) {
       try {
         if (action === 'deposit') {
           await contract.methods[action]().send({
             value: action === 'deposit' ? weiValue : 0,
-            from: currentUser?.username,
+            from: address,
           });
 
           const updatedUser: User = {
-            ...currentUser,
+            ...address,
             ...{
-              wethBalance: (
-                +currentUser.wethBalance + +values.amount
-              ).toString(),
-              ethBalance: (+currentUser.ethBalance - +values.amount).toString(),
+              wethBalance: (+address?.wethBalance + +values.amount).toString(),
+              ethBalance: (+address?.ethBalance - +values.amount).toString(),
             },
           };
-
-          setCurrentUser(updatedUser);
         } else {
           await contract.methods[action](weiValue).send({
             value: action === 'deposit' ? weiValue : 0,
-            from: currentUser?.username,
+            from: address,
           });
 
           const updatedUser: User = {
-            ...currentUser,
+            ...address,
             ...{
-              wethBalance: (
-                +currentUser.wethBalance - +values.amount
-              ).toString(),
-              ethBalance: (+currentUser.ethBalance + +values.amount).toString(),
+              wethBalance: (+address?.wethBalance - +values.amount).toString(),
+              ethBalance: (+address?.ethBalance + +values.amount).toString(),
             },
           };
 
-          setCurrentUser(updatedUser);
+          // setCurrentUser(updatedUser);
         }
       } catch (e) {
         console.log('Error: ', e);
       }
     }
   };
+  */
 
   return (
     <Container mt={12}>
@@ -93,7 +99,8 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
         onSubmit={async (values: Values, { setSubmitting, resetForm }) => {
           setSubmitting(true);
           try {
-            onFormSubmit(values);
+            null;
+            // onFormSubmit(values);
           } catch (err) {
             console.log(err);
           } finally {
@@ -111,12 +118,12 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
           setFieldValue,
         }) => {
           const setMax = () => {
-            if (currentUser?.ethBalance) {
+            if (data) {
               setFieldValue(
                 'amount',
                 action === 'deposit'
-                  ? (+currentUser.ethBalance).toPrecision(18)
-                  : (+currentUser.wethBalance).toPrecision(18),
+                  ? (+data).toPrecision(18)
+                  : (+data).toPrecision(18),
               );
             }
           };
@@ -141,11 +148,11 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
                     min={0}
                     max={
                       action === 'deposit'
-                        ? currentUser?.ethBalance
-                          ? +currentUser.ethBalance
+                        ? data
+                          ? +data
                           : 0
-                        : currentUser?.wethBalance
-                        ? +currentUser.wethBalance
+                        : data
+                        ? +data
                         : 0
                     }
                   >

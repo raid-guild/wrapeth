@@ -1,9 +1,17 @@
 import React, { useEffect } from 'react';
 
 import { Button } from '@raidguild/design-system';
-import { useInjectedProvider } from 'contexts/injectedProviderContext';
-import { useCurrentUser } from 'contexts/currentUserContext';
-import { useContract } from 'contexts/contractContext';
+import {
+  useAccount,
+  useNetwork,
+  useProvider,
+  useBalance,
+  useContract,
+  erc20ABI,
+} from 'wagmi';
+// import { useInjectedProvider } from 'contexts/injectedProviderContext';
+// import { useCurrentUser } from 'contexts/currentUserContext';
+// import { useContract } from 'contexts/contractContext';
 import BN from 'bn.js';
 
 export interface TokenInfoProps {
@@ -21,27 +29,41 @@ export interface TokenInfoProps {
  * Interface component for connecting web3 provider, getting account and displaying address in header
  */
 const TokenInfo: React.FC<TokenInfoProps> = ({ deposit, setMax }) => {
-  const { injectedProvider } = useInjectedProvider();
-  const { currentUser, setCurrentUser } = useCurrentUser();
-  const { contract } = useContract();
+  // const { injectedProvider } = useInjectedProvider();
+  // const { currentUser, setCurrentUser } = useCurrentUser();
+  /*
+  **
+  replaced currentUser with address. Double check for errors
+  */
+  const { address, isConnected } = useAccount();
+  const provider = useProvider();
+  const { chain } = useNetwork();
+  const { data, isError, isLoading } = useBalance({
+    addressOrName: address,
+  });
+  const contract = useContract({
+    addressOrName: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+    contractInterface: erc20ABI,
+  });
 
+  /*
   useEffect(() => {
-    if (contract && currentUser && injectedProvider) {
+    if (contract && isConnected && provider?) {
       const getInfo = async () => {
         try {
           // set wETH balance
           const wethBalanceInWei: string = await contract?.methods
-            .balanceOf(currentUser?.username)
+            .balanceOf(address)
             .call()
             .then((response: string | BN) => response.toString());
-          const wethBalance: string = injectedProvider.utils
+          const wethBalance: string = provider?.utils
             .fromWei('' + wethBalanceInWei)
             .toString();
           // get Eth Balance
-          const ethBalanceInWei: string = await injectedProvider.eth
-            .getBalance(currentUser?.username)
+          const ethBalanceInWei: string = await provider?.eth
+            .getBalance(address)
             .then((response: string | BN) => response.toString());
-          const ethBalance = injectedProvider.utils.fromWei(
+          const ethBalance = provider?.utils.fromWei(
             '' + ethBalanceInWei,
           );
           setCurrentUser({ ...currentUser, ...{ wethBalance, ethBalance } });
@@ -55,20 +77,21 @@ const TokenInfo: React.FC<TokenInfoProps> = ({ deposit, setMax }) => {
 
     // eslint-disable-next-line
   }, [contract]);
+  */
 
-  const forDisplay = (number: string | undefined): string => {
+  const forDisplay = (number: any | undefined): any => {
     return number ? (+number).toFixed(4) : 'Fetching ...';
   };
 
   return deposit ? (
     <Button variant='ghost' onClick={setMax}>
-      {`${currentUser?.network?.chain} Balance:
-      ${forDisplay(currentUser?.ethBalance)}`}
+      {`${address} Balance:
+      ${forDisplay(data)}`}
     </Button>
   ) : (
     <Button variant='ghost' onClick={setMax}>
-      {`${'w' + currentUser?.network?.chain} Balance:
-      ${forDisplay(currentUser?.wethBalance)}`}
+      {`${'w' + address} Balance:
+      ${forDisplay(data)}`}
     </Button>
   );
 };
