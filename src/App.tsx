@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Heading,
   Card,
@@ -9,8 +9,11 @@ import {
   BuiltByRaidGuildComponent,
 } from '@raidguild/design-system';
 import '@rainbow-me/rainbowkit/styles.css';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount, useNetwork, useContract, useSigner } from 'wagmi';
 import { WrapperForm, Header, ConnectWallet } from './components';
+import { wethAddrs } from 'utils/contracts';
+import WethAbi from 'contracts/wethAbi.json';
+import { ethers } from 'ethers';
 import '@fontsource/uncial-antiqua';
 
 export interface AppProps {
@@ -25,8 +28,13 @@ export interface AppProps {
  */
 const App: React.FC<AppProps> = ({ children }) => {
   const [deposit, setDeposit] = useState<boolean>(true);
+  const [contract, setContract] = useState<any>();
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
+  const { data: signer } = useSigner();
+  const network: any = chain?.network;
+  const chainAddress: any = isConnected ? wethAddrs[network] : null;
+  const abi: any = WethAbi;
 
   const onButtonSelection = (index: number) => {
     switch (index) {
@@ -41,8 +49,27 @@ const App: React.FC<AppProps> = ({ children }) => {
     }
   };
 
-  const networkName: string =
-    chain?.network !== undefined ? chain?.network : '';
+  const networkName: string = network ? network : '';
+
+  useEffect(() => {
+    // Get contract data:
+    const fetchContract: any = async () => {
+      console.log(chain?.network);
+      try {
+        const contractInstance: any = await useContract({
+          addressOrName: chainAddress,
+          contractInterface: abi,
+          // signerOrProvider: signer,
+        });
+        setContract(contractInstance);
+        console.log(contract);
+      } catch (error) {
+        console.log(error);
+      }
+      return;
+    };
+    isConnected ? fetchContract() : null;
+  }, [chain]);
 
   return (
     <>

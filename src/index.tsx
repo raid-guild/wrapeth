@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { RGThemeProvider } from '@raidguild/design-system';
 import { LoaderContextProvider } from 'contexts/loaderContext';
-import { ContractContextProvider } from 'contexts/contractContext';
 import App from './App';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { wagmiClient } from 'utils/wagmiClient';
@@ -16,9 +15,7 @@ ReactDOM.render(
       <LoaderContextProvider>
         <WagmiConfig client={wagmiClient}>
           <RainbowKitProvider chains={chains}>
-            <ContractContextProvider>
-              <App />
-            </ContractContextProvider>
+            <App />
           </RainbowKitProvider>
         </WagmiConfig>
       </LoaderContextProvider>
