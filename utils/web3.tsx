@@ -1,5 +1,9 @@
+import React, { ReactNode } from 'react';
 import { createClient } from 'wagmi';
-import { connectorsForWallets } from '@rainbow-me/rainbowkit';
+import {
+  connectorsForWallets,
+  RainbowKitProvider,
+} from '@rainbow-me/rainbowkit';
 import {
   injectedWallet,
   metaMaskWallet,
@@ -10,6 +14,7 @@ import {
   coinbaseWallet,
   ledgerWallet,
 } from '@rainbow-me/rainbowkit/wallets';
+import { WagmiConfig } from 'wagmi';
 
 import { chains, provider } from './chains';
 
@@ -34,8 +39,14 @@ const connectors = connectorsForWallets([
   },
 ]);
 
-export const wagmiClient = createClient({
+const wagmiClient = createClient({
   provider,
   connectors,
   autoConnect: false,
 });
+
+export const Web3Provider = ({ children }: { children: ReactNode }) => (
+  <WagmiConfig client={wagmiClient}>
+    <RainbowKitProvider chains={chains}>{children}</RainbowKitProvider>
+  </WagmiConfig>
+);

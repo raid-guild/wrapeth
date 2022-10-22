@@ -1,99 +1,29 @@
 {
-  "name": "wrapeth-web",
-  "version": "1.0.0",
+  "name": "wrapeth",
+  "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "@chakra-ui/icons": "^1.0.13",
-    "@fontsource/mirza": "^4.4.5",
-    "@fontsource/uncial-antiqua": "^4.4.5",
-    "@gnosis.pm/safe-apps-sdk": "^4.0.0",
-    "@gnosis.pm/safe-apps-web3modal": "^0.6.0",
-    "@raidguild/design-system": "^0.3.3",
-    "@rainbow-me/rainbowkit": "^0.7.1",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "@walletconnect/web3-provider": "^1.4.1",
-    "babel-loader": "8.1.0",
-    "ethers": "^5.7.1",
-    "formik": "^2.2.9",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-redux": "^7.2.3",
-    "react-scripts": "4.0.3",
-    "wagmi": "^0.6.8",
-    "web-vitals": "^1.0.1",
-    "web3": "^1.3.5",
-    "web3-eth-contract": "^1.4.0",
-    "web3modal": "^1.9.3",
-    "yup": "^0.32.9"
-  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "eject": "react-scripts eject",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public",
-    "pretty": "prettier --write ."
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ],
-    "overrides": [
-      {
-        "files": [
-          "**/*.stories.*"
-        ],
-        "rules": {
-          "import/no-anonymous-default-export": "off"
-        }
-      }
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "resolutions": {
-    "webpack": "4.44.2"
+  "dependencies": {
+    "@fontsource/uncial-antiqua": "^4.5.10",
+    "@raidguild/design-system": "^0.3.4",
+    "@rainbow-me/rainbowkit": "^0.7.3",
+    "ethers": "^5.7.2",
+    "next": "12.3.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "wagmi": "^0.6.8",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@storybook/addon-actions": "^6.2.9",
-    "@storybook/addon-essentials": "^6.2.9",
-    "@storybook/addon-links": "^6.2.9",
-    "@storybook/node-logger": "^6.2.9",
-    "@storybook/preset-create-react-app": "^3.1.7",
-    "@storybook/react": "^6.2.9",
-    "@types/jest": "^26.0.22",
-    "@types/node": "^14.14.41",
-    "@types/react": "^17.0.3",
-    "@types/react-dom": "^18.0.5",
-    "@types/styled-components": "^5.1.9",
-    "@typescript-eslint/eslint-plugin": "^4.22.0",
-    "@typescript-eslint/parser": "^4.22.0",
-    "eslint": "^7.25.0",
-    "eslint-config-import": "^0.13.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-config-react": "^1.1.7",
-    "eslint-config-react-app": "^6.0.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^3.4.0",
-    "eslint-plugin-react": "^7.23.2",
-    "eslint-plugin-react-hooks": "^4.2.0",
-    "eslint-plugin-standard": "^5.0.0",
-    "prettier": "^2.2.1",
-    "typescript": "^4.2.4"
-  },
-  "packageManager": "yarn@3.2.4"
+    "@types/react": "^18.0.21",
+    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "eslint": "8.26.0",
+    "eslint-config-next": "^12.3.1",
+    "typescript": "^4.8.4"
+  }
 }

@@ -10,13 +10,15 @@ import {
 } from '@raidguild/design-system';
 import '@rainbow-me/rainbowkit/styles.css';
 import { useAccount, useNetwork, useContract, useSigner } from 'wagmi';
-import { WrapperForm, Header, ConnectWallet } from './components';
-import { wethAddrs } from 'utils/contracts';
-import WethAbi from 'contracts/wethAbi.json';
-import { ethers } from 'ethers';
+// import { ethers } from 'ethers';
+
+import { WrapperForm, Header, ConnectWallet } from '../components';
+import { wethAddrs } from '../utils/contracts';
+import WethAbi from '../contracts/wethAbi.json';
+
 import '@fontsource/uncial-antiqua';
 
-export interface AppProps {
+export interface HomeProps {
   /**
    * The components to render within the app container
    */
@@ -26,7 +28,7 @@ export interface AppProps {
 /**
  * Primary UI component for user interaction
  */
-const App: React.FC<AppProps> = ({ children }) => {
+const Home: React.FC<HomeProps> = ({ children }) => {
   const [deposit, setDeposit] = useState<boolean>(true);
   const [contract, setContract] = useState<any>();
   const { address, isConnected } = useAccount();
@@ -51,25 +53,11 @@ const App: React.FC<AppProps> = ({ children }) => {
 
   const networkName: string = network ? network : '';
 
-  useEffect(() => {
-    // Get contract data:
-    const fetchContract: any = async () => {
-      console.log(chain?.network);
-      try {
-        const contractInstance: any = await useContract({
-          addressOrName: chainAddress,
-          contractInterface: abi,
-          // signerOrProvider: signer,
-        });
-        setContract(contractInstance);
-        console.log(contract);
-      } catch (error) {
-        console.log(error);
-      }
-      return;
-    };
-    isConnected ? fetchContract() : null;
-  }, [chain]);
+  const contractInstance: any = useContract({
+    addressOrName: chainAddress,
+    contractInterface: abi,
+    // signerOrProvider: signer,
+  });
 
   return (
     <>
@@ -123,4 +111,4 @@ const App: React.FC<AppProps> = ({ children }) => {
   );
 };
 
-export default App;
+export default Home;

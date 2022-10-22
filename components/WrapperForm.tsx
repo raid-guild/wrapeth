@@ -21,9 +21,9 @@ import {
   erc20ABI,
 } from 'wagmi';
 
-import { ValidAmount } from 'utils/validation';
+import { ValidAmount } from '../utils/validation';
 import { User } from 'types';
-import { TokenInfo } from '../TokenInfo';
+import TokenInfo from './TokenInfo';
 
 export interface WrapperFormProps {
   /**

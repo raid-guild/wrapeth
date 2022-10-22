@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
 import { Button } from '@raidguild/design-system';
-import { truncateAddress } from 'utils/general';
+import { truncateAddress } from '../utils/general';
 
 export interface ConnectWalletProps {}
 

@@ -10,7 +10,7 @@ import {
   erc20ABI,
 } from 'wagmi';
 // import { useContract } from 'contexts/contractContext';
-import BN from 'bn.js';
+// import BN from 'bn.js';
 
 export interface TokenInfoProps {
   /**

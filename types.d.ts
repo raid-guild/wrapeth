@@ -1,3 +1,5 @@
+declare module '*.png';
+
 export type User = {
   attributes: { 'custom:account_address': string };
   network: Network;
