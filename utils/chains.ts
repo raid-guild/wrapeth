@@ -1,15 +1,15 @@
 import { Chain } from '@rainbow-me/rainbowkit';
 import { chain, configureChains } from 'wagmi';
-// import { infuraProvider } from 'wagmi/providers/infura';
-// import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { infuraProvider } from 'wagmi/providers/infura';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
-// import logo from '../assets/gnosis-logo.png';
+import logo from 'public/gnosis-logo.png';
 
 const xdai: Chain = {
   id: 100,
   name: 'Gnosis Chain',
   network: 'gnosis',
-  // iconUrl: logo,
+  iconUrl: logo,
   iconBackground: '#fff',
   nativeCurrency: {
     decimals: 18,
@@ -28,17 +28,20 @@ const xdai: Chain = {
 export const { chains, provider } = configureChains(
   [
     chain.mainnet,
-    // xdai,
+    xdai,
     chain.polygon,
     chain.arbitrum,
     chain.optimism,
-    chain.rinkeby,
-    chain.kovan,
     chain.goerli,
+    chain.sepolia,
   ],
   [
-    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY }),
-    // jsonRpcProvider()
-    // infuraProvider({ apiKey: process.env.NEXT_PUBLIC_RPC_KEY })
+    jsonRpcProvider({
+      rpc: (chain) => ({
+        http: chain.rpcUrls.default,
+      }),
+    }),
+    infuraProvider({ apiKey: process.env.REACT_APP_RPC_KEY }),
+    alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_KEY }),
   ],
 );

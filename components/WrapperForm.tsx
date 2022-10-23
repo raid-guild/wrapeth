@@ -1,28 +1,19 @@
 import React from 'react';
-
-import { Formik, Form } from 'formik';
+import { useForm } from 'react-hook-form';
 import {
   Button,
   FormControl,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   Flex,
   Container,
-  InputGroup,
+  HStack,
+  ChakraInput,
 } from '@raidguild/design-system';
-import {
-  useProvider,
-  useAccount,
-  useBalance,
-  useContract,
-  erc20ABI,
-} from 'wagmi';
+import { FiAlertTriangle } from 'react-icons/fi';
+import { IoMdOpen } from 'react-icons/io';
+import { useNetwork } from 'wagmi';
+// import { ValidAmount } from 'utils/validation';
+// import { User } from 'types';
 
-import { ValidAmount } from '../utils/validation';
-import { User } from 'types';
 import TokenInfo from './TokenInfo';
 
 export interface WrapperFormProps {
@@ -30,172 +21,169 @@ export interface WrapperFormProps {
    * Provide the current action selected by the user
    */
   action: string;
+  // change contract to 'actionHandler'
+  contract: any;
+  wethBalance: number;
+  ethBalance: number;
+  inputBalance: number;
+  setInputBalance: any;
+  gasEstimate: string | number;
+  transactionData: any;
+  txSuccess: boolean;
+  isTxError: boolean;
+  txError: any;
 }
 
-interface Values {
-  amount: string;
+interface IFormInput {
+  amount: number;
 }
 
 /**
- * Interface for depositing ETH and receiving wETH
+ * Interface for depositinging ETH or native token and receiving wETH
  */
-const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
-  const provider = useProvider();
-  const { address, isConnected } = useAccount();
-  const contract = useContract({
-    addressOrName: 'address',
-    contractInterface: erc20ABI,
-  });
-  const { data, isError, isLoading } = useBalance({ addressOrName: address });
+const WrapperForm: React.FC<WrapperFormProps> = ({
+  action,
+  contract,
+  wethBalance,
+  ethBalance,
+  inputBalance,
+  setInputBalance,
+  gasEstimate,
+  transactionData,
+  txSuccess,
+  isTxError,
+  txError,
+}) => {
+  const { chain } = useNetwork();
+  // form variables
+  const {
+    handleSubmit,
+    register,
+    formState: { dirtyFields, errors },
+  } = useForm<IFormInput>();
 
-  /*
-  const onFormSubmit = async (values: Values) => {
-    const weiValue = provider?.utils.toWei('' + values.amount);
-    if (isConnected && contract) {
-      try {
-        if (action === 'deposit') {
-          await contract.methods[action]().send({
-            value: action === 'deposit' ? weiValue : 0,
-            from: address,
-          });
-
-          const updatedUser: User = {
-            ...address,
-            ...{
-              wethBalance: (+address?.wethBalance + +values.amount).toString(),
-              ethBalance: (+address?.ethBalance - +values.amount).toString(),
-            },
-          };
-        } else {
-          await contract.methods[action](weiValue).send({
-            value: action === 'deposit' ? weiValue : 0,
-            from: address,
-          });
-
-          const updatedUser: User = {
-            ...address,
-            ...{
-              wethBalance: (+address?.wethBalance - +values.amount).toString(),
-              ethBalance: (+address?.ethBalance + +values.amount).toString(),
-            },
-          };
-
-          // setCurrentUser(updatedUser);
-        }
-      } catch (e) {
-        console.log('Error: ', e);
-      }
-    }
+  /**
+   * handleSetMax gets passed down to TokenInfo
+   */
+  const handleSetMax: any = () => {
+    setInputBalance(action === 'deposit' ? ethBalance : wethBalance);
   };
-  */
+
+  // console.log(dirtyFields, errors);
+
+  const onSubmit = async (data: IFormInput) => {
+    const amount = data.amount;
+    console.log(`${amount} send to contract`);
+    contract?.();
+  };
+
+  const successMessage = (
+    <a
+      href={`${chain?.blockExplorers?.default.url}/tx/${transactionData?.hash}`}
+      target='_'
+    >
+      <span
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          fontWeight: 'bold',
+        }}
+      >
+        {' '}
+        Success! Click here to view transaction details{' '}
+        <IoMdOpen style={{ marginLeft: '0.5em' }} />
+      </span>
+    </a>
+  );
 
   return (
     <Container mt={12}>
-      <Formik
-        enableReinitialize
-        initialValues={{ amount: '' }}
-        validationSchema={ValidAmount}
-        onSubmit={async (values: Values, { setSubmitting, resetForm }) => {
-          setSubmitting(true);
-          try {
-            null;
-            // onFormSubmit(values);
-          } catch (err) {
-            console.log(err);
-          } finally {
-            setSubmitting(false);
-            resetForm();
-          }
-        }}
-      >
-        {({
-          values,
-          errors,
-          touched,
-          handleBlur,
-          isSubmitting,
-          setFieldValue,
-        }) => {
-          const setMax = () => {
-            if (data) {
-              setFieldValue(
-                'amount',
-                action === 'deposit'
-                  ? (+data).toPrecision(18)
-                  : (+data).toPrecision(18),
-              );
-            }
-          };
-
-          return (
-            <Form>
-              <FormControl id='depositForm' isRequired>
-                <Flex justify='end' my={3}>
-                  <TokenInfo deposit={action === 'deposit'} setMax={setMax} />
-                </Flex>
-                <InputGroup marginBottom='32px'>
-                  <NumberInput
-                    value={values.amount}
-                    color='white'
-                    placeholder='Amount to wrap'
-                    variant='outline'
-                    width='80%'
-                    onChange={(e) => {
-                      setFieldValue('amount', e);
-                    }}
-                    onBlur={handleBlur}
-                    min={0}
-                    max={
-                      action === 'deposit'
-                        ? data
-                          ? +data
-                          : 0
-                        : data
-                        ? +data
+      <Flex justify='end' my={3}>
+        <TokenInfo
+          deposit={action === 'deposit'}
+          ethBalance={ethBalance}
+          wethBalance={wethBalance}
+          gasEstimate={gasEstimate}
+        />
+      </Flex>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <HStack marginBottom='32px'>
+          <FormControl>
+            <ChakraInput
+              color='white'
+              variant='outline'
+              width='100%'
+              type='number'
+              value={inputBalance}
+              defaultValue={0}
+              {...register('amount', {
+                required: 'Input cannot be blank',
+                valueAsNumber: true,
+                validate: (value) => value > 0,
+                onChange: (e) => setInputBalance(e.target.value),
+                max: {
+                  value:
+                    action === 'deposit'
+                      ? +ethBalance
+                        ? +ethBalance
                         : 0
-                    }
-                  >
-                    <NumberInputField name='amount' borderRadius='none' />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
+                      : +wethBalance
+                      ? +wethBalance
+                      : 0,
+                  message: `Value must be less than your balance, plus gas required for transaction`,
+                },
+                min: {
+                  value: 0,
+                  message: 'Value must be greater than 0',
+                },
+              })}
+            />
+          </FormControl>
 
-                  <Button
-                    textStyle='buttonLabel'
-                    maxW='120px'
-                    variant='outline'
-                    // background='transparent'
-                    // color='white'
-                    // variant='outline'
-                    size='lg'
-                    h='100%'
-                    w='100%'
-                    borderRadius='none'
-                    onClick={setMax}
-                  >
-                    Set Max
-                  </Button>
-                </InputGroup>
+          <Button
+            textStyle='buttonLabel'
+            maxW='120px'
+            variant='outline'
+            size='lg'
+            h='100%'
+            w='100%'
+            borderRadius='none'
+            onClick={handleSetMax}
+          >
+            Set Max
+          </Button>
+        </HStack>
+        <Flex color='white' opacity='0.65' mt='-3' mb='5'>
+          {errors.amount && (
+            <span
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+            >
+              <FiAlertTriangle style={{ marginRight: '0.5rem' }} />
+              {errors.amount.message}
+            </span>
+          )}
+        </Flex>
 
-                {touched.amount && errors.amount ? (
-                  <div className='error-message'>{errors.amount}</div>
-                ) : null}
-              </FormControl>
-              <Button
-                variant='solid'
-                type='submit'
-                isLoading={isSubmitting}
-                loadingText='Submitting'
-                width='100%'
-              >
-                Submit
-              </Button>
-            </Form>
-          );
-        }}
-      </Formik>
+        <Button
+          as='button'
+          variant='solid'
+          type='submit'
+          loadingText='Submitting'
+          width='100%'
+        >
+          Submit
+        </Button>
+      </form>
+
+      <Flex color='white' justifyContent='center' mt={txSuccess ? '5' : 0}>
+        {txSuccess ? successMessage : null}
+        {/* {isTxError ? txError : null} */}
+      </Flex>
     </Container>
   );
 };

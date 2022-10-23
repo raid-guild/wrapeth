@@ -1,7 +1,7 @@
 import React from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
-import { useAccount, useDisconnect, useEnsName } from 'wagmi';
+import { useAccount, useDisconnect } from 'wagmi';
 import {
   Menu,
   MenuButton,
@@ -15,14 +15,13 @@ import {
 } from '@chakra-ui/react';
 import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
 import { Button } from '@raidguild/design-system';
-import { truncateAddress } from '../utils/general';
+import { truncateAddress } from 'utils/general';
 
 export interface ConnectWalletProps {}
 
 export const ConnectWallet: React.FC<ConnectWalletProps> = () => {
   const { isConnecting } = useAccount();
   const { disconnect } = useDisconnect();
-  // const { data: name } = useEnsName();
 
   return (
     <>

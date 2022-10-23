@@ -9,16 +9,24 @@ import {
   BuiltByRaidGuildComponent,
 } from '@raidguild/design-system';
 import '@rainbow-me/rainbowkit/styles.css';
-import { useAccount, useNetwork, useContract, useSigner } from 'wagmi';
-// import { ethers } from 'ethers';
+import {
+  useAccount,
+  useBalance,
+  useContractWrite,
+  useNetwork,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from 'wagmi';
+import { ethers } from 'ethers';
 
-import { WrapperForm, Header, ConnectWallet } from '../components';
-import { wethAddrs } from '../utils/contracts';
-import WethAbi from '../contracts/wethAbi.json';
-
+import { WrapperForm } from 'components';
+import { Header } from 'components';
+import { ConnectWallet } from 'components';
+import { wethAddrs } from 'utils/contracts';
+import WethAbi from 'contracts/wethAbi.json';
 import '@fontsource/uncial-antiqua';
 
-export interface HomeProps {
+export interface AppProps {
   /**
    * The components to render within the app container
    */
@@ -28,36 +36,164 @@ export interface HomeProps {
 /**
  * Primary UI component for user interaction
  */
-const Home: React.FC<HomeProps> = ({ children }) => {
+const App: React.FC<AppProps> = ({ children }) => {
+  /**
+   * pass input balance to WrapperForm and TokenInfo to handle form input. This is used with handleSetMax to let use input max balance
+   */
+  const [inputBalance, setInputBalance] = useState<number>(0);
   const [deposit, setDeposit] = useState<boolean>(true);
-  const [contract, setContract] = useState<any>();
-  const { address, isConnected } = useAccount();
+  const [network, setNetwork] = useState<any | null>(null);
+  const [contractAddress, setContractAddress] = useState<string>();
+  const [userAddress, setUserAddress] = useState<string>();
+  const [ethBalanceFormatted, setEthBalanceFormatted] = useState<any>(0);
+  const [wethBalanceFormatted, setWethBalanceFormatted] = useState<any>(0);
+  const [gasEstimate, setGasEstimate] = useState<any>();
+  const { address: getAddress, isConnected } = useAccount();
   const { chain } = useNetwork();
-  const { data: signer } = useSigner();
-  const network: any = chain?.network;
-  const chainAddress: any = isConnected ? wethAddrs[network] : null;
-  const abi: any = WethAbi;
+  const abi = WethAbi;
+
+  const ethBalance = useBalance({
+    addressOrName: userAddress,
+    enabled: contractAddress?.length !== 0,
+  });
+
+  const wethBalance = useBalance({
+    addressOrName: userAddress,
+    enabled: contractAddress?.length !== 0,
+    token: contractAddress,
+  });
+
+  /**
+   * wagmi deposit functionality
+   */
+  const {
+    data: dataPrepareDeposit,
+    config: configDeposit,
+    error: txErrorDeposit,
+    isError: isErrorDeposit,
+  } = usePrepareContractWrite({
+    addressOrName: contractAddress || '',
+    contractInterface: abi,
+    functionName: 'deposit',
+    enabled: !!inputBalance,
+    overrides: {
+      from: userAddress,
+      value: ethers.utils.parseEther(inputBalance.toString()),
+    },
+    onSuccess(data) {
+      console.log(data);
+      return data;
+    },
+    onError(error) {
+      return error;
+    },
+  });
+
+  const { write: writeDeposit, data: dataDeposit } = useContractWrite({
+    ...configDeposit,
+    request: configDeposit.request,
+  });
+
+  const { isSuccess: isSuccessDeposit } = useWaitForTransaction({
+    hash: dataDeposit?.hash,
+    onSuccess(data) {
+      return data;
+    },
+    onError(error) {
+      return error;
+    },
+  });
+
+  /**
+   * wagmi withdraw functionality
+   */
+  const {
+    data: dataPrepareWithdraw,
+    config: configWithdraw,
+    error: txErrorWithdraw,
+    isError: isErrorWithdraw,
+  } = usePrepareContractWrite({
+    addressOrName: contractAddress || '',
+    contractInterface: abi,
+    functionName: 'withdraw',
+    enabled: !!inputBalance,
+    args: [ethers.utils.parseEther(inputBalance.toString())],
+    onSuccess(data) {
+      // console.log('Success', data);
+      return data;
+    },
+    onError(error) {
+      // console.log('Error', error);
+      return error;
+    },
+  });
+
+  const { write: writeWithdraw, data: dataWithdraw } = useContractWrite({
+    ...configWithdraw,
+    request: configWithdraw.request,
+  });
+
+  const { isSuccess: isSuccessWithdraw } = useWaitForTransaction({
+    hash: dataWithdraw?.hash,
+    onSuccess(data) {
+      console.log('Success', data);
+    },
+    onError(error) {
+      console.log('Error', error);
+    },
+  });
 
   const onButtonSelection = (index: number) => {
     switch (index) {
       case 0:
         setDeposit(true);
+        !deposit ? setInputBalance(0) : null;
         break;
       case 1:
         setDeposit(false);
+        deposit ? setInputBalance(0) : null;
         break;
       default:
         console.log(`Invalid input: ${index}`);
     }
   };
 
-  const networkName: string = network ? network : '';
+  useEffect(() => {
+    if (chain?.network) setNetwork(chain?.network);
 
-  const contractInstance: any = useContract({
-    addressOrName: chainAddress,
-    contractInterface: abi,
-    // signerOrProvider: signer,
-  });
+    if (isConnected && network) setContractAddress(wethAddrs[network]);
+
+    if (isConnected && network) {
+      setEthBalanceFormatted(ethBalance.data?.formatted);
+      setWethBalanceFormatted(wethBalance.data?.formatted);
+    }
+
+    if (getAddress) setUserAddress(getAddress);
+
+    // set gas estimate for wrap
+    if (dataPrepareDeposit) {
+      const gas: any = dataPrepareDeposit?.request.gasLimit?._hex.toString();
+
+      const gasFormatted = ethers.utils.formatUnits(gas, 'gwei');
+      setGasEstimate(gasFormatted);
+    }
+    // set gas estimate for unwrap
+    if (dataPrepareWithdraw) {
+      const gas: any = dataPrepareWithdraw?.request.gasLimit?._hex.toString();
+
+      const gasFormatted = ethers.utils.formatUnits(gas, 'gwei');
+      setGasEstimate(gasFormatted);
+    }
+  }, [
+    chain,
+    network,
+    isConnected,
+    getAddress,
+    ethBalance,
+    wethBalance,
+    dataPrepareDeposit,
+    dataPrepareWithdraw,
+  ]);
 
   return (
     <>
@@ -81,23 +217,32 @@ const Home: React.FC<HomeProps> = ({ children }) => {
                 isAttached
                 onSelect={onButtonSelection}
               />
-              {/* {isConnected ? (
-              deposit ? (
-                <WrapperForm action='deposit' />
+
+              {isConnected ? (
+                <WrapperForm
+                  action={deposit ? 'deposit' : 'withdraw'}
+                  contract={deposit ? writeDeposit : writeWithdraw}
+                  wethBalance={+wethBalanceFormatted}
+                  ethBalance={+ethBalanceFormatted}
+                  inputBalance={inputBalance}
+                  setInputBalance={setInputBalance}
+                  gasEstimate={gasEstimate}
+                  transactionData={deposit ? dataDeposit : dataWithdraw}
+                  txSuccess={deposit ? isSuccessDeposit : isSuccessWithdraw}
+                  isTxError={deposit ? isErrorDeposit : isErrorWithdraw}
+                  txError={deposit ? txErrorDeposit : txErrorWithdraw}
+                />
               ) : (
-                <WrapperForm action='withdraw' />
-              )
-            ) : (
-              <Heading
-                color='whiteAlpha.900'
-                variant='noShadow'
-                mt={5}
-                size='lg'
-              >
-                Connect to {deposit ? 'wrap' : 'unwrap'}{' '}
-                {networkName || deposit ? 'ETH' : 'WETH'}
-              </Heading>
-            )} */}
+                <Heading
+                  color='whiteAlpha.900'
+                  variant='noShadow'
+                  mt={5}
+                  size='lg'
+                >
+                  Connect to {deposit ? 'wrap' : 'unwrap'}{' '}
+                  {network || deposit ? 'ETH' : 'WETH'}
+                </Heading>
+              )}
             </Card>
           </Container>
 
@@ -111,4 +256,4 @@ const Home: React.FC<HomeProps> = ({ children }) => {
   );
 };
 
-export default Home;
+export default App;

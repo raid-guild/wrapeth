@@ -1,8 +1,12 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { RGThemeProvider } from '@raidguild/design-system';
-
-// import { LoaderContextProvider } from '../contexts/loaderContext';
-import { Web3Provider } from '../utils/web3';
+import { LoaderContextProvider } from 'contexts/loaderContext';
+// import App from './App';
+import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { wagmiClient } from 'utils/wagmiClient';
+import { chains } from 'utils/chains';
+import { WagmiConfig } from 'wagmi';
 import '@rainbow-me/rainbowkit/styles.css';
 
 interface AppProps {
@@ -12,11 +16,13 @@ interface AppProps {
 
 const App = ({ Component, pageProps }: AppProps) => (
   <RGThemeProvider>
-    {/* <LoaderContextProvider> */}
-    <Web3Provider>
-      <Component {...pageProps} />
-    </Web3Provider>
-    {/* </LoaderContextProvider> */}
+    <LoaderContextProvider>
+      <WagmiConfig client={wagmiClient}>
+        <RainbowKitProvider chains={chains}>
+          <Component {...pageProps} />
+        </RainbowKitProvider>
+      </WagmiConfig>
+    </LoaderContextProvider>
   </RGThemeProvider>
 );
 
