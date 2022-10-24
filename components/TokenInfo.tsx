@@ -9,6 +9,7 @@ import {
   PopoverBody,
 } from '@chakra-ui/popover';
 import { useNetwork } from 'wagmi';
+import { unitConverter } from 'utils/unitConverter';
 
 export interface TokenInfoProps {
   /**
@@ -17,16 +18,20 @@ export interface TokenInfoProps {
   deposit: boolean;
   ethBalance: number;
   wethBalance: number;
-  gasEstimate: string | number;
+  gasLimit: number;
 }
 
 const TokenInfo: React.FC<TokenInfoProps> = ({
   deposit,
   ethBalance,
   wethBalance,
-  gasEstimate,
+  gasLimit,
 }) => {
   const { chain } = useNetwork();
+
+  // const gasEstimate = unitConverter(gasLimit);
+  const gwei = Number(gasLimit.gwei).toFixed(2);
+  const ether = Number(gasLimit.ether).toFixed(12);
 
   return (
     <Popover>
@@ -46,7 +51,7 @@ const TokenInfo: React.FC<TokenInfoProps> = ({
           bg='none'
           opacity='100'
         >
-          Gas estimate: {gasEstimate} gwei
+          Gas Limit: {gwei} gwei ({ether} ether)
         </PopoverBody>
       </PopoverContent>
     </Popover>

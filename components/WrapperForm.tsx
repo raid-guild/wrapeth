@@ -26,7 +26,7 @@ export interface WrapperFormProps {
   ethBalance: number;
   inputBalance: number;
   setInputBalance: any;
-  gasEstimate: string | number;
+  gasLimit: object;
   transactionData: any;
   txSuccess: boolean;
   isTxError: boolean;
@@ -47,7 +47,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({
   ethBalance,
   inputBalance,
   setInputBalance,
-  gasEstimate,
+  gasLimit,
   transactionData,
   txSuccess,
   isTxError,
@@ -97,6 +97,8 @@ const WrapperForm: React.FC<WrapperFormProps> = ({
     </a>
   );
 
+  // console.log(gasLimit?.eth);
+
   return (
     <Container mt={12}>
       <Flex justify='end' my={3}>
@@ -104,7 +106,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({
           deposit={action === 'deposit'}
           ethBalance={ethBalance}
           wethBalance={wethBalance}
-          gasEstimate={gasEstimate}
+          gasLimit={gasLimit}
         />
       </Flex>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -181,7 +183,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({
 
       <Flex color='white' justifyContent='center' mt={txSuccess ? '5' : 0}>
         {txSuccess ? successMessage : null}
-        {/* {isTxError ? txError : null} */}
+        {isTxError ? JSON.stringify(txError) : null}
       </Flex>
     </Container>
   );

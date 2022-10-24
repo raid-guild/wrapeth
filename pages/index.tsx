@@ -16,14 +16,17 @@ import {
   useNetwork,
   usePrepareContractWrite,
   useWaitForTransaction,
+  useFeeData,
 } from 'wagmi';
-import { utils, BigNumber } from 'ethers';
-
 import { WrapperForm } from 'components';
 import { Header } from 'components';
 import { ConnectWallet } from 'components';
 import { wethAddrs } from 'utils/contracts';
 import WethAbi from 'contracts/wethAbi.json';
+import { unitConverter } from 'utils/unitConverter';
+import { useDebounce } from 'usehooks-ts';
+import { utils, BigNumber } from 'ethers';
+
 import '@fontsource/uncial-antiqua';
 
 export interface AppProps {
@@ -47,11 +50,12 @@ const App: React.FC<AppProps> = ({ children }) => {
   const [userAddress, setUserAddress] = useState<string>();
   const [ethBalanceFormatted, setEthBalanceFormatted] = useState<any>(0);
   const [wethBalanceFormatted, setWethBalanceFormatted] = useState<any>(0);
-  const [gasEstimate, setGasEstimate] = useState<any>();
-
+  const [gasLimit, setGasLimit] = useState<any>(0);
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const abi = WethAbi;
+  // debounced hook to prevent rate-limiting
+  const debouncedValue = useDebounce(inputBalance, 500);
 
   const ethBalance = useBalance({
     addressOrName: userAddress,
@@ -63,6 +67,8 @@ const App: React.FC<AppProps> = ({ children }) => {
     enabled: contractAddress?.length !== 0,
     token: contractAddress,
   });
+
+  const { data: feeData } = useFeeData();
 
   /**
    * wagmi deposit functionality
@@ -76,16 +82,17 @@ const App: React.FC<AppProps> = ({ children }) => {
     addressOrName: contractAddress || '',
     contractInterface: abi,
     functionName: 'deposit',
-    enabled: inputBalance !== undefined,
+    enabled: Boolean(debouncedValue),
     overrides: {
       from: userAddress,
-      value: BigNumber.from(utils.parseEther(inputBalance.toString() || '0')),
+      value: BigNumber.from(utils.parseEther(debouncedValue.toString() || '0')),
     },
     onSuccess(data) {
-      console.log(data);
+      // console.log(data);
       return data;
     },
     onError(error) {
+      // console.log(error);
       return error;
     },
   });
@@ -117,8 +124,8 @@ const App: React.FC<AppProps> = ({ children }) => {
     addressOrName: contractAddress || '',
     contractInterface: abi,
     functionName: 'withdraw',
-    enabled: !!inputBalance,
-    args: [BigNumber.from(utils.parseEther(inputBalance.toString() || '0'))],
+    enabled: Boolean(debouncedValue),
+    args: [BigNumber.from(utils.parseEther(debouncedValue.toString() || '0'))],
     onSuccess(data) {
       return data;
     },
@@ -168,19 +175,6 @@ const App: React.FC<AppProps> = ({ children }) => {
     }
 
     if (address) setUserAddress(address);
-
-    /*
-    // set gas estimate for wrap
-    if (dataPrepareDeposit) {
-      const gas: any = dataPrepareDeposit?.request.gasLimit?._hex.toString();
-      setGasEstimate(gasFormatted);
-    }
-    // set gas estimate for unwrap
-    if (dataPrepareWithdraw) {
-      const gas: any = dataPrepareWithdraw?.request.gasLimit?._hex.toString();
-      setGasEstimate(gasFormatted);
-    }
-    */
   }, [
     chain,
     network,
@@ -190,6 +184,7 @@ const App: React.FC<AppProps> = ({ children }) => {
     wethBalance,
     dataPrepareDeposit,
     dataPrepareWithdraw,
+    debouncedValue,
   ]);
 
   return (
@@ -223,7 +218,7 @@ const App: React.FC<AppProps> = ({ children }) => {
                   ethBalance={+ethBalanceFormatted}
                   inputBalance={inputBalance}
                   setInputBalance={setInputBalance}
-                  gasEstimate={gasEstimate}
+                  gasLimit={gasLimit}
                   transactionData={deposit ? dataDeposit : dataWithdraw}
                   txSuccess={deposit ? isSuccessDeposit : isSuccessWithdraw}
                   isTxError={deposit ? isErrorDeposit : isErrorWithdraw}
