@@ -13,7 +13,6 @@ import { IoMdOpen } from 'react-icons/io';
 import { useNetwork } from 'wagmi';
 // import { ValidAmount } from 'utils/validation';
 // import { User } from 'types';
-
 import TokenInfo from './TokenInfo';
 
 export interface WrapperFormProps {
@@ -66,7 +65,9 @@ const WrapperForm: React.FC<WrapperFormProps> = ({
    * handleSetMax gets passed down to TokenInfo
    */
   const handleSetMax: any = () => {
-    setInputBalance(action === 'deposit' ? ethBalance : wethBalance);
+    setInputBalance(
+      action === 'deposit' ? ethBalance.toFixed(6) : wethBalance.toFixed(6),
+    );
   };
 
   // console.log(dirtyFields, errors);
@@ -90,7 +91,6 @@ const WrapperForm: React.FC<WrapperFormProps> = ({
           fontWeight: 'bold',
         }}
       >
-        {' '}
         Success! Click here to view transaction details{' '}
         <IoMdOpen style={{ marginLeft: '0.5em' }} />
       </span>
@@ -116,10 +116,9 @@ const WrapperForm: React.FC<WrapperFormProps> = ({
               width='100%'
               type='number'
               value={inputBalance}
-              defaultValue={0}
               {...register('amount', {
                 required: 'Input cannot be blank',
-                valueAsNumber: true,
+                valueAsNumber: false,
                 validate: (value) => value > 0,
                 onChange: (e) => setInputBalance(e.target.value),
                 max: {

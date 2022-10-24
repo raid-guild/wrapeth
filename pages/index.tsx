@@ -17,7 +17,7 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
-import { ethers } from 'ethers';
+import { utils, BigNumber } from 'ethers';
 
 import { WrapperForm } from 'components';
 import { Header } from 'components';
@@ -48,7 +48,8 @@ const App: React.FC<AppProps> = ({ children }) => {
   const [ethBalanceFormatted, setEthBalanceFormatted] = useState<any>(0);
   const [wethBalanceFormatted, setWethBalanceFormatted] = useState<any>(0);
   const [gasEstimate, setGasEstimate] = useState<any>();
-  const { address: getAddress, isConnected } = useAccount();
+
+  const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const abi = WethAbi;
 
@@ -75,10 +76,10 @@ const App: React.FC<AppProps> = ({ children }) => {
     addressOrName: contractAddress || '',
     contractInterface: abi,
     functionName: 'deposit',
-    enabled: !!inputBalance,
+    enabled: inputBalance !== undefined,
     overrides: {
       from: userAddress,
-      value: ethers.utils.parseEther(inputBalance.toString()),
+      value: BigNumber.from(utils.parseEther(inputBalance.toString() || '0')),
     },
     onSuccess(data) {
       console.log(data);
@@ -117,13 +118,11 @@ const App: React.FC<AppProps> = ({ children }) => {
     contractInterface: abi,
     functionName: 'withdraw',
     enabled: !!inputBalance,
-    args: [ethers.utils.parseEther(inputBalance.toString())],
+    args: [BigNumber.from(utils.parseEther(inputBalance.toString() || '0'))],
     onSuccess(data) {
-      // console.log('Success', data);
       return data;
     },
     onError(error) {
-      // console.log('Error', error);
       return error;
     },
   });
@@ -168,27 +167,25 @@ const App: React.FC<AppProps> = ({ children }) => {
       setWethBalanceFormatted(wethBalance.data?.formatted);
     }
 
-    if (getAddress) setUserAddress(getAddress);
+    if (address) setUserAddress(address);
 
+    /*
     // set gas estimate for wrap
     if (dataPrepareDeposit) {
       const gas: any = dataPrepareDeposit?.request.gasLimit?._hex.toString();
-
-      const gasFormatted = ethers.utils.formatUnits(gas, 'gwei');
       setGasEstimate(gasFormatted);
     }
     // set gas estimate for unwrap
     if (dataPrepareWithdraw) {
       const gas: any = dataPrepareWithdraw?.request.gasLimit?._hex.toString();
-
-      const gasFormatted = ethers.utils.formatUnits(gas, 'gwei');
       setGasEstimate(gasFormatted);
     }
+    */
   }, [
     chain,
     network,
     isConnected,
-    getAddress,
+    address,
     ethBalance,
     wethBalance,
     dataPrepareDeposit,
