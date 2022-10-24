@@ -23,7 +23,6 @@ import { Header } from 'components';
 import { ConnectWallet } from 'components';
 import { wethAddrs } from 'utils/contracts';
 import WethAbi from 'contracts/wethAbi.json';
-import { unitConverter } from 'utils/unitConverter';
 import { useDebounce } from 'usehooks-ts';
 import { utils, BigNumber } from 'ethers';
 
@@ -50,7 +49,7 @@ const App: React.FC<AppProps> = ({ children }) => {
   const [userAddress, setUserAddress] = useState<string>();
   const [ethBalanceFormatted, setEthBalanceFormatted] = useState<any>(0);
   const [wethBalanceFormatted, setWethBalanceFormatted] = useState<any>(0);
-  const [gasLimit, setGasLimit] = useState<any>(0);
+  const [gasLimit, setGasLimit] = useState<object | undefined>({});
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const abi = WethAbi;
@@ -69,85 +68,99 @@ const App: React.FC<AppProps> = ({ children }) => {
   });
 
   const { data: feeData } = useFeeData();
+  // if (isConnected) {
+  //   const maxGasFee = feeData?.maxFeePerGas;
+  //   const gasEther = utils.formatUnits(maxGasFee, 18);
+  //   console.log(gasEther);
+  // }
+  // const gas = unitConverter(maxGasFee);
 
   /**
    * wagmi deposit functionality
    */
-  const {
-    data: dataPrepareDeposit,
-    config: configDeposit,
-    error: txErrorDeposit,
-    isError: isErrorDeposit,
-  } = usePrepareContractWrite({
-    addressOrName: contractAddress || '',
-    contractInterface: abi,
-    functionName: 'deposit',
-    enabled: Boolean(debouncedValue),
-    overrides: {
-      from: userAddress,
-      value: BigNumber.from(utils.parseEther(debouncedValue.toString() || '0')),
-    },
-    onSuccess(data) {
-      // console.log(data);
-      return data;
-    },
-    onError(error) {
-      // console.log(error);
-      return error;
-    },
-  });
+  const { data: dataPrepareDeposit, config: configDeposit } =
+    usePrepareContractWrite({
+      addressOrName: contractAddress || '',
+      contractInterface: abi,
+      functionName: 'deposit',
+      enabled: Boolean(debouncedValue),
+      overrides: {
+        from: userAddress,
+        value: BigNumber.from(
+          utils.parseEther(debouncedValue.toString() || '0'),
+        ),
+      },
+      onSuccess(data) {
+        // console.log(data);
+        return data;
+      },
+      onError(error) {
+        // console.log(error);
+        return error;
+      },
+    });
 
-  const { write: writeDeposit, data: dataDeposit } = useContractWrite({
+  const {
+    write: writeDeposit,
+    data: dataDeposit,
+    isError: isErrorDeposit,
+    error: errorDeposit,
+  } = useContractWrite({
     ...configDeposit,
     request: configDeposit.request,
   });
 
-  const { isSuccess: isSuccessDeposit } = useWaitForTransaction({
-    hash: dataDeposit?.hash,
-    onSuccess(data) {
-      return data;
-    },
-    onError(error) {
-      return error;
-    },
-  });
+  const { isSuccess: isSuccessDeposit, isLoading: isLoadingDeposit } =
+    useWaitForTransaction({
+      hash: dataDeposit?.hash,
+      onSuccess(data) {
+        return data;
+      },
+      onError(error) {
+        return error;
+      },
+    });
 
   /**
    * wagmi withdraw functionality
    */
-  const {
-    data: dataPrepareWithdraw,
-    config: configWithdraw,
-    error: txErrorWithdraw,
-    isError: isErrorWithdraw,
-  } = usePrepareContractWrite({
-    addressOrName: contractAddress || '',
-    contractInterface: abi,
-    functionName: 'withdraw',
-    enabled: Boolean(debouncedValue),
-    args: [BigNumber.from(utils.parseEther(debouncedValue.toString() || '0'))],
-    onSuccess(data) {
-      return data;
-    },
-    onError(error) {
-      return error;
-    },
-  });
+  const { data: dataPrepareWithdraw, config: configWithdraw } =
+    usePrepareContractWrite({
+      addressOrName: contractAddress || '',
+      contractInterface: abi,
+      functionName: 'withdraw',
+      enabled: Boolean(debouncedValue),
+      args: [
+        BigNumber.from(utils.parseEther(debouncedValue.toString() || '0')),
+      ],
+      onSuccess(data) {
+        return data;
+      },
+      onError(error) {
+        return error;
+      },
+    });
 
-  const { write: writeWithdraw, data: dataWithdraw } = useContractWrite({
+  const {
+    write: writeWithdraw,
+    data: dataWithdraw,
+    isError: isErrorWithdraw,
+    error: errorWithdraw,
+  } = useContractWrite({
     ...configWithdraw,
     request: configWithdraw.request,
   });
 
-  const { isSuccess: isSuccessWithdraw } = useWaitForTransaction({
-    hash: dataWithdraw?.hash,
-    onSuccess(data) {
-      console.log('Success', data);
-    },
-    onError(error) {
-      console.log('Error', error);
-    },
-  });
+  const { isSuccess: isSuccessWithdraw, isLoading: isLoadingWithdraw } =
+    useWaitForTransaction({
+      hash: dataWithdraw?.hash,
+      onSuccess(data) {
+        console.log('Success', data);
+      },
+      onError(error) {
+        console.log('Error', error);
+      },
+    });
 
   const onButtonSelection = (index: number) => {
     switch (index) {
@@ -175,6 +188,13 @@ const App: React.FC<AppProps> = ({ children }) => {
     }
 
     if (address) setUserAddress(address);
+
+    if (isConnected) {
+      const maxGasFee = feeData?.maxFeePerGas;
+      const gasEther = utils.formatUnits(maxGasFee || '0');
+      setGasLimit(gasEther);
+      console.log(gasLimit);
+    }
   }, [
     chain,
     network,
@@ -185,6 +205,8 @@ const App: React.FC<AppProps> = ({ children }) => {
     dataPrepareDeposit,
     dataPrepareWithdraw,
     debouncedValue,
+    isSuccessDeposit,
+    isSuccessWithdraw,
   ]);
 
   return (
@@ -220,9 +242,10 @@ const App: React.FC<AppProps> = ({ children }) => {
                   setInputBalance={setInputBalance}
                   gasLimit={gasLimit}
                   transactionData={deposit ? dataDeposit : dataWithdraw}
+                  txPending={deposit ? isLoadingDeposit : isLoadingWithdraw}
                   txSuccess={deposit ? isSuccessDeposit : isSuccessWithdraw}
                   isTxError={deposit ? isErrorDeposit : isErrorWithdraw}
-                  txError={deposit ? txErrorDeposit : txErrorWithdraw}
+                  txError={deposit ? errorDeposit : errorWithdraw}
                 />
               ) : (
                 <Heading

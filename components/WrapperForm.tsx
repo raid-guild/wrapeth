@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Button,
@@ -11,8 +11,6 @@ import {
 import { FiAlertTriangle } from 'react-icons/fi';
 import { IoMdOpen } from 'react-icons/io';
 import { useNetwork } from 'wagmi';
-// import { ValidAmount } from 'utils/validation';
-// import { User } from 'types';
 import TokenInfo from './TokenInfo';
 
 export interface WrapperFormProps {
@@ -20,14 +18,14 @@ export interface WrapperFormProps {
    * Provide the current action selected by the user
    */
   action: string;
-  // change contract to 'actionHandler'
   contract: any;
   wethBalance: number;
   ethBalance: number;
   inputBalance: number;
   setInputBalance: any;
-  gasLimit: object;
+  gasLimit: any;
   transactionData: any;
+  txPending: boolean;
   txSuccess: boolean;
   isTxError: boolean;
   txError: any;
@@ -49,6 +47,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({
   setInputBalance,
   gasLimit,
   transactionData,
+  txPending,
   txSuccess,
   isTxError,
   txError,
@@ -60,13 +59,14 @@ const WrapperForm: React.FC<WrapperFormProps> = ({
     register,
     formState: { dirtyFields, errors },
   } = useForm<IFormInput>();
-
   /**
    * handleSetMax gets passed down to TokenInfo
    */
   const handleSetMax: any = () => {
     setInputBalance(
-      action === 'deposit' ? ethBalance.toFixed(6) : wethBalance.toFixed(6),
+      action === 'deposit'
+        ? (ethBalance - gasLimit).toFixed(6)
+        : (wethBalance - gasLimit).toFixed(6),
     );
   };
 
@@ -97,7 +97,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({
     </a>
   );
 
-  // console.log(gasLimit?.eth);
+  useEffect(() => {}, [txError]);
 
   return (
     <Container mt={12}>
@@ -127,7 +127,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({
                   value:
                     action === 'deposit'
                       ? +ethBalance
-                        ? +ethBalance
+                        ? +ethBalance - +gasLimit
                         : 0
                       : +wethBalance
                       ? +wethBalance
@@ -181,9 +181,16 @@ const WrapperForm: React.FC<WrapperFormProps> = ({
         </Button>
       </form>
 
-      <Flex color='white' justifyContent='center' mt={txSuccess ? '5' : 0}>
+      <Flex
+        color='white'
+        justifyContent='center'
+        mt={txSuccess || isTxError || txPending ? '5' : 0}
+      >
+        {txPending
+          ? 'Please wait while your transaction is being mined.'
+          : null}
         {txSuccess ? successMessage : null}
-        {isTxError ? JSON.stringify(txError) : null}
+        {isTxError ? `Error: ${txError.code}` : null}
       </Flex>
     </Container>
   );
