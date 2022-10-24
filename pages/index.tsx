@@ -52,6 +52,7 @@ const App: React.FC<AppProps> = ({ children }) => {
   const [gasLimit, setGasLimit] = useState<object | undefined>({});
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
+
   const abi = WethAbi;
   // debounced hook to prevent rate-limiting
   const debouncedValue = useDebounce(inputBalance, 500);
@@ -67,13 +68,9 @@ const App: React.FC<AppProps> = ({ children }) => {
     token: contractAddress,
   });
 
+  console.log(ethBalance);
+
   const { data: feeData } = useFeeData();
-  // if (isConnected) {
-  //   const maxGasFee = feeData?.maxFeePerGas;
-  //   const gasEther = utils.formatUnits(maxGasFee, 18);
-  //   console.log(gasEther);
-  // }
-  // const gas = unitConverter(maxGasFee);
 
   /**
    * wagmi deposit functionality

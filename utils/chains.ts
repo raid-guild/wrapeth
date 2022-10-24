@@ -15,10 +15,10 @@ const xdai: Chain = {
   nativeCurrency: {
     decimals: 18,
     name: 'xDai',
-    symbol: 'xDAI',
+    symbol: 'XDAI',
   },
   rpcUrls: {
-    default: 'https://dai.poa.network',
+    default: 'https://rpc.gnosischain.com',
   },
   blockExplorers: {
     default: { name: 'BlockScout', url: 'https://blockscout.com/poa/xdai' },
