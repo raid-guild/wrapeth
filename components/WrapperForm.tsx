@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Button,
@@ -12,23 +12,16 @@ import { FiAlertTriangle } from 'react-icons/fi';
 import { IoMdOpen } from 'react-icons/io';
 import { useNetwork } from 'wagmi';
 import TokenInfo from './TokenInfo';
+import useBalances from 'hooks/useBalances';
+import useDeposit from 'hooks/useDeposit';
+import useWithdraw from 'hooks/useWithdraw';
 
 export interface WrapperFormProps {
   /**
-   * Provide the current action selected by the user
+   * action is either 'deposit' or 'withdraw'
    */
   action: string;
-  contract: any;
-  wethBalance: number;
-  ethBalance: number;
-  inputBalance: number;
-  setInputBalance: any;
   gasLimit: any;
-  transactionData: any;
-  txPending: boolean;
-  txSuccess: boolean;
-  isTxError: boolean;
-  txError: any;
 }
 
 interface IFormInput {
@@ -38,49 +31,62 @@ interface IFormInput {
 /**
  * Interface for depositinging ETH or native token and receiving wETH
  */
-const WrapperForm: React.FC<WrapperFormProps> = ({
-  action,
-  contract,
-  wethBalance,
-  ethBalance,
-  inputBalance,
-  setInputBalance,
-  gasLimit,
-  transactionData,
-  txPending,
-  txSuccess,
-  isTxError,
-  txError,
-}) => {
+const WrapperForm: React.FC<WrapperFormProps> = ({ action, gasLimit }) => {
+  const [inputBalance, setInputBalance] = useState<number>(0);
   const { chain } = useNetwork();
-  // form variables
+
+  const { ethBalance, wethBalance } = useBalances();
+  const handleSetMax: any = () => {
+    setInputBalance(action === 'deposit' ? ethBalance : wethBalance);
+  };
+
+  const {
+    writeDeposit,
+    dataDeposit,
+    isErrorDeposit,
+    errorDeposit,
+    isLoadingDeposit,
+    isSuccessDeposit,
+  } = useDeposit(inputBalance);
+
+  const {
+    writeWithdraw,
+    dataWithdraw,
+    isErrorWithdraw,
+    errorWithdraw,
+    isLoadingWithdraw,
+    isSuccessWithdraw,
+  } = useWithdraw(inputBalance);
+
   const {
     handleSubmit,
     register,
     formState: { dirtyFields, errors },
   } = useForm<IFormInput>();
-  /**
-   * handleSetMax gets passed down to TokenInfo
-   */
-  const handleSetMax: any = () => {
-    setInputBalance(
-      action === 'deposit'
-        ? (ethBalance - gasLimit).toFixed(6)
-        : (wethBalance - gasLimit).toFixed(6),
-    );
-  };
 
   // console.log(dirtyFields, errors);
 
   const onSubmit = async (data: IFormInput) => {
+    console.log(
+      writeDeposit,
+      dataDeposit,
+      isErrorDeposit,
+      errorDeposit,
+      isLoadingDeposit,
+      isSuccessDeposit,
+    );
     const amount = data.amount;
     console.log(`${amount} send to contract`);
-    contract?.();
+    if (action === 'deposit') writeDeposit();
+    if (action === 'withdraw') writeWithdraw();
+    // contract?.();
   };
 
   const successMessage = (
     <a
-      href={`${chain?.blockExplorers?.default.url}/tx/${transactionData?.hash}`}
+      href={`${chain?.blockExplorers?.default.url}/tx/${
+        dataDeposit?.hash || dataWithdraw?.hash
+      }`}
       target='_'
     >
       <span
@@ -97,17 +103,12 @@ const WrapperForm: React.FC<WrapperFormProps> = ({
     </a>
   );
 
-  useEffect(() => {}, [txError]);
+  useEffect(() => {}, [inputBalance]);
 
   return (
     <Container mt={12}>
       <Flex justify='end' my={3}>
-        <TokenInfo
-          deposit={action === 'deposit'}
-          ethBalance={ethBalance}
-          wethBalance={wethBalance}
-          gasLimit={gasLimit}
-        />
+        <TokenInfo deposit={action === 'deposit'} gasLimit={gasLimit} />
       </Flex>
       <form onSubmit={handleSubmit(onSubmit)}>
         <HStack marginBottom='32px'>
@@ -184,13 +185,24 @@ const WrapperForm: React.FC<WrapperFormProps> = ({
       <Flex
         color='white'
         justifyContent='center'
-        mt={txSuccess || isTxError || txPending ? '5' : 0}
+        mt={
+          isSuccessDeposit ||
+          isSuccessWithdraw ||
+          isErrorDeposit ||
+          isErrorWithdraw ||
+          isLoadingDeposit ||
+          isLoadingWithdraw
+            ? '5'
+            : 0
+        }
       >
-        {txPending
+        {isLoadingDeposit || isLoadingWithdraw
           ? 'Please wait while your transaction is being mined.'
           : null}
-        {txSuccess ? successMessage : null}
-        {isTxError ? `Error: ${txError.code}` : null}
+        {isSuccessDeposit || isSuccessWithdraw ? successMessage : null}
+        {isErrorDeposit || isErrorWithdraw
+          ? `Error: ${errorDeposit?.code || errorWithdraw?.code}`
+          : null}
       </Flex>
     </Container>
   );

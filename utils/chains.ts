@@ -1,16 +1,14 @@
-// import { Chain } from '@rainbow-me/rainbowkit';
 import { chain, configureChains } from 'wagmi';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
-
-const gnosisLogo: string = 'public/gnosis-logo.png';
+import gnosisLogo from 'public/gnosis-logo.png';
 
 const xdai: Chain = {
   id: 100,
   name: 'Gnosis Chain',
   network: 'gnosis',
-  iconUrl: gnosisLogo,
+  iconUrl: gnosisLogo.src,
   iconBackground: '#fff',
   nativeCurrency: {
     decimals: 18,
@@ -32,7 +30,6 @@ export const { chains, provider } = configureChains(
     xdai,
     chain.polygon,
     chain.arbitrum,
-    chain.arbitrumGoerli,
     chain.optimism,
     chain.goerli,
     chain.sepolia,

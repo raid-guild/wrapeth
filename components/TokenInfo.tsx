@@ -1,36 +1,31 @@
-import React from 'react';
 import { Button } from '@raidguild/design-system';
 // import { Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverCloseButton, PopoverBody } from '@chakra-ui/popover';
 import { useNetwork } from 'wagmi';
+import useBalances from '../hooks/useBalances';
 
 export interface TokenInfoProps {
   /**
    * Deposit or withdraw form?
    */
   deposit: boolean;
-  ethBalance: number;
-  wethBalance: number;
   gasLimit: any;
 }
 
 const TokenInfo: React.FC<TokenInfoProps> = ({
   deposit,
-  ethBalance,
-  wethBalance,
-  gasLimit,
+  // gasLimit,
 }) => {
   const { chain } = useNetwork();
-  const symbol = chain?.nativeCurrency?.symbol;
+  const { ethBalance, wethBalance } = useBalances();
 
-  // const gwei = Number(gasLimit.gwei).toFixed(2);
-  // const ether = Number(gasLimit.ether).toFixed(12);
+  const symbol = chain?.nativeCurrency?.symbol;
 
   return (
     // <Popover>
     //   <PopoverTrigger>
     <Button variant='ghost'>
       {`${deposit ? '' : 'W'}${symbol} Balance: ${
-        deposit ? ethBalance.toFixed(6) : wethBalance.toFixed(6)
+        deposit ? ethBalance?.substr(0, 6) || 0 : wethBalance?.substr(0, 6) || 0
       }`}
     </Button>
     // </PopoverTrigger>

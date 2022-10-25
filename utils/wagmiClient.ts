@@ -16,6 +16,7 @@ import { chains, provider } from './chains';
 const connectors = connectorsForWallets([
   {
     groupName: 'Popular',
+
     wallets: [
       injectedWallet({ chains }),
       metaMaskWallet({ chains, shimDisconnect: false }),
@@ -37,5 +38,5 @@ const connectors = connectorsForWallets([
 export const wagmiClient = createClient({
   provider,
   connectors,
-  autoConnect: false,
+  // autoConnect: true,
 });
