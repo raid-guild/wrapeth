@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Heading,
   Card,
@@ -24,7 +24,8 @@ export interface AppProps {
  */
 const App: React.FC<AppProps> = ({ children }) => {
   const [deposit, setDeposit] = useState<boolean>(true);
-  const { isConnected } = useAccount();
+  const [_isConnected, _setIsConnected] = useState<boolean>(false);
+  const { isConnected, address } = useAccount();
   const { chain } = useNetwork();
 
   const onButtonSelection = (index: number) => {
@@ -39,6 +40,14 @@ const App: React.FC<AppProps> = ({ children }) => {
         console.log(`Invalid input: ${index}`);
     }
   };
+
+  useEffect(() => {
+    if (isConnected) {
+      _setIsConnected(true);
+    } else {
+      _setIsConnected(false);
+    }
+  }, []);
 
   return (
     <>
@@ -63,7 +72,7 @@ const App: React.FC<AppProps> = ({ children }) => {
                 onSelect={onButtonSelection}
               />
 
-              {isConnected ? (
+              {_isConnected ? (
                 <WrapperForm action={deposit ? 'deposit' : 'withdraw'} />
               ) : (
                 <Heading

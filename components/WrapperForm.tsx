@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Button,
@@ -33,6 +33,8 @@ interface IFormInput {
  */
 const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const [inputBalance, setInputBalance] = useState<number>(0);
+  const [pendingMsg, setPendingMsg] = useState<string>();
+  const [successMsg, setSuccessMsg] = useState<string>();
   const { chain } = useNetwork();
   const { ethBalance, wethBalance } = useBalances();
   const { gasLimitEther } = useGasFee();
@@ -44,8 +46,8 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const {
     writeDeposit,
     dataDeposit,
-    isErrorDeposit,
-    errorDeposit,
+    // isErrorDeposit,
+    // errorDeposit,
     isLoadingDeposit,
     isSuccessDeposit,
   } = useDeposit(inputBalance);
@@ -53,8 +55,8 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const {
     writeWithdraw,
     dataWithdraw,
-    isErrorWithdraw,
-    errorWithdraw,
+    // isErrorWithdraw,
+    // errorWithdraw,
     isLoadingWithdraw,
     isSuccessWithdraw,
   } = useWithdraw(inputBalance);
@@ -72,6 +74,19 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
     if (action === 'deposit') writeDeposit();
     else writeWithdraw();
   };
+
+  useEffect(() => {
+    if (isLoadingDeposit || isLoadingWithdraw) {
+      setPendingMsg('Please wait while your transaction is being mined.');
+    } else {
+      setPendingMsg();
+    }
+  }, [
+    isLoadingDeposit,
+    isLoadingWithdraw,
+    isSuccessDeposit,
+    isSuccessWithdraw,
+  ]);
 
   const successMessage = (
     <a
@@ -181,10 +196,12 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
             : 0
         }
       >
-        {isLoadingDeposit || isLoadingWithdraw
-          ? 'Please wait while your transaction is being mined.'
+        {/* {isLoadingDeposit || isLoadingWithdraw ? 'Please wait while your transaction is being mined.' : null} */}
+        {pendingMsg}
+        {(isSuccessDeposit && !isLoadingDeposit) ||
+        (isSuccessWithdraw && !isLoadingWithdraw)
+          ? successMessage
           : null}
-        {isSuccessDeposit || isSuccessWithdraw ? successMessage : null}
         {/* {isErrorDeposit || isErrorWithdraw ? `Error: ${errorDeposit?.code || errorWithdraw?.code}` : null} */}
       </Flex>
     </Container>

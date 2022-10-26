@@ -3,6 +3,7 @@ import { infuraProvider } from 'wagmi/providers/infura';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import gnosisLogo from 'public/gnosis-logo.png';
+import { Chain } from 'types';
 
 const xdai: Chain = {
   id: 100,
@@ -38,7 +39,7 @@ export const { chains, provider } = configureChains(
     infuraProvider({ apiKey: process.env.REACT_APP_RPC_KEY }),
     alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_KEY }),
     jsonRpcProvider({
-      rpc: (chain) => ({
+      rpc: (chain: any) => ({
         http: chain.rpcUrls.default,
       }),
     }),

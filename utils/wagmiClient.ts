@@ -38,5 +38,5 @@ const connectors = connectorsForWallets([
 export const wagmiClient = createClient({
   provider,
   connectors,
-  // autoConnect: true,
+  autoConnect: true,
 });

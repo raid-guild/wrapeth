@@ -20,3 +20,15 @@ export type Network = {
   block_explorer: string;
   hub_sort_order?: number;
 };
+
+export type Chain = {
+  id: number;
+  name: string;
+  network: string;
+  iconUrl: object;
+  iconBackground: string;
+  nativeCurrency: object;
+  rpcUrls: object;
+  blockExplorers: object;
+  testnet: boolean;
+};
