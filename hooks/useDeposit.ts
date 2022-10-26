@@ -36,35 +36,31 @@ const useDeposit = (inputBalance: number) => {
     },
   });
 
-  const {
-    write: writeDeposit,
-    data: dataDeposit,
-    // isError: isErrorDeposit,
-    // error: errorDeposit,
-  } = useContractWrite({
+  const { write: writeDeposit, data: dataDeposit } = useContractWrite({
     ...config,
     request: config.request,
   });
 
-  const { isLoading: isLoadingDeposit, isSuccess: isSuccessDeposit } =
-    useWaitForTransaction({
-      hash: dataDeposit?.hash,
-      onSuccess(data: any) {
-        console.log('Success', data);
-      },
-      onError(error: any) {
-        console.log('Error', error);
-      },
-    });
+  const {
+    isLoading: isLoadingDeposit,
+    isSuccess: isSuccessDeposit,
+    status: statusDeposit,
+  } = useWaitForTransaction({
+    hash: dataDeposit?.hash,
+    onSuccess(data: any) {
+      console.log('Success', data);
+    },
+    onError(error: any) {
+      console.log('Error', error);
+    },
+  });
 
   return {
     writeDeposit,
     dataDeposit,
     isLoadingDeposit,
-    // isErrorDeposit,
-    // errorDeposit,
-    isLoadingDeposit,
     isSuccessDeposit,
+    statusDeposit,
   };
 };
 

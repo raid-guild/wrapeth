@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Button,
@@ -8,7 +8,6 @@ import {
   HStack,
   ChakraInput,
   Toast,
-  Box,
 } from '@raidguild/design-system';
 import { FiAlertTriangle } from 'react-icons/fi';
 import { IoMdOpen } from 'react-icons/io';
@@ -35,8 +34,6 @@ interface IFormInput {
  */
 const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const [inputBalance, setInputBalance] = useState<number>(0);
-  const [pendingMsg, setPendingMsg] = useState<string>();
-  const [successMsg, setSuccessMsg] = useState<string>();
   const { chain } = useNetwork();
   const { ethBalance, wethBalance } = useBalances();
   const { gasLimitEther } = useGasFee();
@@ -51,17 +48,16 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
     );
   };
 
-  const { writeDeposit, dataDeposit, isLoadingDeposit, isSuccessDeposit } =
-    useDeposit(inputBalance);
+  const { writeDeposit, dataDeposit, statusDeposit } = useDeposit(inputBalance);
 
-  const { writeWithdraw, dataWithdraw, isLoadingWithdraw, isSuccessWithdraw } =
+  const { writeWithdraw, dataWithdraw, statusWithdraw } =
     useWithdraw(inputBalance);
 
   const {
     handleSubmit,
     register,
-    reset,
-    formState: { dirtyFields, errors, isSubmitSuccessful },
+
+    formState: { dirtyFields, errors },
   } = useForm<IFormInput>({
     defaultValues: {
       amount: 0,
@@ -97,35 +93,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
     </a>
   );
 
-  useEffect(() => {
-    setSuccessMsg();
-    if (isSuccessDeposit || isSuccessWithdraw) setSuccessMsg(successMessage);
-    else setSuccessMsg();
-
-    if (isLoadingDeposit || isLoadingWithdraw) {
-      setPendingMsg('Wait a moment while your transaction is being mined...');
-      setSuccessMsg();
-    } else setPendingMsg();
-  }, [
-    isLoadingDeposit,
-    isSuccessDeposit,
-    isLoadingWithdraw,
-    isSuccessWithdraw,
-  ]);
-
-  // useEffect to handle resetting of react-hook-form errors
-  useEffect(() => {
-    reset(
-      {
-        amount: 0,
-      },
-      { keepErrors: false },
-      { keepDefaultValues: true },
-    );
-    if (isSubmitSuccessful) {
-      reset({ amount: 0 });
-    }
-  }, [action, reset, isSubmitSuccessful]);
+  console.log(statusDeposit, statusWithdraw);
 
   return (
     <Container mt={12}>
@@ -206,26 +174,16 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
         </Button>
       </form>
 
-      <Flex
-        color='white'
-        justifyContent='center'
-        mt={
-          isSuccessDeposit ||
-          isSuccessWithdraw ||
-          // isErrorDeposit ||
-          // isErrorWithdraw ||
-          isLoadingDeposit ||
-          isLoadingWithdraw
-            ? '5'
-            : 0
-        }
-      >
-        {isLoadingDeposit || isLoadingWithdraw ? (
-          <Toast title='Pending transaction' description={pendingMsg} />
+      <Flex color='white' justifyContent='center'>
+        {statusDeposit === 'loading' || statusWithdraw === 'loading' ? (
+          <Toast
+            title='Pending transaction'
+            description='Wait a moment while your transaction is being mined...'
+          />
         ) : null}
-        {isLoadingDeposit || isLoadingWithdraw ? null : isSuccessDeposit ||
-          isSuccessWithdraw ? (
-          <Toast title='Success!' description={successMsg} type='success' />
+        {(statusDeposit === 'success' && statusWithdraw !== 'loading') ||
+        (statusWithdraw === 'success' && statusDeposit !== 'loading') ? (
+          <Toast title='Success!' description={successMessage} type='success' />
         ) : null}
       </Flex>
     </Container>

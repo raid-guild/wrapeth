@@ -30,34 +30,31 @@ const useWithdraw = (inputBalance: number) => {
     },
   });
 
-  const {
-    write: writeWithdraw,
-    data: dataWithdraw,
-    isError: isErrorWithdraw,
-    error: errorWithdraw,
-  } = useContractWrite({
+  const { write: writeWithdraw, data: dataWithdraw } = useContractWrite({
     ...config,
     request: config.request,
   });
 
-  const { isLoading: isLoadingWithdraw, isSuccess: isSuccessWithdraw } =
-    useWaitForTransaction({
-      hash: dataWithdraw?.hash,
-      onSuccess(data: any) {
-        console.log('Success', data);
-      },
-      onError(error: any) {
-        console.log('Error', error);
-      },
-    });
+  const {
+    isLoading: isLoadingWithdraw,
+    isSuccess: isSuccessWithdraw,
+    status: statusWithdraw,
+  } = useWaitForTransaction({
+    hash: dataWithdraw?.hash,
+    onSuccess(data: any) {
+      console.log('Success', data);
+    },
+    onError(error: any) {
+      console.log('Error', error);
+    },
+  });
 
   return {
     writeWithdraw,
     dataWithdraw,
-    isErrorWithdraw,
-    errorWithdraw,
     isLoadingWithdraw,
     isSuccessWithdraw,
+    statusWithdraw,
   };
 };
 
