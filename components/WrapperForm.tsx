@@ -38,7 +38,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const { ethBalance, wethBalance } = useBalances();
   const { gasLimitEther } = useGasFee();
 
-  const handleSetMax: any = () => {
+  const handleSetMax: any = (): void => {
     const eth = +ethBalance;
     const weth = +wethBalance;
     setInputBalance(
@@ -56,18 +56,17 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const {
     handleSubmit,
     register,
-
-    formState: { dirtyFields, errors },
+    formState: { errors },
   } = useForm<IFormInput>({
     defaultValues: {
       amount: 0,
     },
   });
-  // console.log(dirtyFields, errors);
 
   const onSubmit = async (data: IFormInput) => {
     const amount = data.amount;
     console.log(`${amount} send to contract`);
+    if (!writeDeposit || !writeWithdraw) return;
     if (action === 'deposit') writeDeposit();
     else writeWithdraw();
   };
@@ -87,7 +86,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
           fontWeight: 'normal',
         }}
       >
-        Transaction success! View on {chain?.blockExplorers.default.name}
+        Transaction success! View on {chain?.blockExplorers?.default.name}
         <IoMdOpen style={{ marginLeft: '0.5em' }} />
       </span>
     </a>
@@ -112,14 +111,14 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
               {...register('amount', {
                 required: 'Input cannot be blank',
                 valueAsNumber: false,
-                validate: (value) => {
+                validate: (value: any) => {
                   if (action === 'deposit') {
                     value > 0 && value < +ethBalance - +gasLimitEther;
                   } else {
                     value > 0 && value <= +wethBalance;
                   }
                 },
-                onChange: (e) => setInputBalance(e.target.value),
+                onChange: (e: any) => setInputBalance(e.target.value),
                 max: {
                   value:
                     action === 'deposit'
@@ -150,16 +149,10 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
         </HStack>
         <Flex color='white' opacity='0.65' mt='-3' mb='5'>
           {errors.amount && (
-            <span
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}
-            >
+            <Flex as='span' alignItems='center'>
               <FiAlertTriangle style={{ marginRight: '0.5rem' }} />
               {errors.amount.message}
-            </span>
+            </Flex>
           )}
         </Flex>
 

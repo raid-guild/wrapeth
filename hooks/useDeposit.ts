@@ -15,7 +15,7 @@ const useDeposit = (inputBalance: number) => {
   const { chain } = useNetwork();
   const debouncedValue = useDebounce(inputBalance, 500);
 
-  const contractAddress = wethAddrs?.[chain?.network];
+  const contractAddress = wethAddrs?.[chain?.network || 'homestead'];
 
   !inputBalance ? (inputBalance = 0) : null;
 
@@ -36,16 +36,16 @@ const useDeposit = (inputBalance: number) => {
     },
   });
 
+  // let writeDeposit = () => {};
+  // const depositContract = useContractWrite({
   const { write: writeDeposit, data: dataDeposit } = useContractWrite({
     ...config,
     request: config.request,
   });
+  // writeDeposit = depositContract.write;
+  // const dataDeposit = depositContract.data
 
-  const {
-    isLoading: isLoadingDeposit,
-    isSuccess: isSuccessDeposit,
-    status: statusDeposit,
-  } = useWaitForTransaction({
+  const { status: statusDeposit } = useWaitForTransaction({
     hash: dataDeposit?.hash,
     onSuccess(data: any) {
       console.log('Success', data);
@@ -58,8 +58,6 @@ const useDeposit = (inputBalance: number) => {
   return {
     writeDeposit,
     dataDeposit,
-    isLoadingDeposit,
-    isSuccessDeposit,
     statusDeposit,
   };
 };

@@ -22,10 +22,10 @@ export interface AppProps {
 /**
  * Primary UI component for user interaction
  */
-const App: React.FC<AppProps> = ({ children }) => {
+const App: React.FC<AppProps> = ({ children }: AppProps) => {
   const [deposit, setDeposit] = useState<boolean>(true);
   const [_isConnected, _setIsConnected] = useState<boolean>(false);
-  const { isConnected, address } = useAccount();
+  const { isConnected } = useAccount();
   const { chain } = useNetwork();
 
   const onButtonSelection = (index: number) => {
@@ -78,7 +78,7 @@ const App: React.FC<AppProps> = ({ children }) => {
                 <Heading
                   color='whiteAlpha.900'
                   variant='noShadow'
-                  mt={5}
+                  mt='5'
                   size='lg'
                 >
                   Connect to {deposit ? 'wrap' : 'unwrap'} ETH

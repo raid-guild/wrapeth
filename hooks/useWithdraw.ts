@@ -13,7 +13,7 @@ const useWithdraw = (inputBalance: number) => {
   const { chain } = useNetwork();
   const debouncedValue = useDebounce(inputBalance, 500);
 
-  const contractAddress = wethAddrs?.[chain?.network];
+  const contractAddress = wethAddrs?.[chain?.network || 'homestead'];
   !inputBalance ? (inputBalance = 0) : null;
 
   const { config } = usePrepareContractWrite({
@@ -22,10 +22,10 @@ const useWithdraw = (inputBalance: number) => {
     functionName: 'withdraw',
     enabled: Boolean(debouncedValue),
     args: [BigNumber.from(utils.parseEther(debouncedValue.toString() || '0'))],
-    onSuccess(data: any) {
+    onSuccess(data: any): any {
       return data;
     },
-    onError(error: any) {
+    onError(error: any): any {
       return error;
     },
   });
@@ -35,11 +35,7 @@ const useWithdraw = (inputBalance: number) => {
     request: config.request,
   });
 
-  const {
-    isLoading: isLoadingWithdraw,
-    isSuccess: isSuccessWithdraw,
-    status: statusWithdraw,
-  } = useWaitForTransaction({
+  const { status: statusWithdraw } = useWaitForTransaction({
     hash: dataWithdraw?.hash,
     onSuccess(data: any) {
       console.log('Success', data);
@@ -52,8 +48,6 @@ const useWithdraw = (inputBalance: number) => {
   return {
     writeWithdraw,
     dataWithdraw,
-    isLoadingWithdraw,
-    isSuccessWithdraw,
     statusWithdraw,
   };
 };

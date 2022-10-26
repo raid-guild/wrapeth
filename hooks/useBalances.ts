@@ -5,7 +5,7 @@ const useBalances = () => {
   const { address } = useAccount();
   const { chain } = useNetwork();
 
-  const contractAddress = wethAddrs?.[chain?.network];
+  const contractAddress = wethAddrs?.[chain?.network || 'homestead'];
 
   const getEthBalance = useBalance({
     addressOrName: address,
@@ -20,8 +20,8 @@ const useBalances = () => {
     token: contractAddress,
   });
 
-  const ethBalance = getEthBalance.data?.formatted;
-  const wethBalance = getWethBalance.data?.formatted;
+  const ethBalance = getEthBalance.data?.formatted || '0';
+  const wethBalance = getWethBalance.data?.formatted || '0';
 
   return { ethBalance, wethBalance };
 };

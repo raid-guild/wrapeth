@@ -1,7 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
 import { RGThemeProvider } from '@raidguild/design-system';
-import { LoaderContextProvider } from 'contexts/loaderContext';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { wagmiClient } from 'utils/wagmiClient';
 import { chains } from 'utils/chains';
@@ -24,13 +23,11 @@ const App = ({ Component, pageProps }: AppProps) => (
       <link rel='icon' href='/favicon.ico' />
     </Head>
     <RGThemeProvider>
-      <LoaderContextProvider>
-        <WagmiConfig client={wagmiClient}>
-          <RainbowKitProvider chains={chains}>
-            <Component {...pageProps} />
-          </RainbowKitProvider>
-        </WagmiConfig>
-      </LoaderContextProvider>
+      <WagmiConfig client={wagmiClient}>
+        <RainbowKitProvider chains={chains}>
+          <Component {...pageProps} />
+        </RainbowKitProvider>
+      </WagmiConfig>
     </RGThemeProvider>
   </>
 );
