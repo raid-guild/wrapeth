@@ -39,8 +39,8 @@ const useDeposit = (inputBalance: number) => {
   const {
     write: writeDeposit,
     data: dataDeposit,
-    isError: isErrorDeposit,
-    error: errorDeposit,
+    // isError: isErrorDeposit,
+    // error: errorDeposit,
   } = useContractWrite({
     ...config,
     request: config.request,
@@ -60,8 +60,9 @@ const useDeposit = (inputBalance: number) => {
   return {
     writeDeposit,
     dataDeposit,
-    isErrorDeposit,
-    errorDeposit,
+    isLoadingDeposit,
+    // isErrorDeposit,
+    // errorDeposit,
     isLoadingDeposit,
     isSuccessDeposit,
   };

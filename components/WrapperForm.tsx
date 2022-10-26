@@ -7,6 +7,8 @@ import {
   Container,
   HStack,
   ChakraInput,
+  Toast,
+  Box,
 } from '@raidguild/design-system';
 import { FiAlertTriangle } from 'react-icons/fi';
 import { IoMdOpen } from 'react-icons/io';
@@ -42,7 +44,6 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const handleSetMax: any = () => {
     const eth = +ethBalance;
     const weth = +wethBalance;
-    console.log(typeof eth, typeof weth);
     setInputBalance(
       action === 'deposit'
         ? parseFloat(eth.toFixed(4))
@@ -50,29 +51,22 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
     );
   };
 
-  const {
-    writeDeposit,
-    dataDeposit,
-    // isErrorDeposit,
-    // errorDeposit,
-    isLoadingDeposit,
-    isSuccessDeposit,
-  } = useDeposit(inputBalance);
+  const { writeDeposit, dataDeposit, isLoadingDeposit, isSuccessDeposit } =
+    useDeposit(inputBalance);
 
-  const {
-    writeWithdraw,
-    dataWithdraw,
-    // isErrorWithdraw,
-    // errorWithdraw,
-    isLoadingWithdraw,
-    isSuccessWithdraw,
-  } = useWithdraw(inputBalance);
+  const { writeWithdraw, dataWithdraw, isLoadingWithdraw, isSuccessWithdraw } =
+    useWithdraw(inputBalance);
 
   const {
     handleSubmit,
     register,
-    formState: { dirtyFields, errors },
-  } = useForm<IFormInput>();
+    reset,
+    formState: { dirtyFields, errors, isSubmitSuccessful },
+  } = useForm<IFormInput>({
+    defaultValues: {
+      amount: 0,
+    },
+  });
   // console.log(dirtyFields, errors);
 
   const onSubmit = async (data: IFormInput) => {
@@ -81,19 +75,6 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
     if (action === 'deposit') writeDeposit();
     else writeWithdraw();
   };
-
-  useEffect(() => {
-    if (isLoadingDeposit || isLoadingWithdraw) {
-      setPendingMsg('Please wait while your transaction is being mined.');
-    } else {
-      setPendingMsg();
-    }
-  }, [
-    isLoadingDeposit,
-    isLoadingWithdraw,
-    isSuccessDeposit,
-    isSuccessWithdraw,
-  ]);
 
   const successMessage = (
     <a
@@ -107,14 +88,44 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          fontWeight: 'bold',
+          fontWeight: 'normal',
         }}
       >
-        Success! Click here to view transaction details{' '}
+        Transaction success! View on {chain?.blockExplorers.default.name}
         <IoMdOpen style={{ marginLeft: '0.5em' }} />
       </span>
     </a>
   );
+
+  useEffect(() => {
+    setSuccessMsg();
+    if (isSuccessDeposit || isSuccessWithdraw) setSuccessMsg(successMessage);
+    else setSuccessMsg();
+
+    if (isLoadingDeposit || isLoadingWithdraw) {
+      setPendingMsg('Wait a moment while your transaction is being mined...');
+      setSuccessMsg();
+    } else setPendingMsg();
+  }, [
+    isLoadingDeposit,
+    isSuccessDeposit,
+    isLoadingWithdraw,
+    isSuccessWithdraw,
+  ]);
+
+  // useEffect to handle resetting of react-hook-form errors
+  useEffect(() => {
+    reset(
+      {
+        amount: 0,
+      },
+      { keepErrors: false },
+      { keepDefaultValues: true },
+    );
+    if (isSubmitSuccessful) {
+      reset({ amount: 0 });
+    }
+  }, [action, reset, isSubmitSuccessful]);
 
   return (
     <Container mt={12}>
@@ -133,14 +144,20 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
               {...register('amount', {
                 required: 'Input cannot be blank',
                 valueAsNumber: false,
-                validate: (value) => value > 0,
+                validate: (value) => {
+                  if (action === 'deposit') {
+                    value > 0 && value < +ethBalance - +gasLimitEther;
+                  } else {
+                    value > 0 && value <= +wethBalance;
+                  }
+                },
                 onChange: (e) => setInputBalance(e.target.value),
                 max: {
                   value:
                     action === 'deposit'
                       ? +ethBalance - +gasLimitEther
                       : +wethBalance,
-                  message: `Value must be less than your balance, plus gas required for transaction`,
+                  message: `Input must be less than your full balance, plus enough to cover transaction fees...`,
                 },
                 min: {
                   value: 0,
@@ -203,13 +220,12 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
             : 0
         }
       >
-        {/* {isLoadingDeposit || isLoadingWithdraw ? 'Please wait while your transaction is being mined.' : null} */}
-        {pendingMsg}
-        {(isSuccessDeposit && !isLoadingDeposit) ||
-        (isSuccessWithdraw && !isLoadingWithdraw)
-          ? successMessage
-          : null}
-        {/* {isErrorDeposit || isErrorWithdraw ? `Error: ${errorDeposit?.code || errorWithdraw?.code}` : null} */}
+        {isLoadingDeposit || isLoadingWithdraw ? (
+          <Toast title='Pending transaction' description={pendingMsg} />
+        ) : null}
+        {isSuccessDeposit || isSuccessWithdraw ? (
+          <Toast title='Success!' description={successMsg} type='success' />
+        ) : null}
       </Flex>
     </Container>
   );
