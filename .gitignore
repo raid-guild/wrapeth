@@ -6,3 +6,6 @@ build
 .env.local
 
 .next
+
+.yarn
+yarnrc.yml
