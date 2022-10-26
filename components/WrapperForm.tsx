@@ -223,7 +223,8 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
         {isLoadingDeposit || isLoadingWithdraw ? (
           <Toast title='Pending transaction' description={pendingMsg} />
         ) : null}
-        {isSuccessDeposit || isSuccessWithdraw ? (
+        {isLoadingDeposit || isLoadingWithdraw ? null : isSuccessDeposit ||
+          isSuccessWithdraw ? (
           <Toast title='Success!' description={successMsg} type='success' />
         ) : null}
       </Flex>
