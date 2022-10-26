@@ -40,7 +40,14 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const { gasLimitEther } = useGasFee();
 
   const handleSetMax: any = () => {
-    setInputBalance(action === 'deposit' ? ethBalance : wethBalance);
+    const eth = +ethBalance;
+    const weth = +wethBalance;
+    console.log(typeof eth, typeof weth);
+    setInputBalance(
+      action === 'deposit'
+        ? parseFloat(eth.toFixed(4))
+        : parseFloat(weth.toFixed(4)),
+    );
   };
 
   const {
