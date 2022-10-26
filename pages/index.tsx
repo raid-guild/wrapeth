@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Heading,
   Card,
@@ -9,12 +9,10 @@ import {
   BuiltByRaidGuildComponent,
 } from '@raidguild/design-system';
 import '@rainbow-me/rainbowkit/styles.css';
-import { useAccount, useNetwork, useFeeData } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 import { WrapperForm } from 'components';
 import { Header } from 'components';
 import { ConnectWallet } from 'components';
-import { utils } from 'ethers';
-
 import '@fontsource/uncial-antiqua';
 
 export interface AppProps {
@@ -26,11 +24,8 @@ export interface AppProps {
  */
 const App: React.FC<AppProps> = ({ children }) => {
   const [deposit, setDeposit] = useState<boolean>(true);
-  const [gasLimit, setGasLimit] = useState<object | undefined>();
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const { chain } = useNetwork();
-
-  const { data: feeData } = useFeeData();
 
   const onButtonSelection = (index: number) => {
     switch (index) {
@@ -44,14 +39,6 @@ const App: React.FC<AppProps> = ({ children }) => {
         console.log(`Invalid input: ${index}`);
     }
   };
-
-  useEffect(() => {
-    if (isConnected) {
-      const maxGasFee = feeData?.maxFeePerGas;
-      const gasEther = utils.formatUnits(maxGasFee || '0');
-      setGasLimit(gasEther);
-    }
-  }, [chain, address]);
 
   return (
     <>
@@ -77,10 +64,7 @@ const App: React.FC<AppProps> = ({ children }) => {
               />
 
               {isConnected ? (
-                <WrapperForm
-                  action={deposit ? 'deposit' : 'withdraw'}
-                  gasLimit={gasLimit}
-                />
+                <WrapperForm action={deposit ? 'deposit' : 'withdraw'} />
               ) : (
                 <Heading
                   color='whiteAlpha.900'

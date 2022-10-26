@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Button,
@@ -15,13 +15,13 @@ import TokenInfo from './TokenInfo';
 import useBalances from 'hooks/useBalances';
 import useDeposit from 'hooks/useDeposit';
 import useWithdraw from 'hooks/useWithdraw';
+import useGasFee from 'hooks/useGasFee';
 
 export interface WrapperFormProps {
   /**
    * action is either 'deposit' or 'withdraw'
    */
   action: string;
-  gasLimit: any;
 }
 
 interface IFormInput {
@@ -31,11 +31,12 @@ interface IFormInput {
 /**
  * Interface for depositinging ETH or native token and receiving wETH
  */
-const WrapperForm: React.FC<WrapperFormProps> = ({ action, gasLimit }) => {
+const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const [inputBalance, setInputBalance] = useState<number>(0);
   const { chain } = useNetwork();
-
   const { ethBalance, wethBalance } = useBalances();
+  const { gasLimitEther } = useGasFee();
+
   const handleSetMax: any = () => {
     setInputBalance(action === 'deposit' ? ethBalance : wethBalance);
   };
@@ -63,23 +64,13 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action, gasLimit }) => {
     register,
     formState: { dirtyFields, errors },
   } = useForm<IFormInput>();
-
   // console.log(dirtyFields, errors);
 
   const onSubmit = async (data: IFormInput) => {
-    console.log(
-      writeDeposit,
-      dataDeposit,
-      isErrorDeposit,
-      errorDeposit,
-      isLoadingDeposit,
-      isSuccessDeposit,
-    );
     const amount = data.amount;
     console.log(`${amount} send to contract`);
     if (action === 'deposit') writeDeposit();
-    if (action === 'withdraw') writeWithdraw();
-    // contract?.();
+    else writeWithdraw();
   };
 
   const successMessage = (
@@ -103,12 +94,10 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action, gasLimit }) => {
     </a>
   );
 
-  useEffect(() => {}, [inputBalance]);
-
   return (
     <Container mt={12}>
       <Flex justify='end' my={3}>
-        <TokenInfo deposit={action === 'deposit'} gasLimit={gasLimit} />
+        <TokenInfo deposit={action === 'deposit'} />
       </Flex>
       <form onSubmit={handleSubmit(onSubmit)}>
         <HStack marginBottom='32px'>
@@ -127,12 +116,8 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action, gasLimit }) => {
                 max: {
                   value:
                     action === 'deposit'
-                      ? +ethBalance
-                        ? +ethBalance - +gasLimit
-                        : 0
-                      : +wethBalance
-                      ? +wethBalance
-                      : 0,
+                      ? +ethBalance - +gasLimitEther
+                      : +wethBalance,
                   message: `Value must be less than your balance, plus gas required for transaction`,
                 },
                 min: {
@@ -188,8 +173,8 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action, gasLimit }) => {
         mt={
           isSuccessDeposit ||
           isSuccessWithdraw ||
-          isErrorDeposit ||
-          isErrorWithdraw ||
+          // isErrorDeposit ||
+          // isErrorWithdraw ||
           isLoadingDeposit ||
           isLoadingWithdraw
             ? '5'
@@ -200,9 +185,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action, gasLimit }) => {
           ? 'Please wait while your transaction is being mined.'
           : null}
         {isSuccessDeposit || isSuccessWithdraw ? successMessage : null}
-        {isErrorDeposit || isErrorWithdraw
-          ? `Error: ${errorDeposit?.code || errorWithdraw?.code}`
-          : null}
+        {/* {isErrorDeposit || isErrorWithdraw ? `Error: ${errorDeposit?.code || errorWithdraw?.code}` : null} */}
       </Flex>
     </Container>
   );
