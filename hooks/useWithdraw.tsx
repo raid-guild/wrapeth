@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   useNetwork,
   usePrepareContractWrite,
@@ -35,60 +36,35 @@ const useWithdraw = (inputBalance: number) => {
   const { write: writeWithdraw, data: dataWithdraw } = useContractWrite({
     ...config,
     request: config.request,
-    onSuccess(data) {
-      console.log('tx submitted', data);
-      Toast({
-        render: (props: RenderProps) =>
-          Toast({
-            type: 'success',
-            title: 'Transaction pending...',
-            description: `Please wait a moment...`,
-            isClosable: true,
-            duration: 20000,
-          }),
+    onSuccess() {
+      toast({
+        render: () => <Toast title='Submitted' />,
       });
     },
     onError(error: any) {
-      Toast({
-        render: (props: RenderProps) =>
-          Toast({
-            type: 'error',
-            title: 'Error!',
-            Description: `${JSON.stringify(error)}`,
-            isClosable: true,
-            duration: 20000,
-          }),
+      // eslint-disable-next-line no-console
+      console.log(error);
+      toast({
+        duration: 20000,
+        render: () => <Toast title='Error!' />,
       });
     },
   });
 
   const { status: statusWithdraw } = useWaitForTransaction({
     hash: dataWithdraw?.hash,
-    onSuccess: (data: any) => {
-      console.log('Success', data);
-      Toast({
-        render: (props: RenderProps) =>
-          Toast({
-            type: 'success',
-            title: 'Success!',
-            description: `Unwrapped ${chain?.nativeCurrency?.symbol}!`,
-            isClosable: true,
-            type: 'error',
-            duration: 20000,
-          }),
+    onSuccess: () => {
+      toast({
+        duration: 20000,
+        render: () => <Toast title='Success!' />,
       });
     },
     onError(error: any) {
+      // eslint-disable-next-line no-console
       console.log('Error', error);
-      Toast({
-        render: (props: RenderProps) =>
-          Toast({
-            type: 'error',
-            title: 'Error!',
-            Description: `${JSON.stringify(error)}`,
-            isClosable: true,
-            duration: 20000,
-          }),
+      toast({
+        duration: 20000,
+        render: () => <Toast title='Error!' />,
       });
     },
   });

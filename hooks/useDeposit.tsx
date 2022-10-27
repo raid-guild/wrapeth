@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   useAccount,
   useNetwork,
@@ -43,26 +44,23 @@ const useDeposit = (inputBalance: number) => {
     onSuccess() {
       // console.log('tx submitted', data);
       toast({
-        render: (props: RenderProps) =>
+        isClosable: true,
+        duration: 20000,
+        render: () =>
           Toast({
             type: 'success',
             title: 'Transaction pending...',
             description: `Please wait a moment...`,
-            isClosable: true,
-            duration: 20000,
           }),
       });
     },
     onError(error: any) {
+      // eslint-disable-next-line no-console
+      console.log(error);
       toast({
-        render: (props: RenderProps) =>
-          Toast({
-            type: 'error',
-            title: 'Error!',
-            description: `${JSON.stringify(error)}`,
-            isClosable: true,
-            duration: 20000,
-          }),
+        isClosable: true,
+        duration: 20000,
+        render: () => <Toast title='Error!' />,
       });
     },
   });
@@ -72,26 +70,18 @@ const useDeposit = (inputBalance: number) => {
     onSuccess: () => {
       // console.log('Success', data);
       toast({
-        render: (props: RenderProps) =>
-          Toast({
-            type: 'success',
-            title: 'Success!',
-            description: `Wrapped ${chain?.nativeCurrency?.symbol}!`,
-            isClosable: true,
-            duration: 20000,
-          }),
+        isClosable: true,
+        duration: 20000,
+        render: () => <Toast title='Success!' />,
       });
     },
     onError(error: any) {
+      // eslint-disable-next-line no-console
+      console.log(error);
       toast({
-        render: (props: RenderProps) =>
-          Toast({
-            type: 'error',
-            title: 'Error!',
-            description: `${JSON.stringify(error)}`,
-            isClosable: true,
-            duration: 20000,
-          }),
+        isClosable: true,
+        duration: 20000,
+        render: () => <Toast title='Error!' />,
       });
     },
   });
