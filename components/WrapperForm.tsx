@@ -111,7 +111,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
               {...register('amount', {
                 required: 'Input cannot be blank',
                 valueAsNumber: false,
-                validate: (value: any) => {
+                validate: (value: any): void => {
                   if (action === 'deposit') {
                     value > 0 && value < +ethBalance - +gasLimitEther;
                   } else {
