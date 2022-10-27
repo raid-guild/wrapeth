@@ -38,14 +38,15 @@ const useWithdraw = (inputBalance: number) => {
     request: config.request,
     onSuccess() {
       toast({
-        render: () => <Toast title='Submitted' />,
+        duration: 2000,
+        render: () => <Toast title='Transaction pending...' />,
       });
     },
     onError(error: any) {
       // eslint-disable-next-line no-console
       console.log(error);
       toast({
-        duration: 20000,
+        duration: 5000,
         render: () => <Toast title='Error!' />,
       });
     },
@@ -55,18 +56,18 @@ const useWithdraw = (inputBalance: number) => {
     hash: dataWithdraw?.hash,
     onSuccess: () => {
       toast({
-        duration: 20000,
+        duration: 5000,
         render: () => <Toast title='Success!' />,
       });
     },
-    onError(error: any) {
-      // eslint-disable-next-line no-console
-      console.log('Error', error);
-      toast({
-        duration: 20000,
-        render: () => <Toast title='Error!' />,
-      });
-    },
+    // onError(error: any) {
+    //   // eslint-disable-next-line no-console
+    //   console.log('Error', error);
+    //   toast({
+    //     duration: 5000,
+    //     render: () => <Toast title='Error!' />,
+    //   });
+    // },
   });
 
   return {

@@ -42,24 +42,16 @@ const useDeposit = (inputBalance: number) => {
     ...config,
     request: config.request,
     onSuccess() {
-      // console.log('tx submitted', data);
       toast({
-        isClosable: true,
-        duration: 20000,
-        render: () =>
-          Toast({
-            type: 'success',
-            title: 'Transaction pending...',
-            description: `Please wait a moment...`,
-          }),
+        duration: 2000,
+        render: () => <Toast title='Transaction pending...' />,
       });
     },
     onError(error: any) {
       // eslint-disable-next-line no-console
       console.log(error);
       toast({
-        isClosable: true,
-        duration: 20000,
+        duration: 5000,
         render: () => <Toast title='Error!' />,
       });
     },
@@ -70,20 +62,18 @@ const useDeposit = (inputBalance: number) => {
     onSuccess: () => {
       // console.log('Success', data);
       toast({
-        isClosable: true,
-        duration: 20000,
+        duration: 5000,
         render: () => <Toast title='Success!' />,
       });
     },
-    onError(error: any) {
-      // eslint-disable-next-line no-console
-      console.log(error);
-      toast({
-        isClosable: true,
-        duration: 20000,
-        render: () => <Toast title='Error!' />,
-      });
-    },
+    // onError(error: any) {
+    //   // eslint-disable-next-line no-console
+    //   console.log(error);
+    //   toast({
+    //     duration: 5000,
+    //     render: () => <Toast title='Error!' />,
+    //   });
+    // },
   });
 
   return {
