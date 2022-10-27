@@ -7,7 +7,7 @@ import {
   useContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
-import { useToast } from '@raidguild/design-system';
+import { useToast, Toast } from '@raidguild/design-system';
 import { useDebounce } from 'usehooks-ts';
 import { utils, BigNumber } from 'ethers';
 
@@ -42,11 +42,26 @@ const useDeposit = (inputBalance: number) => {
     onSuccess(data) {
       console.log('tx submitted', data);
       toast({
-        title: 'Transaction pending...',
-        description: `Please wait a moment...`,
-        isClosable: true,
-        status: 'info',
-        duration: 10000,
+        render: (props: RenderProps) =>
+          Toast({
+            type: 'success',
+            title: 'Transaction pending...',
+            description: `Please wait a moment...`,
+            isClosable: true,
+            duration: 20000,
+          }),
+      });
+    },
+    onError(error: any) {
+      toast({
+        render: (props: RenderProps) =>
+          Toast({
+            type: 'error',
+            title: 'Error!',
+            Description: `${JSON.stringify(error)}`,
+            isClosable: true,
+            duration: 20000,
+          }),
       });
     },
   });
@@ -56,15 +71,27 @@ const useDeposit = (inputBalance: number) => {
     onSuccess: (data: any) => {
       console.log('Success', data);
       toast({
-        title: 'Success!',
-        description: `Wrapped ${chain?.nativeCurrency?.symbol}!`,
-        isClosable: true,
-        status: 'info',
-        duration: 30000,
+        render: (props: RenderProps) =>
+          Toast({
+            type: 'success',
+            title: 'Success!',
+            description: `Wrapped ${chain?.nativeCurrency?.symbol}!`,
+            isClosable: true,
+            duration: 20000,
+          }),
       });
     },
     onError(error: any) {
-      console.log('Error', error);
+      toast({
+        render: (props: RenderProps) =>
+          Toast({
+            type: 'error',
+            title: 'Error!',
+            Description: `${JSON.stringify(error)}`,
+            isClosable: true,
+            duration: 20000,
+          }),
+      });
     },
   });
 

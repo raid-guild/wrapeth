@@ -2,14 +2,14 @@ import { chain, configureChains, Chain } from 'wagmi';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
-// import gnosisLogo from '../public/gnosis-logo.png';
+import gnosisLogo from '../public/gnosis-logo.png';
 // import { Chain } from 'types';
 
 const xdai: Chain = {
   id: 100,
   name: 'Gnosis Chain',
   network: 'gnosis',
-  // iconUrl: gnosisLogo.src,
+  iconUrl: gnosisLogo.src,
   // iconBackground: '#fff',
   nativeCurrency: {
     decimals: 18,

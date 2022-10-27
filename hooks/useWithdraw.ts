@@ -6,7 +6,7 @@ import {
   useContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
-import { useToast } from '@raidguild/design-system';
+import { useToast, Toast } from '@raidguild/design-system';
 import { useDebounce } from 'usehooks-ts';
 import { utils, BigNumber } from 'ethers';
 
@@ -36,12 +36,27 @@ const useWithdraw = (inputBalance: number) => {
     request: config.request,
     onSuccess(data) {
       console.log('tx submitted', data);
-      toast({
-        title: 'Transaction pending...',
-        description: `Please wait a moment...`,
-        isClosable: true,
-        status: 'info',
-        duration: 10000,
+      Toast({
+        render: (props: RenderProps) =>
+          Toast({
+            type: 'success',
+            title: 'Transaction pending...',
+            description: `Please wait a moment...`,
+            isClosable: true,
+            duration: 20000,
+          }),
+      });
+    },
+    onError(error: any) {
+      Toast({
+        render: (props: RenderProps) =>
+          Toast({
+            type: 'error',
+            title: 'Error!',
+            Description: `${JSON.stringify(error)}`,
+            isClosable: true,
+            duration: 20000,
+          }),
       });
     },
   });
@@ -50,16 +65,30 @@ const useWithdraw = (inputBalance: number) => {
     hash: dataWithdraw?.hash,
     onSuccess: (data: any) => {
       console.log('Success', data);
-      toast({
-        title: 'Success!',
-        description: `Unwrapped ${chain?.nativeCurrency?.symbol}!`,
-        isClosable: true,
-        status: 'info',
-        duration: 30000,
+      Toast({
+        render: (props: RenderProps) =>
+          Toast({
+            type: 'success',
+            title: 'Success!',
+            description: `Unwrapped ${chain?.nativeCurrency?.symbol}!`,
+            isClosable: true,
+            type: 'error',
+            duration: 20000,
+          }),
       });
     },
     onError(error: any) {
       console.log('Error', error);
+      Toast({
+        render: (props: RenderProps) =>
+          Toast({
+            type: 'error',
+            title: 'Error!',
+            Description: `${JSON.stringify(error)}`,
+            isClosable: true,
+            duration: 20000,
+          }),
+      });
     },
   });
 
