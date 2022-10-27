@@ -10,11 +10,11 @@ import {
 } from '@raidguild/design-system';
 import { FiAlertTriangle } from 'react-icons/fi';
 
-import TokenInfo from './TokenInfo';
 import useBalances from 'hooks/useBalances';
 import useDeposit from 'hooks/useDeposit';
 import useWithdraw from 'hooks/useWithdraw';
 import useGasFee from 'hooks/useGasFee';
+import TokenInfo from './TokenInfo';
 
 export interface WrapperFormProps {
   /**
@@ -59,9 +59,9 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
     },
   });
 
-  const onSubmit = async (data: IFormInput) => {
-    const amount = data.amount;
-    console.log(`${amount} send to contract`);
+  const onSubmit = async () => {
+    // const { amount } = data;
+    // console.log(`${amount} send to contract`);
     if (action === 'deposit' && writeDeposit) writeDeposit();
     else if (action === 'withdraw' && writeWithdraw) writeWithdraw();
   };
@@ -138,7 +138,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
         </Button>
       </form>
 
-      <Flex color='white' justifyContent='center' mt='5'></Flex>
+      <Flex color='white' justifyContent='center' mt='5' />
     </Container>
   );
 };

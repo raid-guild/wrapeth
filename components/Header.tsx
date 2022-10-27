@@ -21,4 +21,8 @@ const Header: React.FC<HeaderProps> = ({ children }) => (
   </Flex>
 );
 
+Header.defaultProps = {
+  children: null,
+};
+
 export default Header;

@@ -1,5 +1,3 @@
-import { wethAddrs } from '../utils/contracts';
-import WethAbi from '../contracts/wethAbi.json';
 import {
   useAccount,
   useNetwork,
@@ -10,6 +8,9 @@ import {
 import { useToast, Toast } from '@raidguild/design-system';
 import { useDebounce } from 'usehooks-ts';
 import { utils, BigNumber } from 'ethers';
+
+import { wethAddrs } from '../utils/contracts';
+import WethAbi from '../contracts/wethAbi.json';
 
 const useDeposit = (inputBalance: number) => {
   const { address } = useAccount();
@@ -39,8 +40,8 @@ const useDeposit = (inputBalance: number) => {
   const { write: writeDeposit, data: dataDeposit } = useContractWrite({
     ...config,
     request: config.request,
-    onSuccess(data) {
-      console.log('tx submitted', data);
+    onSuccess() {
+      // console.log('tx submitted', data);
       toast({
         render: (props: RenderProps) =>
           Toast({
@@ -58,7 +59,7 @@ const useDeposit = (inputBalance: number) => {
           Toast({
             type: 'error',
             title: 'Error!',
-            Description: `${JSON.stringify(error)}`,
+            description: `${JSON.stringify(error)}`,
             isClosable: true,
             duration: 20000,
           }),
@@ -68,8 +69,8 @@ const useDeposit = (inputBalance: number) => {
 
   const { status: statusDeposit } = useWaitForTransaction({
     hash: dataDeposit?.hash,
-    onSuccess: (data: any) => {
-      console.log('Success', data);
+    onSuccess: () => {
+      // console.log('Success', data);
       toast({
         render: (props: RenderProps) =>
           Toast({
@@ -87,7 +88,7 @@ const useDeposit = (inputBalance: number) => {
           Toast({
             type: 'error',
             title: 'Error!',
-            Description: `${JSON.stringify(error)}`,
+            description: `${JSON.stringify(error)}`,
             isClosable: true,
             duration: 20000,
           }),

@@ -1,5 +1,3 @@
-import { wethAddrs } from '../utils/contracts';
-import WethAbi from '../contracts/wethAbi.json';
 import {
   useNetwork,
   usePrepareContractWrite,
@@ -9,6 +7,9 @@ import {
 import { useToast, Toast } from '@raidguild/design-system';
 import { useDebounce } from 'usehooks-ts';
 import { utils, BigNumber } from 'ethers';
+
+import { wethAddrs } from '../utils/contracts';
+import WethAbi from '../contracts/wethAbi.json';
 
 const useWithdraw = (inputBalance: number) => {
   const { chain } = useNetwork();

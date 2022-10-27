@@ -1,3 +1,4 @@
+import React from 'react';
 import { Button } from '@raidguild/design-system';
 import { useNetwork } from 'wagmi';
 import useBalances from '../hooks/useBalances';
