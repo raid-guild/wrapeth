@@ -1,16 +1,23 @@
-import { chain, configureChains, Chain } from 'wagmi';
+import { chain, configureChains, Chain as WagmiChain } from 'wagmi';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
-// import gnosisLogo from '../public/gnosis-logo.png';
+import gnosisLogo from '../public/gnosis-logo.png';
 // import { Chain } from 'types';
+
+type CustomChain = {
+  iconUrl: string;
+  iconBackground: string;
+};
+
+type Chain = CustomChain & WagmiChain;
 
 const xdai: Chain = {
   id: 100,
   name: 'Gnosis Chain',
   network: 'gnosis',
-  // iconUrl: gnosisLogo.src,
-  // iconBackground: '#fff',
+  iconUrl: gnosisLogo.src,
+  iconBackground: '#fff',
   nativeCurrency: {
     decimals: 18,
     name: 'xDai',
