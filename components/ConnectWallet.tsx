@@ -17,9 +17,7 @@ import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
 import { Button } from '@raidguild/design-system';
 import { truncateAddress } from 'utils/general';
 
-// export interface ConnectWalletProps {}
-
-export const ConnectWallet: React.FC<ConnectWalletProps> = () => {
+export const ConnectWallet: React.FC = () => {
   const { isConnecting } = useAccount();
   const { disconnect } = useDisconnect();
 

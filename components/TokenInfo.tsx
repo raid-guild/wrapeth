@@ -15,7 +15,7 @@ const TokenInfo: React.FC<TokenInfoProps> = ({ deposit }) => {
   return (
     <Button variant='ghost'>
       {`${deposit ? '' : 'W'}${symbol} Balance: ${
-        deposit ? ethBalance?.substr(0, 6) || 0 : wethBalance?.substr(0, 6) || 0
+        deposit ? ethBalance?.slice(0, 6) || 0 : wethBalance?.slice(0, 6) || 0
       }`}
     </Button>
   );

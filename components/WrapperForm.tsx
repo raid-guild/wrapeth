@@ -28,7 +28,7 @@ interface IFormInput {
 }
 
 /**
- * Interface for depositinging ETH or native token and receiving wETH
+ * Interface for depositing ETH or native token and receiving wETH
  */
 const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const [inputBalance, setInputBalance] = useState<number>(0);
@@ -62,11 +62,8 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const onSubmit = async (data: IFormInput) => {
     const amount = data.amount;
     console.log(`${amount} send to contract`);
-
-    if (action === 'deposit' && !writeDeposit) return;
-    else if (action === 'withdraw' && !writeWithdraw) return;
-    else if (action === 'deposit') writeDeposit();
-    else writeWithdraw();
+    if (action === 'deposit' && writeDeposit) writeDeposit();
+    else if (action === 'withdraw' && writeWithdraw) writeWithdraw();
   };
 
   return (
@@ -86,12 +83,11 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
               {...register('amount', {
                 required: 'Input cannot be blank',
                 valueAsNumber: false,
-                validate: (value: any): void => {
+                validate: (value: number) => {
                   if (action === 'deposit') {
-                    value > 0 && value < +ethBalance - +gasLimitEther;
-                  } else {
-                    value > 0 && value <= +wethBalance;
+                    return value > 0 && value < +ethBalance - +gasLimitEther;
                   }
+                  return value > 0 && value <= +wethBalance;
                 },
                 onChange: (e: any) => setInputBalance(e.target.value),
                 max: {
