@@ -66,8 +66,10 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const onSubmit = async (data: IFormInput) => {
     const amount = data.amount;
     console.log(`${amount} send to contract`);
-    if (!writeDeposit || !writeWithdraw) return;
-    if (action === 'deposit') writeDeposit();
+
+    if (action === 'deposit' && !writeDeposit) return;
+    else if (action === 'withdraw' && !writeWithdraw) return;
+    else if (action === 'deposit') writeDeposit();
     else writeWithdraw();
   };
 
@@ -91,8 +93,6 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
       </span>
     </a>
   );
-
-  console.log(statusDeposit, statusWithdraw);
 
   return (
     <Container mt={12}>
@@ -167,7 +167,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
         </Button>
       </form>
 
-      <Flex color='white' justifyContent='center'>
+      <Flex color='white' justifyContent='center' mt='5'>
         {statusDeposit === 'loading' || statusWithdraw === 'loading' ? (
           <Toast
             title='Pending transaction'
