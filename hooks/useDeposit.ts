@@ -7,17 +7,17 @@ import {
   useContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
+import { useToast } from '@raidguild/design-system';
 import { useDebounce } from 'usehooks-ts';
 import { utils, BigNumber } from 'ethers';
 
 const useDeposit = (inputBalance: number) => {
   const { address } = useAccount();
   const { chain } = useNetwork();
+  const toast = useToast();
   const debouncedValue = useDebounce(inputBalance, 500);
 
   const contractAddress = wethAddrs?.[chain?.network || 'homestead'];
-
-  !inputBalance ? (inputBalance = 0) : null;
 
   const { config } = usePrepareContractWrite({
     addressOrName: contractAddress || '',
@@ -36,19 +36,32 @@ const useDeposit = (inputBalance: number) => {
     },
   });
 
-  // let writeDeposit = () => {};
-  // const depositContract = useContractWrite({
   const { write: writeDeposit, data: dataDeposit } = useContractWrite({
     ...config,
     request: config.request,
+    onSuccess(data) {
+      console.log('tx submitted', data);
+      toast({
+        title: 'Transaction pending...',
+        description: `Please wait a moment...`,
+        isClosable: true,
+        status: 'info',
+        duration: 10000,
+      });
+    },
   });
-  // writeDeposit = depositContract.write;
-  // const dataDeposit = depositContract.data
 
   const { status: statusDeposit } = useWaitForTransaction({
     hash: dataDeposit?.hash,
-    onSuccess(data: any) {
+    onSuccess: (data: any) => {
       console.log('Success', data);
+      toast({
+        title: 'Success!',
+        description: `Wrapped ${chain?.nativeCurrency?.symbol}!`,
+        isClosable: true,
+        status: 'info',
+        duration: 30000,
+      });
     },
     onError(error: any) {
       console.log('Error', error);

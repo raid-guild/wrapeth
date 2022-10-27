@@ -7,11 +7,9 @@ import {
   Container,
   HStack,
   ChakraInput,
-  Toast,
 } from '@raidguild/design-system';
 import { FiAlertTriangle } from 'react-icons/fi';
-import { IoMdOpen } from 'react-icons/io';
-import { useNetwork } from 'wagmi';
+
 import TokenInfo from './TokenInfo';
 import useBalances from 'hooks/useBalances';
 import useDeposit from 'hooks/useDeposit';
@@ -34,7 +32,6 @@ interface IFormInput {
  */
 const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const [inputBalance, setInputBalance] = useState<number>(0);
-  const { chain } = useNetwork();
   const { ethBalance, wethBalance } = useBalances();
   const { gasLimitEther } = useGasFee();
 
@@ -48,10 +45,9 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
     );
   };
 
-  const { writeDeposit, dataDeposit, statusDeposit } = useDeposit(inputBalance);
+  const { writeDeposit } = useDeposit(inputBalance);
 
-  const { writeWithdraw, dataWithdraw, statusWithdraw } =
-    useWithdraw(inputBalance);
+  const { writeWithdraw } = useWithdraw(inputBalance);
 
   const {
     handleSubmit,
@@ -72,27 +68,6 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
     else if (action === 'deposit') writeDeposit();
     else writeWithdraw();
   };
-
-  const successMessage = (
-    <a
-      href={`${chain?.blockExplorers?.default.url}/tx/${
-        dataDeposit?.hash || dataWithdraw?.hash
-      }`}
-      target='_'
-    >
-      <span
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          fontWeight: 'normal',
-        }}
-      >
-        Transaction success! View on {chain?.blockExplorers?.default.name}
-        <IoMdOpen style={{ marginLeft: '0.5em' }} />
-      </span>
-    </a>
-  );
 
   return (
     <Container mt={12}>
@@ -167,18 +142,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
         </Button>
       </form>
 
-      <Flex color='white' justifyContent='center' mt='5'>
-        {statusDeposit === 'loading' || statusWithdraw === 'loading' ? (
-          <Toast
-            title='Pending transaction'
-            description='Wait a moment while your transaction is being mined...'
-          />
-        ) : null}
-        {(statusDeposit === 'success' && statusWithdraw !== 'loading') ||
-        (statusWithdraw === 'success' && statusDeposit !== 'loading') ? (
-          <Toast title='Success!' description={successMessage} type='success' />
-        ) : null}
-      </Flex>
+      <Flex color='white' justifyContent='center' mt='5'></Flex>
     </Container>
   );
 };
