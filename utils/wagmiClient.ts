@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { createClient } from 'wagmi';
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import {
