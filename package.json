@@ -11,10 +11,11 @@
   "dependencies": {
     "@chakra-ui/react": "^2.3.6",
     "@fontsource/uncial-antiqua": "^4.5.10",
-    "@raidguild/design-system": "^0.3.4",
+    "@raidguild/design-system": "^0.4.15",
     "@rainbow-me/rainbowkit": "^0.7.3",
     "ethers": "^5.7.2",
     "next": "12.3.1",
+    "next-transpile-modules": "^9.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.38.0",
