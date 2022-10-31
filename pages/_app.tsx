@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import { RGThemeProvider } from '@raidguild/design-system';
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { wagmiClient } from 'utils/wagmiClient';
 import { chains } from 'utils/chains';
 import { WagmiConfig } from 'wagmi';
@@ -24,7 +24,7 @@ const App = ({ Component, pageProps }: AppProps) => (
     </Head>
     <RGThemeProvider>
       <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider chains={chains}>
+        <RainbowKitProvider chains={chains} theme={darkTheme()}>
           <Component {...pageProps} />
         </RainbowKitProvider>
       </WagmiConfig>
