@@ -1,11 +1,10 @@
-import React from 'react';
 import {
   useNetwork,
   usePrepareContractWrite,
   useContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
-import { useToast, Toast } from '@raidguild/design-system';
+import { useCustomToast } from '@raidguild/design-system';
 import { useDebounce } from 'usehooks-ts';
 import { utils, BigNumber } from 'ethers';
 
@@ -14,9 +13,8 @@ import WethAbi from '../contracts/wethAbi.json';
 
 const useWithdraw = (inputBalance: number) => {
   const { chain } = useNetwork();
-  const toast = useToast();
+  const toast = useCustomToast();
   const debouncedValue = useDebounce(inputBalance, 500);
-
   const contractAddress = wethAddrs?.[chain?.network || 'homestead'];
 
   const { config } = usePrepareContractWrite({
@@ -37,17 +35,17 @@ const useWithdraw = (inputBalance: number) => {
     ...config,
     request: config.request,
     onSuccess() {
-      toast({
-        duration: 2000,
-        render: () => <Toast title='Transaction pending...' />,
+      toast.success({
+        status: 'loading',
+        title: 'Transaction pending...',
       });
     },
     onError(error: any) {
       // eslint-disable-next-line no-console
       console.log(error);
-      toast({
-        duration: 5000,
-        render: () => <Toast title='Error!' />,
+      toast.error({
+        status: 'error',
+        title: 'Error... transaction reverted...',
       });
     },
   });
@@ -55,19 +53,11 @@ const useWithdraw = (inputBalance: number) => {
   const { status: statusWithdraw } = useWaitForTransaction({
     hash: dataWithdraw?.hash,
     onSuccess: () => {
-      toast({
-        duration: 5000,
-        render: () => <Toast title='Success!' />,
+      toast.success({
+        status: 'success',
+        title: `Success! Unwrapped ${chain?.nativeCurrency?.symbol || 'ETH'}`,
       });
     },
-    // onError(error: any) {
-    //   // eslint-disable-next-line no-console
-    //   console.log('Error', error);
-    //   toast({
-    //     duration: 5000,
-    //     render: () => <Toast title='Error!' />,
-    //   });
-    // },
   });
 
   return {
