@@ -1,12 +1,17 @@
 import React from 'react';
-import { useForm, FieldValues } from 'react-hook-form';
+import { useForm, FieldValues, Controller } from 'react-hook-form';
 import {
   Button,
   FormControl,
   Flex,
   Container,
   HStack,
-  NumberInput,
+  // NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  ChakraNumberInput,
   Text,
   Icon,
 } from '@raidguild/design-system';
@@ -37,10 +42,14 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
       amount: 0,
     },
   });
+
   const {
     handleSubmit,
     setValue,
     watch,
+    //
+    control,
+    //
     formState: { errors },
   } = localForm;
 
@@ -89,15 +98,26 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <HStack marginBottom='32px'>
           <FormControl color='white'>
-            <NumberInput
-              variant='outline'
-              width='100%'
-              step={0.1}
-              min={0}
-              max={action === 'deposit' ? +ethBalance : +wethBalance}
-              localForm={localForm}
+            <Controller
+              control={control}
               name='amount'
-              customValidations={customValidations}
+              rules={customValidations}
+              render={({ field: { ref, ...restField } }) => (
+                <ChakraNumberInput
+                  step={0.1}
+                  width='100%'
+                  min={0}
+                  max={action === 'deposit' ? +ethBalance : +wethBalance}
+                  variant='outline'
+                  {...restField}
+                >
+                  <NumberInputField ref={ref} name={restField.name} />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </ChakraNumberInput>
+              )}
             />
           </FormControl>
           <Button
