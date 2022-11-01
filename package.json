@@ -11,7 +11,7 @@
   "dependencies": {
     "@chakra-ui/react": "^2.3.6",
     "@fontsource/uncial-antiqua": "^4.5.10",
-    "@raidguild/design-system": "^0.4.15",
+    "@raidguild/design-system": "^0.4.18",
     "@rainbow-me/rainbowkit": "^0.7.3",
     "ethers": "^5.7.2",
     "next": "12.3.1",
