@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React from 'react';
+import { useForm, FieldValues } from 'react-hook-form';
 import {
   Button,
   FormControl,
   Flex,
   Container,
   HStack,
-  ChakraInput,
+  NumberInput,
+  Text,
+  Icon,
 } from '@raidguild/design-system';
 import { FiAlertTriangle } from 'react-icons/fi';
 
@@ -23,47 +25,60 @@ export interface WrapperFormProps {
   action: string;
 }
 
-interface IFormInput {
-  amount: number;
-}
-
 /**
  * Interface for depositing ETH or native token and receiving wETH
  */
 const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
-  const [inputBalance, setInputBalance] = useState<number>(0);
   const { ethBalance, wethBalance } = useBalances();
   const { gasLimitEther } = useGasFee();
+
+  const localForm = useForm<FieldValues>({
+    defaultValues: {
+      amount: 0,
+    },
+  });
+  const {
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = localForm;
+
+  const { writeDeposit } = useDeposit(watch('amount'));
+  const { writeWithdraw } = useWithdraw(watch('amount'));
 
   const handleSetMax: any = (): void => {
     const eth = +ethBalance;
     const weth = +wethBalance;
-    setInputBalance(
+    setValue(
+      'amount',
       action === 'deposit'
         ? parseFloat(eth.toFixed(4))
         : parseFloat(weth.toFixed(4)),
     );
   };
 
-  const { writeDeposit } = useDeposit(inputBalance);
-
-  const { writeWithdraw } = useWithdraw(inputBalance);
-
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = useForm<IFormInput>({
-    defaultValues: {
-      amount: 0,
-    },
-  });
-
   const onSubmit = async () => {
-    // const { amount } = data;
-    // console.log(`${amount} send to contract`);
     if (action === 'deposit' && writeDeposit) writeDeposit();
     else if (action === 'withdraw' && writeWithdraw) writeWithdraw();
+  };
+
+  const customValidations = {
+    required: 'Input cannot be blank',
+    validate: (value: number) => {
+      if (action === 'deposit') {
+        return value > 0 && value < +ethBalance - +gasLimitEther;
+      }
+      return value > 0 && value <= +wethBalance;
+    },
+    max: {
+      value: action === 'deposit' ? +ethBalance - +gasLimitEther : +wethBalance,
+      message: `Input must be less than your full balance, plus transaction fees...`,
+    },
+    min: {
+      value: 0,
+      message: 'Value must be greater than 0',
+    },
   };
 
   return (
@@ -73,38 +88,18 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
       </Flex>
       <form onSubmit={handleSubmit(onSubmit)}>
         <HStack marginBottom='32px'>
-          <FormControl>
-            <ChakraInput
-              color='white'
+          <FormControl color='white'>
+            <NumberInput
               variant='outline'
               width='100%'
-              type='number'
-              value={inputBalance}
-              {...register('amount', {
-                required: 'Input cannot be blank',
-                valueAsNumber: false,
-                validate: (value: number) => {
-                  if (action === 'deposit') {
-                    return value > 0 && value < +ethBalance - +gasLimitEther;
-                  }
-                  return value > 0 && value <= +wethBalance;
-                },
-                onChange: (e: any) => setInputBalance(e.target.value),
-                max: {
-                  value:
-                    action === 'deposit'
-                      ? +ethBalance - +gasLimitEther
-                      : +wethBalance,
-                  message: `Input must be less than your full balance, plus enough to cover transaction fees...`,
-                },
-                min: {
-                  value: 0,
-                  message: 'Value must be greater than 0',
-                },
-              })}
+              step={0.1}
+              min={0}
+              max={action === 'deposit' ? +ethBalance : +wethBalance}
+              localForm={localForm}
+              name='amount'
+              customValidations={customValidations}
             />
           </FormControl>
-
           <Button
             textStyle='buttonLabel'
             maxW='120px'
@@ -121,8 +116,10 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
         <Flex color='white' opacity='0.65' mt='-3' mb='5'>
           {errors.amount && (
             <Flex as='span' alignItems='center'>
-              <FiAlertTriangle style={{ marginRight: '0.5rem' }} />
-              {errors.amount.message}
+              <Icon as={FiAlertTriangle} mr='0.5' />
+              <Text fontFamily='spaceMono' fontWeight='medium'>
+                {errors.amount.message}
+              </Text>
             </Flex>
           )}
         </Flex>
