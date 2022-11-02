@@ -4,7 +4,7 @@
 const withTM = require('next-transpile-modules')(['@raidguild/design-system']);
 
 const nextConfig = {
-  exportTrailingSlash: true,
+  trailingSlash: true,
   reactStrictMode: true,
   swcMinify: true,
 };
