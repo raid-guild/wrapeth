@@ -14,6 +14,7 @@ import {
   ChakraNumberInput,
   Text,
   Icon,
+  Box,
 } from '@raidguild/design-system';
 import { FiAlertTriangle } from 'react-icons/fi';
 
@@ -96,7 +97,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
         <TokenInfo deposit={action === 'deposit'} />
       </Flex>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <HStack marginBottom='32px'>
+        <HStack marginBottom={8}>
           <FormControl color='white'>
             <Controller
               control={control}
@@ -104,6 +105,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
               rules={customValidations}
               render={({ field: { ref, ...restField } }) => (
                 <ChakraNumberInput
+                  h='100%'
                   step={0.1}
                   width='100%'
                   min={0}
@@ -120,24 +122,23 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
               )}
             />
           </FormControl>
-          <Button
-            textStyle='buttonLabel'
-            maxW='120px'
-            variant='outline'
-            size='lg'
-            h='100%'
-            w='100%'
-            borderRadius='none'
-            onClick={handleSetMax}
-          >
-            Set Max
-          </Button>
+          <Box h='100%'>
+            <Button
+              maxW='120px'
+              variant='outline'
+              size='lg'
+              w='100%'
+              onClick={handleSetMax}
+            >
+              Set Max
+            </Button>
+          </Box>
         </HStack>
         <Flex color='white' opacity='0.65' mt='-3' mb='5'>
           {errors.amount && (
-            <Flex as='span' alignItems='center'>
+            <Flex as='span' alignItems='center' gap={4}>
               <Icon as={FiAlertTriangle} mr='0.5' />
-              <Text fontFamily='spaceMono' fontWeight='medium'>
+              <Text fontFamily='spaceMono' fontWeight='medium' fontSize='sm'>
                 {errors.amount.message}
               </Text>
             </Flex>

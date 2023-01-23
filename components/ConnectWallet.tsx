@@ -1,8 +1,9 @@
 import React from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-
 import { useAccount, useDisconnect } from 'wagmi';
+import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
 import {
+  Button,
   Menu,
   MenuButton,
   MenuList,
@@ -12,9 +13,7 @@ import {
   Box,
   Flex,
   Image,
-} from '@chakra-ui/react';
-import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
-import { Button } from '@raidguild/design-system';
+} from '@raidguild/design-system';
 import { truncateAddress } from 'utils/general';
 
 export const ConnectWallet: React.FC = () => {

@@ -10,10 +10,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.3.6",
-    "@fontsource/uncial-antiqua": "^4.5.10",
-    "@raidguild/design-system": "^0.4.18",
-    "@rainbow-me/rainbowkit": "^0.7.3",
+    "@raidguild/design-system": "^0.4.39",
+    "@rainbow-me/rainbowkit": "^0.8.1",
     "ethers": "^5.7.2",
     "next": "12.3.1",
     "next-transpile-modules": "^9.1.0",
@@ -22,7 +20,7 @@
     "react-hook-form": "^7.38.0",
     "react-icons": "^4.6.0",
     "usehooks-ts": "^2.9.1",
-    "wagmi": "^0.6.8"
+    "wagmi": "^0.10.14"
   },
   "devDependencies": {
     "@types/node": "18.11.5",

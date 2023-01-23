@@ -11,7 +11,6 @@ import {
 import '@rainbow-me/rainbowkit/styles.css';
 import { useAccount, useNetwork } from 'wagmi';
 import { WrapperForm, Header, ConnectWallet } from 'components';
-import '@fontsource/uncial-antiqua';
 
 export interface AppProps {
   children?: any;
