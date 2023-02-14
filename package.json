@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@raidguild/design-system": "^0.4.39",
+    "@raidguild/design-system": "^0.4.44",
     "@rainbow-me/rainbowkit": "^0.8.1",
     "ethers": "^5.7.2",
     "next": "12.3.1",

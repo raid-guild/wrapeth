@@ -6,7 +6,7 @@ import {
   Flex,
   Spacer,
   ButtonGroup,
-  BuiltByRaidGuildComponent,
+  BuiltByRaidGuild,
 } from '@raidguild/design-system';
 import '@rainbow-me/rainbowkit/styles.css';
 import { useAccount, useNetwork } from 'wagmi';
@@ -76,7 +76,7 @@ const App: React.FC<AppProps> = ({ children }: AppProps) => {
         </Container>
 
         <Flex justify='flex-end' width='100%' my='6' mr='48px'>
-          <BuiltByRaidGuildComponent />
+          <BuiltByRaidGuild />
         </Flex>
       </Container>
       {children}

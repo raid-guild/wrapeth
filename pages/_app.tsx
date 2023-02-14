@@ -1,6 +1,11 @@
 import React from 'react';
 import Head from 'next/head';
-import { RGThemeProvider } from '@raidguild/design-system';
+import {
+  defaultTheme,
+  ChakraProvider,
+  Fonts,
+  ColorModeScript,
+} from '@raidguild/design-system';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { wagmiClient } from 'utils/wagmiClient';
 import { chains } from 'utils/chains';
@@ -22,13 +27,15 @@ const App = ({ Component, pageProps }: AppProps) => (
       />
       <link rel='icon' href='/favicon.ico' />
     </Head>
-    <RGThemeProvider>
+    <ChakraProvider theme={defaultTheme} resetCSS>
+      <ColorModeScript initialColorMode='dark' />
+      <Fonts />
       <WagmiConfig client={wagmiClient}>
         <RainbowKitProvider chains={chains} theme={darkTheme()}>
           <Component {...pageProps} />
         </RainbowKitProvider>
       </WagmiConfig>
-    </RGThemeProvider>
+    </ChakraProvider>
   </>
 );
 
