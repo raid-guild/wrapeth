@@ -1,16 +1,16 @@
-import {
-  useAccount,
-  useNetwork,
-  usePrepareContractWrite,
-  useContractWrite,
-  useWaitForTransaction,
-} from 'wagmi';
 import { useToast } from '@raidguild/design-system';
 import { useDebounce } from 'usehooks-ts';
-import { utils, BigNumber } from 'ethers';
+import { parseEther } from 'viem';
+import {
+  useAccount,
+  useContractWrite,
+  useNetwork,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from 'wagmi';
 
-import { wethAddrs } from '../utils/contracts';
 import WethAbi from '../contracts/wethAbi.json';
+import { wethAddrs } from '../utils/contracts';
 
 const useDeposit = (inputBalance: number) => {
   const { address } = useAccount();
@@ -26,10 +26,8 @@ const useDeposit = (inputBalance: number) => {
     abi: WethAbi,
     functionName: 'deposit',
     enabled: Boolean(debouncedValue),
-    overrides: {
-      from: address,
-      value: BigNumber.from(utils.parseEther(debouncedValue.toString() || '0')),
-    },
+    account: address,
+    value: BigInt(parseEther(debouncedValue.toString() || '0')),
     onSuccess(data: any) {
       return data;
     },

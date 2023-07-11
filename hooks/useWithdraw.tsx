@@ -1,15 +1,15 @@
-import {
-  useNetwork,
-  usePrepareContractWrite,
-  useContractWrite,
-  useWaitForTransaction,
-} from 'wagmi';
 import { useToast } from '@raidguild/design-system';
 import { useDebounce } from 'usehooks-ts';
-import { utils, BigNumber } from 'ethers';
+import { parseEther } from 'viem';
+import {
+  useContractWrite,
+  useNetwork,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from 'wagmi';
 
-import { wethAddrs } from '../utils/contracts';
 import WethAbi from '../contracts/wethAbi.json';
+import { wethAddrs } from '../utils/contracts';
 
 const useWithdraw = (inputBalance: number) => {
   const { chain } = useNetwork();
@@ -22,7 +22,7 @@ const useWithdraw = (inputBalance: number) => {
     abi: WethAbi,
     functionName: 'withdraw',
     enabled: Boolean(debouncedValue),
-    args: [BigNumber.from(utils.parseEther(debouncedValue.toString() || '0'))],
+    args: [BigInt(parseEther(debouncedValue.toString() || '0'))],
     onSuccess(data: any): any {
       return data;
     },
