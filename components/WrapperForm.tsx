@@ -1,27 +1,27 @@
-import React from 'react';
-import { useForm, FieldValues, Controller } from 'react-hook-form';
 import {
+  Box,
   Button,
-  FormControl,
-  Flex,
+  ChakraNumberInput,
   Container,
+  Flex,
+  FormControl,
   HStack,
+  Icon,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
   // NumberInput,
   NumberInputField,
   NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  ChakraNumberInput,
   Text,
-  Icon,
-  Box,
 } from '@raidguild/design-system';
+import React from 'react';
+import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { FiAlertTriangle } from 'react-icons/fi';
 
 import useBalances from 'hooks/useBalances';
 import useDeposit from 'hooks/useDeposit';
-import useWithdraw from 'hooks/useWithdraw';
 import useGasFee from 'hooks/useGasFee';
+import useWithdraw from 'hooks/useWithdraw';
 import TokenInfo from './TokenInfo';
 
 export interface WrapperFormProps {
