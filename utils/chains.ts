@@ -16,7 +16,6 @@ import { publicProvider } from 'wagmi/providers/public';
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
   [mainnet, gnosis, polygon, arbitrum, optimism, goerli, sepolia],
   [
-    publicProvider(),
     infuraProvider({ apiKey: process.env.NEXT_PUBLIC_RPC_KEY || '' }),
     alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY || '' }),
     jsonRpcProvider({
@@ -24,5 +23,6 @@ export const { chains, publicClient, webSocketPublicClient } = configureChains(
         http: localChain.rpcUrls.default,
       }),
     }),
+    publicProvider(),
   ],
 );
