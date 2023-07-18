@@ -10,6 +10,7 @@ import Head from 'next/head';
 import { chains } from 'utils/chains';
 import { wagmiConfig } from 'utils/wagmiConfig';
 import { WagmiConfig } from 'wagmi';
+import React from 'react'
 
 interface AppProps {
   Component: any;
