@@ -8,13 +8,13 @@ const useBalances = () => {
   const contractAddress = wethAddrs?.[chain?.network || 'homestead'];
 
   const getEthBalance = useBalance({
-    addressOrName: address,
+    address,
     enabled: contractAddress?.length !== 0,
     watch: true,
   });
 
   const getWethBalance = useBalance({
-    addressOrName: address,
+    address,
     enabled: contractAddress?.length !== 0,
     watch: true,
     token: contractAddress,

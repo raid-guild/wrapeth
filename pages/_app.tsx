@@ -1,11 +1,16 @@
-import React from 'react';
-import Head from 'next/head';
-import { RGThemeProvider } from '@raidguild/design-system';
+import {
+  ChakraProvider,
+  ColorModeScript,
+  Fonts,
+  defaultTheme,
+} from '@raidguild/design-system';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
-import { wagmiClient } from 'utils/wagmiClient';
-import { chains } from 'utils/chains';
-import { WagmiConfig } from 'wagmi';
 import '@rainbow-me/rainbowkit/styles.css';
+import Head from 'next/head';
+import { wagmiConfig } from '@/utils/wagmiConfig';
+import { WagmiConfig } from 'wagmi';
+import React from 'react';
+import { chains } from '@/utils/chains';
 
 interface AppProps {
   Component: any;
@@ -22,13 +27,15 @@ const App = ({ Component, pageProps }: AppProps) => (
       />
       <link rel='icon' href='/favicon.ico' />
     </Head>
-    <RGThemeProvider>
-      <WagmiConfig client={wagmiClient}>
+    <ChakraProvider theme={defaultTheme} resetCSS>
+      <ColorModeScript initialColorMode='dark' />
+      <Fonts />
+      <WagmiConfig config={wagmiConfig}>
         <RainbowKitProvider chains={chains} theme={darkTheme()}>
           <Component {...pageProps} />
         </RainbowKitProvider>
       </WagmiConfig>
-    </RGThemeProvider>
+    </ChakraProvider>
   </>
 );
 

@@ -10,11 +10,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.3.6",
-    "@fontsource/uncial-antiqua": "^4.5.10",
-    "@raidguild/design-system": "^0.4.18",
-    "@rainbow-me/rainbowkit": "^0.7.3",
-    "ethers": "^5.7.2",
+    "@raidguild/design-system": "^0.4.47",
+    "@rainbow-me/rainbowkit": "^1.0.5",
     "next": "12.3.1",
     "next-transpile-modules": "^9.1.0",
     "react": "18.2.0",
@@ -22,7 +19,8 @@
     "react-hook-form": "^7.38.0",
     "react-icons": "^4.6.0",
     "usehooks-ts": "^2.9.1",
-    "wagmi": "^0.6.8"
+    "viem": "^1.2.14",
+    "wagmi": "^1.3.8"
   },
   "devDependencies": {
     "@types/node": "18.11.5",
@@ -38,6 +36,9 @@
     "eslint-plugin-jsx-a11y": "6.5.1",
     "eslint-plugin-react": "7.29.4",
     "eslint-plugin-react-hooks": "4.5.0",
-    "typescript": "^4.8.4"
+    "typescript": "^5.1.6"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

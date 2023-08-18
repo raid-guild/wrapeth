@@ -1,28 +1,28 @@
+import { useToast } from '@raidguild/design-system';
+import { useDebounce } from 'usehooks-ts';
+import { parseEther } from 'viem';
 import {
+  useContractWrite,
   useNetwork,
   usePrepareContractWrite,
-  useContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
-import { useCustomToast } from '@raidguild/design-system';
-import { useDebounce } from 'usehooks-ts';
-import { utils, BigNumber } from 'ethers';
 
-import { wethAddrs } from '../utils/contracts';
 import WethAbi from '../contracts/wethAbi.json';
+import { wethAddrs } from '../utils/contracts';
 
 const useWithdraw = (inputBalance: number) => {
   const { chain } = useNetwork();
-  const toast = useCustomToast();
+  const toast = useToast();
   const debouncedValue = useDebounce(inputBalance, 500);
   const contractAddress = wethAddrs?.[chain?.network || 'homestead'];
 
   const { config } = usePrepareContractWrite({
-    addressOrName: contractAddress || '',
-    contractInterface: WethAbi,
+    address: contractAddress || '',
+    abi: WethAbi,
     functionName: 'withdraw',
     enabled: Boolean(debouncedValue),
-    args: [BigNumber.from(utils.parseEther(debouncedValue.toString() || '0'))],
+    args: [BigInt(parseEther(debouncedValue.toString() || '0'))],
     onSuccess(data: any): any {
       return data;
     },
@@ -36,7 +36,6 @@ const useWithdraw = (inputBalance: number) => {
     request: config.request,
     onSuccess() {
       toast.success({
-        status: 'loading',
         title: 'Transaction pending...',
       });
     },
@@ -44,7 +43,6 @@ const useWithdraw = (inputBalance: number) => {
       // eslint-disable-next-line no-console
       console.log(error);
       toast.error({
-        status: 'error',
         title: 'Error... transaction reverted...',
       });
     },
@@ -54,7 +52,6 @@ const useWithdraw = (inputBalance: number) => {
     hash: dataWithdraw?.hash,
     onSuccess: () => {
       toast.success({
-        status: 'success',
         title: `Success! Unwrapped ${chain?.nativeCurrency?.symbol || 'ETH'}`,
       });
     },

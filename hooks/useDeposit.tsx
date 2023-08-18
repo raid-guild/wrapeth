@@ -1,35 +1,33 @@
+import { useToast } from '@raidguild/design-system';
+import { useDebounce } from 'usehooks-ts';
+import { parseEther } from 'viem';
 import {
   useAccount,
+  useContractWrite,
   useNetwork,
   usePrepareContractWrite,
-  useContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
-import { useCustomToast } from '@raidguild/design-system';
-import { useDebounce } from 'usehooks-ts';
-import { utils, BigNumber } from 'ethers';
 
-import { wethAddrs } from '../utils/contracts';
 import WethAbi from '../contracts/wethAbi.json';
+import { wethAddrs } from '../utils/contracts';
 
 const useDeposit = (inputBalance: number) => {
   const { address } = useAccount();
   const { chain } = useNetwork();
-  const toast = useCustomToast();
+  const toast = useToast();
 
   const debouncedValue = useDebounce(inputBalance, 500);
 
   const contractAddress = wethAddrs?.[chain?.network || 'homestead'];
 
   const { config } = usePrepareContractWrite({
-    addressOrName: contractAddress || '',
-    contractInterface: WethAbi,
+    address: contractAddress || '',
+    abi: WethAbi,
     functionName: 'deposit',
     enabled: Boolean(debouncedValue),
-    overrides: {
-      from: address,
-      value: BigNumber.from(utils.parseEther(debouncedValue.toString() || '0')),
-    },
+    account: address,
+    value: BigInt(parseEther(debouncedValue.toString() || '0')),
     onSuccess(data: any) {
       return data;
     },
@@ -43,14 +41,12 @@ const useDeposit = (inputBalance: number) => {
     request: config.request,
     onSuccess() {
       toast.success({
-        status: 'loading',
         title: 'Pending Transaction...',
         isClosable: true,
       });
     },
     onError() {
       toast.error({
-        status: 'error',
         title: 'Error... transaction reverted...',
         isClosable: true,
       });
@@ -61,7 +57,6 @@ const useDeposit = (inputBalance: number) => {
     hash: dataDeposit?.hash,
     onSuccess: () => {
       toast.success({
-        status: 'success',
         title: `Success! Wrapped ${chain?.nativeCurrency?.symbol || 'ETH'}`,
         isClosable: true,
       });

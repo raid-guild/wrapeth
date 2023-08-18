@@ -6,12 +6,11 @@ import {
   Flex,
   Spacer,
   ButtonGroup,
-  BuiltByRaidGuildComponent,
+  BuiltByRaidGuild,
 } from '@raidguild/design-system';
 import '@rainbow-me/rainbowkit/styles.css';
 import { useAccount, useNetwork } from 'wagmi';
-import { WrapperForm, Header, ConnectWallet } from 'components';
-import '@fontsource/uncial-antiqua';
+import { WrapperForm, Header, ConnectWallet } from '@/components';
 
 export interface AppProps {
   children?: any;
@@ -77,7 +76,7 @@ const App: React.FC<AppProps> = ({ children }: AppProps) => {
         </Container>
 
         <Flex justify='flex-end' width='100%' my='6' mr='48px'>
-          <BuiltByRaidGuildComponent />
+          <BuiltByRaidGuild />
         </Flex>
       </Container>
       {children}
