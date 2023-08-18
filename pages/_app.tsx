@@ -7,10 +7,10 @@ import {
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
 import Head from 'next/head';
-import { chains } from 'utils/chains';
-import { wagmiConfig } from 'utils/wagmiConfig';
+import { wagmiConfig } from '@/utils/wagmiConfig';
 import { WagmiConfig } from 'wagmi';
-import React from 'react'
+import React from 'react';
+import { chains } from '@/utils/chains';
 
 interface AppProps {
   Component: any;

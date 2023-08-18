@@ -18,10 +18,10 @@ import React from 'react';
 import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { FiAlertTriangle } from 'react-icons/fi';
 
-import useBalances from 'hooks/useBalances';
-import useDeposit from 'hooks/useDeposit';
-import useGasFee from 'hooks/useGasFee';
-import useWithdraw from 'hooks/useWithdraw';
+import useBalances from '@/hooks/useBalances';
+import useDeposit from '@/hooks/useDeposit';
+import useGasFee from '@/hooks/useGasFee';
+import useWithdraw from '@/hooks/useWithdraw';
 import TokenInfo from './TokenInfo';
 
 export interface WrapperFormProps {

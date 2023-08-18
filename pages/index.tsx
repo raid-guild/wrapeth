@@ -10,7 +10,7 @@ import {
 } from '@raidguild/design-system';
 import '@rainbow-me/rainbowkit/styles.css';
 import { useAccount, useNetwork } from 'wagmi';
-import { WrapperForm, Header, ConnectWallet } from 'components';
+import { WrapperForm, Header, ConnectWallet } from '@/components';
 
 export interface AppProps {
   children?: any;
