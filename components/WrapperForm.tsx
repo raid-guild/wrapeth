@@ -92,7 +92,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   };
 
   return (
-    <Container mt={12}>
+    <Container mt={6}>
       <Flex justify='end' my={3}>
         <TokenInfo deposit={action === 'deposit'} />
       </Flex>
@@ -113,7 +113,12 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
                   variant='outline'
                   {...restField}
                 >
-                  <NumberInputField ref={ref} name={restField.name} />
+                  <NumberInputField
+                    ref={ref}
+                    name={restField.name}
+                    border='1px solid'
+                    borderColor='purple.400'
+                  />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
                     <NumberDecrementStepper />
@@ -126,7 +131,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
             <Button
               maxW='120px'
               variant='outline'
-              size='lg'
+              size='md'
               w='100%'
               onClick={handleSetMax}
             >
