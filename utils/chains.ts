@@ -22,8 +22,8 @@ const customGnosis = {
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
   [mainnet, customGnosis, polygon, arbitrum, optimism, goerli, sepolia],
   [
-    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY || '' }),
     infuraProvider({ apiKey: process.env.NEXT_PUBLIC_RPC_KEY || '' }),
+    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY || '' }),
     publicProvider(),
   ],
 );

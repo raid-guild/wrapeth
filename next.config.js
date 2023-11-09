@@ -6,6 +6,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   transpilePackages: ['@raidguild/design-system'],
+  output: 'export',
 };
 
 module.exports = nextConfig;
