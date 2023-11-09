@@ -88,10 +88,7 @@ export const ConnectWallet: React.FC = () => {
                   <Button
                     display='flex'
                     flexDirection='row'
-                    color='brand.primary.600'
-                    backgroundColor='brand.primary.50'
-                    transition='all 100ms ease-in-out'
-                    _hover={{ bgColor: 'brand.primary.100' }}
+                    variant='outline'
                     width='fit'
                     onClick={openChainModal}
                   >
@@ -110,10 +107,7 @@ export const ConnectWallet: React.FC = () => {
                     rightIcon={
                       <Icon as={FiChevronDown} color='brand.primary.600' />
                     }
-                    color='brand.primary.600'
-                    backgroundColor='brand.primary.50'
-                    transition='all 100ms ease-in-out'
-                    _hover={{ bgColor: 'brand.primary.100' }}
+                    variant='outline'
                     width='fit'
                   >
                     {account.ensName

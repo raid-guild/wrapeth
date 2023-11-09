@@ -39,14 +39,16 @@ const App: React.FC<AppProps> = ({ children }: AppProps) => {
   };
 
   return (
-    <Flex h='100vh' w='100vw' maxW='100%'>
+    <Flex h='100vh' w='100vw' maxW='100%' background='gray.800'>
       <Container centerContent maxW='80ch'>
         <Header>
           <Spacer />
           <ConnectWallet />
         </Header>
         <Flex align='center' mt='10px'>
-          <Heading as='h1' size='4xl' variant='shadow' content='Wrap Eth' />
+          <Heading as='h1' size='4xl'>
+            Wrap Eth
+          </Heading>
         </Flex>
         <Container centerContent maxW='80ch'>
           <Card mt='24px' p='64px' w='100%' background='gray.800'>

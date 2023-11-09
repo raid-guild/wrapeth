@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /** @type {import('next').NextConfig} */
 
-const withTM = require('next-transpile-modules')(['@raidguild/design-system']);
-
 const nextConfig = {
   trailingSlash: true,
   reactStrictMode: true,
   swcMinify: true,
+  transpilePackages: ['@raidguild/design-system'],
 };
 
-module.exports = withTM(nextConfig);
+module.exports = nextConfig;
