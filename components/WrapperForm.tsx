@@ -48,9 +48,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
     handleSubmit,
     setValue,
     watch,
-    //
     control,
-    //
     formState: { errors },
   } = localForm;
 
