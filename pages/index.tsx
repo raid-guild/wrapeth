@@ -39,7 +39,7 @@ const App: React.FC<AppProps> = ({ children }: AppProps) => {
   };
 
   return (
-    <Flex h='100vh' w='100vw' maxW='100%' background='gray.800'>
+    <Flex h='100vh' w='100vw' maxW='100%' background='gray.800' overflow={'scroll'}>
       <Container centerContent maxW='80ch'>
         <Header>
           <Spacer />
