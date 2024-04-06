@@ -36,7 +36,7 @@ export interface WrapperFormProps {
  */
 const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const { ethBalance, wethBalance } = useBalances();
-  const { gasLimitEther } = useGasFee();
+  const { txFeeEther } = useGasFee();
 
   const localForm = useForm<FieldValues>({
     defaultValues: {
@@ -77,12 +77,12 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
     required: 'Input cannot be blank',
     validate: (value: number) => {
       if (action === 'deposit') {
-        return value > 0 && value < +ethBalance - +gasLimitEther;
+        return value > 0 && value < +ethBalance - +txFeeEther;
       }
       return value > 0 && value <= +wethBalance;
     },
     max: {
-      value: action === 'deposit' ? +ethBalance - +gasLimitEther : +wethBalance,
+      value: action === 'deposit' ? +ethBalance - +txFeeEther : +wethBalance,
       message: `Input must be less than your full balance, plus transaction fees...`,
     },
     min: {
