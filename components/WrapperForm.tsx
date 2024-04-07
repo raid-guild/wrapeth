@@ -13,7 +13,9 @@ import {
   NumberInputField,
   NumberInputStepper,
   Text,
+  useToast,
 } from '@raidguild/design-system';
+import { useAccount } from 'wagmi';
 import React from 'react';
 import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { FiAlertTriangle } from 'react-icons/fi';
@@ -37,6 +39,8 @@ export interface WrapperFormProps {
 const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const { ethBalance, wethBalance } = useBalances();
   const { gasLimitEther } = useGasFee();
+  const { chain } = useAccount()
+  const toast = useToast()
 
   const localForm = useForm<FieldValues>({
     defaultValues: {
@@ -54,8 +58,8 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
     formState: { errors },
   } = localForm;
 
-  const { writeDeposit } = useDeposit(watch('amount'));
-  const { writeWithdraw } = useWithdraw(watch('amount'));
+  const { writeDeposit, depositConfig, isSuccessDeposit, isPendingDeposit, isErrorDeposit } = useDeposit(watch('amount'));
+  const { writeWithdraw, withdrawConfig, isSuccessWithdraw, isPendingWithdraw, isErrorWithdraw } = useWithdraw(watch('amount'));
 
   const handleSetMax: any = (): void => {
     const eth = +ethBalance;
@@ -69,8 +73,26 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   };
 
   const onSubmit = async () => {
-    if (action === 'deposit' && writeDeposit) writeDeposit();
-    else if (action === 'withdraw' && writeWithdraw) writeWithdraw();
+    if (action === 'deposit' && writeDeposit && depositConfig) writeDeposit(depositConfig.request);
+    else if (action === 'withdraw' && writeWithdraw && withdrawConfig) writeWithdraw(withdrawConfig.request);
+    if (isSuccessDeposit) {
+      toast.success({
+        title: `Success! Wrapped ${chain?.nativeCurrency?.symbol || 'ETH'}`,
+        isClosable: true,
+      });
+    }
+    if (isPendingDeposit) {
+      toast.loading({
+        title: 'Pending Transaction...',
+        isClosable: true,
+      });
+    }
+    if (isErrorDeposit) {
+      toast.error({
+        title: 'Error... transaction reverted...',
+        isClosable: true,
+      });
+    }
   };
 
   const customValidations = {

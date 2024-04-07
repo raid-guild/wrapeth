@@ -1,22 +1,17 @@
-import { useAccount, useBalance, useNetwork } from 'wagmi';
+import { useAccount, useBalance } from 'wagmi';
 import { wethAddrs } from '../utils/contracts';
 
 const useBalances = () => {
-  const { address } = useAccount();
-  const { chain } = useNetwork();
+  const { address, chain } = useAccount();
 
-  const contractAddress = wethAddrs?.[chain?.network || 'homestead'];
+  const contractAddress = wethAddrs?.[chain?.id || 'homestead'];
 
   const getEthBalance = useBalance({
     address,
-    enabled: contractAddress?.length !== 0,
-    watch: true,
   });
 
   const getWethBalance = useBalance({
     address,
-    enabled: contractAddress?.length !== 0,
-    watch: true,
     token: contractAddress,
   });
 
