@@ -14,46 +14,31 @@ import { createConfig } from 'wagmi';
 
 import { chains, publicClient } from './chains';
 
+const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || '';
+
 const connectors = connectorsForWallets([
   {
     groupName: 'Popular',
     wallets: [
       injectedWallet({ chains }),
       metaMaskWallet({
-        projectId: process.env.NEXT_PUBLIC_PROJECT_ID || '',
+        projectId,
         chains,
         shimDisconnect: false,
       }),
-      walletConnectWallet({
-        projectId: process.env.NEXT_PUBLIC_PROJECT_ID || '',
-        chains,
-      }),
-      ledgerWallet({
-        projectId: process.env.NEXT_PUBLIC_PROJECT_ID || '',
-        chains,
-      }),
+      walletConnectWallet({ projectId, chains }),
+      ledgerWallet({ projectId, chains }),
     ],
   },
   {
     groupName: 'Others',
     wallets: [
-      rainbowWallet({
-        projectId: process.env.NEXT_PUBLIC_PROJECT_ID || '',
-        chains,
-      }),
+      rainbowWallet({ projectId, chains }),
       coinbaseWallet({ chains, appName: 'Wrap Eth' }),
-      argentWallet({
-        projectId: process.env.NEXT_PUBLIC_PROJECT_ID || '',
-        chains,
-      }),
+      argentWallet({ projectId, chains }),
       braveWallet({ chains }),
     ],
   },
 ]);
 
-export const wagmiConfig = createConfig({
-  publicClient,
-  connectors,
-  // turn off autoConnect in development
-  // autoConnect: true,
-});
+export const wagmiConfig = createConfig({ publicClient, connectors });
