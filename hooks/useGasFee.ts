@@ -19,7 +19,7 @@ const useGasFee = () => {
   const estimatedGasUsed = chain?.id ? gasUsedByChain[chain.id] : 0;
 
   const txFeeWei = BigInt(gasPrice) * BigInt(estimatedGasUsed);
-  const txFeeEther = Number(formatUnits(txFeeWei, 18)) || 0;
+  const txFeeEther = formatUnits(txFeeWei, 18) || 0;
 
   return { txFeeEther };
 };
