@@ -56,7 +56,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const { writeWithdraw } = useWithdraw(watch('amount'));
 
   const handleSetMax: any = (): void => {
-    const eth = +ethBalance;
+    const eth = +ethBalance - +txFeeEther;
     const weth = +wethBalance;
     setValue(
       'amount',
