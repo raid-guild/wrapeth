@@ -9,7 +9,7 @@ import {
   BuiltByRaidGuild,
 } from '@raidguild/design-system';
 import '@rainbow-me/rainbowkit/styles.css';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { WrapperForm, Header, ConnectWallet } from '@/components';
 
 export interface AppProps {
@@ -21,8 +21,7 @@ export interface AppProps {
  */
 const App: React.FC<AppProps> = ({ children }: AppProps) => {
   const [deposit, setDeposit] = useState<boolean>(true);
-  const { isConnected } = useAccount();
-  const { chain } = useNetwork();
+  const { isConnected, chain } = useAccount();
 
   const onButtonSelection = (index: number) => {
     switch (index) {

@@ -1,44 +1,53 @@
 /* eslint-disable import/prefer-default-export */
-import { connectorsForWallets } from '@rainbow-me/rainbowkit';
+import { getDefaultConfig } from '@rainbow-me/rainbowkit';
+import { http } from 'wagmi';
 import {
-  argentWallet,
-  braveWallet,
-  coinbaseWallet,
-  injectedWallet,
-  ledgerWallet,
-  metaMaskWallet,
-  rainbowWallet,
-  walletConnectWallet,
-} from '@rainbow-me/rainbowkit/wallets';
-import { createConfig } from 'wagmi';
-
-import { chains, publicClient } from './chains';
+  arbitrum,
+  base,
+  blast,
+  gnosis,
+  // goerli,
+  mainnet,
+  optimism,
+  polygon,
+  sepolia,
+  zora,
+} from 'wagmi/chains';
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || '';
 
-const connectors = connectorsForWallets([
-  {
-    groupName: 'Popular',
-    wallets: [
-      injectedWallet({ chains }),
-      metaMaskWallet({
-        projectId,
-        chains,
-        shimDisconnect: false,
-      }),
-      walletConnectWallet({ projectId, chains }),
-      ledgerWallet({ projectId, chains }),
-    ],
-  },
-  {
-    groupName: 'Others',
-    wallets: [
-      rainbowWallet({ projectId, chains }),
-      coinbaseWallet({ chains, appName: 'Wrap Eth' }),
-      argentWallet({ projectId, chains }),
-      braveWallet({ chains }),
-    ],
-  },
-]);
+const customGnosis = {
+  ...gnosis,
+  hasIcon: true,
+  iconUrl: '/chains/gnosis.jpg',
+  iconBackground: 'none',
+};
 
-export const wagmiConfig = createConfig({ publicClient, connectors });
+export const wagmiConfig = getDefaultConfig({
+  appName: 'Wrapeth',
+  projectId,
+  chains: [
+    mainnet,
+    customGnosis,
+    polygon,
+    arbitrum,
+    optimism,
+    // goerli,
+    sepolia,
+    base,
+    blast,
+    zora,
+  ],
+  transports: {
+    [mainnet.id]: http(),
+    [customGnosis.id]: http(),
+    [polygon.id]: http(),
+    [arbitrum.id]: http(),
+    [optimism.id]: http(),
+    // [goerli.id]: http(),
+    [sepolia.id]: http(),
+    [base.id]: http(),
+    [blast.id]: http(),
+    [zora.id]: http(),
+  },
+});

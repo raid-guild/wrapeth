@@ -1,9 +1,9 @@
 import { formatUnits } from 'viem';
-import { useFeeData, useNetwork } from 'wagmi';
+import { useAccount, useEstimateFeesPerGas } from 'wagmi';
 
 const useGasFee = () => {
-  const { chain } = useNetwork();
-  const { data } = useFeeData();
+  const { chain } = useAccount();
+  const { data } = useEstimateFeesPerGas();
   const gasPrice = data?.gasPrice || 0;
 
   const gasUsedByChain = {

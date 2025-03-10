@@ -1,16 +1,17 @@
-import { configureChains } from 'wagmi';
+import { getDefaultConfig } from '@rainbow-me/rainbowkit';
+import { http } from 'wagmi';
 import {
   arbitrum,
+  base,
+  blast,
   gnosis,
-  goerli,
+  // goerli,
   mainnet,
   optimism,
   polygon,
   sepolia,
+  zora,
 } from 'wagmi/chains';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { infuraProvider } from 'wagmi/providers/infura';
-import { publicProvider } from 'wagmi/providers/public';
 
 const customGnosis = {
   ...gnosis,
@@ -19,11 +20,31 @@ const customGnosis = {
   iconBackground: 'none',
 };
 
-export const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [mainnet, customGnosis, polygon, arbitrum, optimism, goerli, sepolia],
-  [
-    infuraProvider({ apiKey: process.env.NEXT_PUBLIC_RPC_KEY || '' }),
-    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY || '' }),
-    publicProvider(),
+export default getDefaultConfig({
+  appName: 'Wrapeth',
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID || '',
+  chains: [
+    mainnet,
+    customGnosis,
+    polygon,
+    arbitrum,
+    optimism,
+    // goerli,
+    sepolia,
+    base,
+    zora,
+    blast,
   ],
-);
+  transports: {
+    [mainnet.id]: http(),
+    [customGnosis.id]: http(),
+    [polygon.id]: http(),
+    [arbitrum.id]: http(),
+    [optimism.id]: http(),
+    // [goerli.id]: http(),
+    [sepolia.id]: http(),
+    [base.id]: http(),
+    [zora.id]: http(),
+    [blast.id]: http(),
+  },
+});

@@ -1,21 +1,24 @@
+import { wagmiConfig } from '@/utils/wagmiConfig';
 import {
   ChakraProvider,
   ColorModeScript,
   Fonts,
   defaultTheme,
 } from '@raidguild/design-system';
+import React from 'react';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Head from 'next/head';
-import { wagmiConfig } from '@/utils/wagmiConfig';
-import { WagmiConfig } from 'wagmi';
-import React from 'react';
-import { chains } from '@/utils/chains';
+import { Analytics } from '@vercel/analytics/next';
+import { WagmiProvider } from 'wagmi';
 
 interface AppProps {
   Component: any;
   pageProps: any;
 }
+
+const queryClient = new QueryClient();
 
 const App = ({ Component, pageProps }: AppProps) => (
   <>
@@ -30,12 +33,16 @@ const App = ({ Component, pageProps }: AppProps) => (
     <ChakraProvider theme={defaultTheme} resetCSS>
       <ColorModeScript initialColorMode='dark' />
       <Fonts />
-      <WagmiConfig config={wagmiConfig}>
-        <RainbowKitProvider chains={chains} theme={darkTheme()}>
-          <Component {...pageProps} />
-        </RainbowKitProvider>
-      </WagmiConfig>
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider theme={darkTheme()}>
+            <Component {...pageProps} />
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
     </ChakraProvider>
+
+    <Analytics />
   </>
 );
 
