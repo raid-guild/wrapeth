@@ -53,44 +53,47 @@ export const ConnectWallet: React.FC = () => {
   useEffect(() => {
     if (!router.isReady || !isConnected || !accountChain || isSyncing.current) return;
 
-    const chainName = typeof router.query.chain === 'string'
-      ? router.query.chain.toLowerCase()
-      : null;
-    const currentChainName = chainMappings[accountChain.name];
-    if (chainName && chainMappings[chainName] && chainMappings[chainName] !== accountChain.name) {
-      const targetChain = chains.find(c => c.name === chainMappings[chainName]);
+    async function asyncChainSwitch() {
+      const chainName = typeof router.query.chain === 'string'
+        ? router.query.chain.toLowerCase()
+        : null;
+      const currentChainName = chainMappings[accountChain?.name ?? ''];
+      if (chainName && chainMappings[chainName] && chainMappings[chainName] !== accountChain?.name) {
+        const targetChain = chains.find(c => c.name === chainMappings[chainName]);
 
-      if (targetChain) {
-        isSyncing.current = true;
-        console.log(`Switching to ${chainMappings[chainName]}`);
+        if (targetChain) {
+          isSyncing.current = true;
+          console.log(`Switching to ${chainMappings[chainName]}`);
 
-        try {
-          switchChain({ chainId: targetChain.id });
-        } catch (error) {
-          console.error('Chain switch failed:', error);
-        } finally {
-          setTimeout(() => {
-            isSyncing.current = false;
-          }, 500);
+          try {
+            await switchChain({ chainId: targetChain.id });
+          } catch (error) {
+            console.error('Chain switch failed:', error);
+          } finally {
+            setTimeout(() => {
+              isSyncing.current = false;
+            }, 500);
+          }
         }
       }
-    }
 
-    else if (currentChainName && chainName !== currentChainName) {
-      isSyncing.current = true;
-      console.log(`Updating URL to ${currentChainName}`);
+      else if (currentChainName && chainName !== currentChainName) {
+        isSyncing.current = true;
+        console.log(`Updating URL to ${currentChainName}`);
 
-      router.push(
-        { pathname: router.pathname, query: { ...router.query, chain: currentChainName } },
-        undefined,
-        { shallow: true }
-      )
-        .finally(() => {
-          setTimeout(() => {
-            isSyncing.current = false;
-          }, 500);
-        });
+        router.push(
+          { pathname: router.pathname, query: { ...router.query, chain: currentChainName } },
+          undefined,
+          { shallow: true }
+        )
+          .finally(() => {
+            setTimeout(() => {
+              isSyncing.current = false;
+            }, 500);
+          });
+      }
     }
+    asyncChainSwitch();
   }, [
     router.isReady,
     isConnected,

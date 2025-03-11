@@ -10,7 +10,7 @@ const useBalances = () => {
   const { data: ethBalanceData } = useBalance({
     address,
     query: {
-      enabled: contractAddress?.length !== 0,
+      enabled: !!contractAddress,
       refetchInterval: 3000,
       refetchIntervalInBackground: false,
     },
