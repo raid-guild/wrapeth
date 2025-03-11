@@ -15,7 +15,7 @@ import { wethAddrs } from '../utils/contracts';
 const useDeposit = (inputBalance: number) => {
   const { address, chain } = useAccount();
   const toast = useToast();
-  const [debouncedValue, setDebouncedValue] = useDebounceValue(inputBalance, 500);
+  const [debouncedValue] = useDebounceValue(inputBalance, 500);
   const contractAddress = wethAddrs?.[chain?.name.toLowerCase() || 'homestead'];
 
   // Add error handling and validation for the debounced value

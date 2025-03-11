@@ -15,7 +15,7 @@ import { wethAddrs } from '../utils/contracts';
 const useWithdraw = (inputBalance: number) => {
   const { chain } = useAccount();
   const toast = useToast();
-  const [debouncedValue, setDebouncedValue] = useDebounceValue(inputBalance, 500)
+  const [debouncedValue] = useDebounceValue(inputBalance, 500)
   const contractAddress = wethAddrs?.[chain?.name.toLowerCase() || 'homestead'];
 
   // Simulate the contract call first to validate it
