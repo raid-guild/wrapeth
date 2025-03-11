@@ -1,30 +1,111 @@
-import React from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount, useDisconnect } from 'wagmi';
-import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
 import {
+  Box,
   Button,
+  Flex,
+  HStack,
+  Icon,
+  Image,
   Menu,
   MenuButton,
-  MenuList,
   MenuItem,
-  Icon,
-  HStack,
-  Box,
-  Flex,
-  Image,
+  MenuList,
 } from '@raidguild/design-system';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useRouter } from 'next/router';
+import React, { useEffect, useRef } from 'react';
+import { FiChevronDown, FiKey, FiXCircle } from 'react-icons/fi';
 import { truncateAddress } from 'utils/general';
+import { useAccount, useChains, useDisconnect, useSwitchChain } from 'wagmi';
+
+// Simple bidirectional mapping between URL slugs and chain names
+const chainMappings = {
+  // Chain name → URL slug
+  'Ethereum': 'ethereum',
+  'Polygon': 'polygon',
+  'OP Mainnet': 'optimism',
+  'Arbitrum One': 'arbitrum',
+  'Base': 'base',
+  'Gnosis': 'gnosis',
+  'Sepolia': 'sepolia',
+  'Blast': 'blast',
+  'Zora': 'zora',
+
+  // URL slug → Chain name
+  'ethereum': 'Ethereum',
+  'polygon': 'Polygon',
+  'optimism': 'OP Mainnet',
+  'arbitrum': 'Arbitrum One',
+  'base': 'Base',
+  'gnosis': 'Gnosis',
+  'sepolia': 'Sepolia',
+  'blast': 'Blast',
+  'zora': 'Zora',
+};
 
 export const ConnectWallet: React.FC = () => {
-  const { isConnecting } = useAccount();
+  const { isConnecting, isConnected, chain: accountChain } = useAccount();
   const { disconnect } = useDisconnect();
+  const { switchChain } = useSwitchChain();
+  const chains = useChains();
+  const router = useRouter();
+  const isSyncing = useRef(false);
+
+  useEffect(() => {
+    if (!router.isReady || !isConnected || !accountChain || isSyncing.current) return;
+
+    const chainName = typeof router.query.chain === 'string'
+      ? router.query.chain.toLowerCase()
+      : null;
+    const currentChainName = chainMappings[accountChain.name];
+    if (chainName && chainMappings[chainName] && chainMappings[chainName] !== accountChain.name) {
+      const targetChain = chains.find(c => c.name === chainMappings[chainName]);
+
+      if (targetChain) {
+        isSyncing.current = true;
+        console.log(`Switching to ${chainMappings[chainName]}`);
+
+        try {
+          switchChain({ chainId: targetChain.id });
+        } catch (error) {
+          console.error('Chain switch failed:', error);
+        } finally {
+          setTimeout(() => {
+            isSyncing.current = false;
+          }, 500);
+        }
+      }
+    }
+
+    else if (currentChainName && chainName !== currentChainName) {
+      isSyncing.current = true;
+      console.log(`Updating URL to ${currentChainName}`);
+
+      router.push(
+        { pathname: router.pathname, query: { ...router.query, chain: currentChainName } },
+        undefined,
+        { shallow: true }
+      )
+        .finally(() => {
+          setTimeout(() => {
+            isSyncing.current = false;
+          }, 500);
+        });
+    }
+  }, [
+    router.isReady,
+    isConnected,
+    accountChain?.name,
+    router.query.chain,
+    chains,
+    switchChain,
+    router
+  ]);
 
   return (
     <ConnectButton.Custom>
       {({
         account,
-        chain,
+        chain: buttonChain,
         openAccountModal,
         openChainModal,
         openConnectModal,
@@ -41,7 +122,7 @@ export const ConnectWallet: React.FC = () => {
           })}
         >
           {(() => {
-            if (!mounted || !account || !chain) {
+            if (!mounted || !account || !buttonChain) {
               return (
                 <Button
                   color='brand.primary.600'
@@ -62,7 +143,7 @@ export const ConnectWallet: React.FC = () => {
               );
             }
 
-            if (chain.unsupported) {
+            if (buttonChain.unsupported) {
               return (
                 <Button
                   onClick={openChainModal}
@@ -93,13 +174,13 @@ export const ConnectWallet: React.FC = () => {
                     onClick={openChainModal}
                   >
                     <Image
-                      alt={chain.name ?? 'Chain icon'}
-                      src={chain.iconUrl}
+                      alt={buttonChain.name ?? 'Chain icon'}
+                      src={buttonChain.iconUrl}
                       width={25}
                       height={25}
                       mr={2}
                     />
-                    {chain.name}
+                    {buttonChain.name}
                   </Button>
 
                   <MenuButton
