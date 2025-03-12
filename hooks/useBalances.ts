@@ -1,23 +1,29 @@
+import { useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { erc20Abi, formatUnits } from 'viem';
-import { useAccount, useBalance, useReadContracts } from 'wagmi';
+import {
+  useAccount,
+  useBalance,
+  useBlockNumber,
+  useReadContracts,
+} from 'wagmi';
 import { wethAddrs } from '../utils/contracts';
 
 const useBalances = () => {
   const { address, chain } = useAccount();
   const contractAddress = wethAddrs?.[chain?.name.toLowerCase() || 'homestead'];
+  const queryClient = useQueryClient();
 
-  // Get native ETH balance
-  const { data: ethBalanceData } = useBalance({
+  const { data: blockNumber } = useBlockNumber({ watch: true });
+
+  const { data: ethBalanceData, queryKey: ethQueryKey } = useBalance({
     address,
     query: {
       enabled: !!contractAddress,
-      refetchInterval: 3000,
-      refetchIntervalInBackground: false,
     },
   });
 
-  // Get WETH token balance using useReadContracts
-  const { data: wethBalanceData } = useReadContracts({
+  const { data: wethBalanceData, queryKey: wethQueryKey } = useReadContracts({
     contracts: address
       ? [
           {
@@ -35,12 +41,16 @@ const useBalances = () => {
       : [],
     query: {
       enabled: contractAddress?.length !== 0,
-      refetchInterval: 3000,
-      refetchIntervalInBackground: false,
     },
   });
 
-  // Format the balances
+  useEffect(() => {
+    if (blockNumber) {
+      queryClient.invalidateQueries({ queryKey: ethQueryKey });
+      queryClient.invalidateQueries({ queryKey: wethQueryKey });
+    }
+  }, [blockNumber, queryClient, ethQueryKey, wethQueryKey]);
+
   const ethBalance = ethBalanceData
     ? formatUnits(ethBalanceData.value, ethBalanceData.decimals)
     : '0';

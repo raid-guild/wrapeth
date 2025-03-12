@@ -10,14 +10,13 @@ import {
   MenuItem,
   MenuList,
 } from '@raidguild/design-system';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { ConnectButton, useChainModal } from '@rainbow-me/rainbowkit';
 import { useRouter } from 'next/router';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FiChevronDown, FiKey, FiXCircle } from 'react-icons/fi';
 import { truncateAddress } from 'utils/general';
 import { useAccount, useChains, useDisconnect, useSwitchChain } from 'wagmi';
 
-// Simple bidirectional mapping between URL slugs and chain names
 const chainMappings = {
   // Chain name → URL slug
   'Ethereum': 'ethereum',
@@ -46,13 +45,33 @@ export const ConnectWallet: React.FC = () => {
   const { isConnecting, isConnected, chain: accountChain } = useAccount();
   const { disconnect } = useDisconnect();
   const { switchChain } = useSwitchChain();
+  const { openChainModal, chainModalOpen } = useChainModal();
   const chains = useChains();
   const router = useRouter();
   const isSyncing = useRef(false);
+  const [lastModalState, setLastModalState] = useState(false);
 
   useEffect(() => {
-    if (!router.isReady || !isConnected || !accountChain || isSyncing.current) return;
+    if (lastModalState && !chainModalOpen && isConnected && accountChain) {
+      const chainName = chainMappings[accountChain.name];
+      if (chainName) {
+        isSyncing.current = true;
+        router.push(
+          { pathname: router.pathname, query: { ...router.query, chain: chainName } },
+          undefined,
+          { shallow: true }
+        ).finally(() => {
+          setTimeout(() => {
+            isSyncing.current = false;
+          }, 500);
+        });
+      }
+    }
+    setLastModalState(chainModalOpen);
+  }, [chainModalOpen, accountChain, isConnected, router, lastModalState]);
 
+  useEffect(() => {
+    if (!router.isReady || !isConnected || !accountChain || isSyncing.current || chainModalOpen) return;
     async function asyncChainSwitch() {
       const chainName = typeof router.query.chain === 'string'
         ? router.query.chain.toLowerCase()
@@ -63,12 +82,8 @@ export const ConnectWallet: React.FC = () => {
 
         if (targetChain) {
           isSyncing.current = true;
-          console.log(`Switching to ${chainMappings[chainName]}`);
-
           try {
             await switchChain({ chainId: targetChain.id });
-          } catch (error) {
-            console.error('Chain switch failed:', error);
           } finally {
             setTimeout(() => {
               isSyncing.current = false;
@@ -79,8 +94,6 @@ export const ConnectWallet: React.FC = () => {
 
       else if (currentChainName && chainName !== currentChainName) {
         isSyncing.current = true;
-        console.log(`Updating URL to ${currentChainName}`);
-
         router.push(
           { pathname: router.pathname, query: { ...router.query, chain: currentChainName } },
           undefined,
@@ -101,7 +114,8 @@ export const ConnectWallet: React.FC = () => {
     router.query.chain,
     chains,
     switchChain,
-    router
+    router,
+    chainModalOpen
   ]);
 
   return (
@@ -110,7 +124,6 @@ export const ConnectWallet: React.FC = () => {
         account,
         chain: buttonChain,
         openAccountModal,
-        openChainModal,
         openConnectModal,
         mounted,
       }) => (
