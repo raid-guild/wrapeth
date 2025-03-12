@@ -1,3 +1,4 @@
+import chainMappings from '@/utils/chainMap';
 import {
   Box,
   Button,
@@ -16,30 +17,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FiChevronDown, FiKey, FiXCircle } from 'react-icons/fi';
 import { truncateAddress } from 'utils/general';
 import { useAccount, useChains, useDisconnect, useSwitchChain } from 'wagmi';
-
-const chainMappings = {
-  // Chain name → URL slug
-  'Ethereum': 'ethereum',
-  'Polygon': 'polygon',
-  'OP Mainnet': 'optimism',
-  'Arbitrum One': 'arbitrum',
-  'Base': 'base',
-  'Gnosis': 'gnosis',
-  'Sepolia': 'sepolia',
-  'Blast': 'blast',
-  'Zora': 'zora',
-
-  // URL slug → Chain name
-  'ethereum': 'Ethereum',
-  'polygon': 'Polygon',
-  'optimism': 'OP Mainnet',
-  'arbitrum': 'Arbitrum One',
-  'base': 'Base',
-  'gnosis': 'Gnosis',
-  'sepolia': 'Sepolia',
-  'blast': 'Blast',
-  'zora': 'Zora',
-};
 
 export const ConnectWallet: React.FC = () => {
   const { isConnecting, isConnected, chain: accountChain } = useAccount();

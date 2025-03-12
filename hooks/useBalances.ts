@@ -40,7 +40,7 @@ const useBalances = () => {
         ]
       : [],
     query: {
-      enabled: contractAddress?.length !== 0,
+      enabled: !!contractAddress,
     },
   });
 
