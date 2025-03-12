@@ -19,7 +19,7 @@ const useBalances = () => {
   const { data: ethBalanceData, queryKey: ethQueryKey } = useBalance({
     address,
     query: {
-      enabled: !!contractAddress,
+      enabled: !!address && !!contractAddress,
     },
   });
 
@@ -40,7 +40,7 @@ const useBalances = () => {
         ]
       : [],
     query: {
-      enabled: !!contractAddress,
+      enabled: !!address && !!contractAddress,
     },
   });
 
@@ -55,12 +55,11 @@ const useBalances = () => {
     ? formatUnits(ethBalanceData.value, ethBalanceData.decimals)
     : '0';
 
+  const balanceResult = wethBalanceData?.[0]?.result as bigint | undefined;
+  const decimalsResult = wethBalanceData?.[1]?.result as number | undefined;
   const wethBalance =
-    wethBalanceData && wethBalanceData[0] && wethBalanceData[1]
-      ? formatUnits(
-          wethBalanceData[0].result as bigint,
-          wethBalanceData[1].result as number,
-        )
+    balanceResult && decimalsResult
+      ? formatUnits(balanceResult, decimalsResult)
       : '0';
 
   return { ethBalance, wethBalance };
