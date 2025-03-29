@@ -1,10 +1,4 @@
 import { wagmiConfig } from '@/utils/wagmiConfig';
-// import {
-//   ChakraProvider,
-//   ColorModeScript,
-//   Fonts,
-//   defaultTheme,
-// } from '@raidguild/design-system';
 import '../styles/globals.css';
 import React from 'react';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
@@ -13,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Head from 'next/head';
 import { Analytics } from '@vercel/analytics/next';
 import { WagmiProvider } from 'wagmi';
+import { Toaster } from '@/components/ui/sonner';
 
 interface AppProps {
   Component: any;
@@ -31,9 +26,6 @@ const App = ({ Component, pageProps }: AppProps) => (
       />
       <link rel='icon' href='/favicon.ico' />
     </Head>
-    {/* <ChakraProvider theme={defaultTheme} resetCSS> */}
-    {/* <ColorModeScript initialColorMode='dark' /> */}
-    {/* <Fonts /> */}
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider theme={darkTheme()}>
@@ -41,8 +33,7 @@ const App = ({ Component, pageProps }: AppProps) => (
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
-    {/* </ChakraProvider> */}
-
+    <Toaster />
     <Analytics />
   </>
 );

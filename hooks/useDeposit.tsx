@@ -1,4 +1,4 @@
-// import { useToast } from '@raidguild/design-system';
+import { toast } from 'sonner';
 import { useEffect, useMemo, useRef } from 'react';
 import { useDebounceValue } from 'usehooks-ts';
 import { parseEther } from 'viem';
@@ -14,7 +14,6 @@ import { wethAddrs } from '../utils/contracts';
 
 const useDeposit = (inputBalance: number) => {
   const { address, chain } = useAccount();
-  const toast = useToast();
   const [debouncedValue] = useDebounceValue(inputBalance, 500);
   const contractAddress = wethAddrs?.[chain?.name.toLowerCase() || 'homestead'];
 
@@ -49,16 +48,10 @@ const useDeposit = (inputBalance: number) => {
   } = useWriteContract({
     mutation: {
       onSuccess() {
-        toast.success({
-          title: 'Pending Transaction...',
-          isClosable: true,
-        });
+        toast.loading('Pending Transaction...');
       },
       onError() {
-        toast.error({
-          title: 'Error... transaction reverted...',
-          isClosable: true,
-        });
+        toast.error('Error... transaction reverted...');
       },
     },
   });
@@ -84,16 +77,13 @@ const useDeposit = (inputBalance: number) => {
     if (isConfirmed && receiptData && dataDeposit) {
       // Check if we've already shown a toast for this transaction
       if (!hasShownToastRef.current[dataDeposit]) {
-        toast.success({
-          title: `Success! Wrapped ${chain?.nativeCurrency?.symbol || 'ETH'}`,
-          isClosable: true,
-        });
+        toast.success(`Success! Wrapped ${chain?.nativeCurrency?.symbol || 'ETH'}`);
 
         // Mark this transaction as having shown a toast
         hasShownToastRef.current[dataDeposit] = true;
       }
     }
-  }, [isConfirmed, receiptData, dataDeposit, chain?.nativeCurrency?.symbol, toast]);
+  }, [isConfirmed, receiptData, dataDeposit, chain?.nativeCurrency?.symbol]);
 
   // Function to execute the deposit
   const executeDeposit = () => {

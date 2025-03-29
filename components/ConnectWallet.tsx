@@ -1,23 +1,12 @@
 import chainMappings from '@/utils/chainMap';
-// import {
-//   Box,
-//   Button,
-//   Flex,
-//   HStack,
-//   Icon,
-//   Image,
-//   Menu,
-//   MenuButton,
-//   MenuItem,
-//   MenuList,
-// } from '@raidguild/design-system';
 import { ConnectButton, useChainModal } from '@rainbow-me/rainbowkit';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
-import { FiChevronDown, FiKey, FiXCircle } from 'react-icons/fi';
+import { FiKey, FiXCircle } from 'react-icons/fi';
 import { truncateAddress } from 'utils/general';
 import { useAccount, useChains, useDisconnect, useSwitchChain } from 'wagmi';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from './ui/navigation-menu';
 
@@ -110,19 +99,17 @@ const ConnectWallet: React.FC = () => {
         <div
           {...(!mounted && {
             'aria-hidden': true,
-            style: {
-              opacity: 0,
-              pointerEvents: 'none',
-              userSelect: 'none',
-            },
           })}
+          className={cn(
+            !mounted ? 'opacity-0 pointer-events-none select-none' : ''
+          )}
         >
           {(() => {
             if (!mounted || !account || !buttonChain) {
               return (
                 <Button
-                  className='bg-purple-600 text-purple-50 rounded-xs transition-all duration-100 ease-in-out hover:bg-purple-600 hover:border-2 hover:border-purple-50'
-                  disabled={isConnecting}
+                  className='bg-purple-600 text-purple-50 rounded-xs uppercase transition-all duration-100 ease-in-out hover:bg-purple-600 hover:border-2 hover:border-purple-50'
+                  disabled={mounted ? isConnecting : false}
                   onClick={openConnectModal}
                   data-cy='connect-wallet'
                   variant='default'
@@ -135,7 +122,7 @@ const ConnectWallet: React.FC = () => {
             if (buttonChain.unsupported) {
               return (
                 <Button
-                  className='bg-brand-primary-50 text-brand-primary-600 transition-all duration-100 ease-in-out hover:bg-brand-primary-100 hover:border-2 hover:border-brand-primary-600'
+                  className='bg-brand-primary-50 text-brand-primary-600 rounded-xs uppercase transition-all duration-100 ease-in-out hover:bg-brand-primary-100 hover:border-2 hover:border-brand-primary-600'
                   onClick={openChainModal}
                 >
                   Unsupported network
@@ -144,9 +131,9 @@ const ConnectWallet: React.FC = () => {
             }
 
             return (
-              <div className='flex gap-2'>
+              <div className='flex items-center gap-2'>
                 <Button
-                  className='flex width-fit'
+                  className='flex width-fit uppercase'
                   onClick={openChainModal}
                   variant='outline'
                 >
@@ -163,7 +150,7 @@ const ConnectWallet: React.FC = () => {
                 <NavigationMenu>
                   <NavigationMenuList>
                     <NavigationMenuItem>
-                      <NavigationMenuTrigger>
+                      <NavigationMenuTrigger className='uppercase'>
                         {account.ensName
                           ? account.ensName
                           : truncateAddress(account.address)}
@@ -172,7 +159,7 @@ const ConnectWallet: React.FC = () => {
                         <ul className="w-[150px]">
                           <NavigationMenuLink
                             onClick={() => openAccountModal()}
-                            className="hover:bg-gray-600"
+                            className="hover:bg-gray-600 select-none"
                           >
                             <div className='flex items-center gap-2'>
                               <FiKey className='text-white' />
@@ -181,7 +168,7 @@ const ConnectWallet: React.FC = () => {
                           </NavigationMenuLink>
                           <NavigationMenuLink
                             onClick={() => disconnect()}
-                            className="hover:bg-gray-600"
+                            className="hover:bg-gray-600 select-none"
                           >
                             <div className='flex items-center gap-2'>
                               <FiXCircle className='text-red-300' />

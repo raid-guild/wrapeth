@@ -1,29 +1,13 @@
-// import {
-//   Box,
-//   Button,
-//   ChakraNumberInput,
-//   Container,
-//   Flex,
-//   FormControl,
-//   HStack,
-//   Icon,
-//   NumberDecrementStepper,
-//   NumberIncrementStepper,
-//   // NumberInput,
-//   NumberInputField,
-//   NumberInputStepper,
-//   Text,
-// } from '@raidguild/design-system';
 import React from 'react';
-import { Controller, FieldValues, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { FiAlertTriangle } from 'react-icons/fi';
-
+import { z } from 'zod';
 import useBalances from '@/hooks/useBalances';
 import useDeposit from '@/hooks/useDeposit';
 import useGasFee from '@/hooks/useGasFee';
 import useWithdraw from '@/hooks/useWithdraw';
 import TokenInfo from './TokenInfo';
-import { FormControl } from './ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from './ui/form';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 
@@ -34,6 +18,12 @@ export interface WrapperFormProps {
   action: string;
 }
 
+const formSchema = z.object({
+  amount: z.number().min(0, {
+    message: "Amount must be greater than 0.",
+  }),
+})
+
 /**
  * Interface for depositing ETH or native token and receiving wETH
  */
@@ -41,7 +31,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const { ethBalance, wethBalance } = useBalances();
   const { txFeeEther } = useGasFee();
 
-  const localForm = useForm<FieldValues>({
+  const localForm = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
       amount: 0,
     },
@@ -69,9 +59,10 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
     );
   };
 
-  const onSubmit = async () => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     if (action === 'deposit' && writeDeposit) writeDeposit();
     else if (action === 'withdraw' && writeWithdraw) writeWithdraw();
+    console.log(data);
   };
 
   const customValidations = {
@@ -97,64 +88,47 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
       <div className='flex justify-end my-3'>
         <TokenInfo deposit={action === 'deposit'} />
       </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className='flex mb-8'>
-          <FormControl className='text-white'>
-            <Controller
-              control={control}
-              name='amount'
-              rules={customValidations}
-              render={({ field: { ref, ...restField } }) => (
-                <Input
-                  className='h-full w-full border border-purple-400 rounded-md'
-                  type='number'
-                  step={0.1}
-                  min={0}
-                  max={action === 'deposit' ? +ethBalance : +wethBalance}
-                  {...restField}
-                >
-                  {/* <NumberInputField
-                    ref={ref}
-                    name={restField.name}
-                    border='1px solid'
-                    borderColor='purple.400'
-                  />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper> */}
-                </Input>
-              )}
-            />
-          </FormControl>
-          <div className='h-full'>
-            <Button
-              className='w-full max-w-30'
-              variant='outline'
-              size='sm'
-              onClick={handleSetMax}
-            >
-              Set Max
-            </Button>
-          </div>
-        </div>
-        <div className='text-white opacity-65 mt-[-3px] mb-5'>
-          {errors.amount && (
-            <div className='flex items-center gap-4'>
-              <FiAlertTriangle className='mr-1' />
-              <p className='font-medium text-sm'>{String(errors.amount.message || '')}</p>
-            </div>
-          )}
-        </div>
-
-        <Button
-          variant='default'
-          type='submit'
-          className='w-full'
-        >
-          Submit
-        </Button>
-      </form>
+      <Form {...localForm}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={control}
+            name='amount'
+            rules={customValidations}
+            render={({ field: { ref, ...restField } }) => (
+              <FormItem>
+                <FormControl className='text-white'>
+                  <div className="flex w-full items-center space-x-2">
+                    <Input
+                      className='border border-purple-400 rounded-xs'
+                      type='number'
+                      step={0.1}
+                      min={0}
+                      max={action === 'deposit' ? +ethBalance : +wethBalance}
+                      {...restField}
+                    />
+                    <Button
+                      type='button'
+                      className='rounded-xs'
+                      variant='outline'
+                      onClick={handleSetMax}
+                    >
+                      Set Max
+                    </Button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button
+            variant='default'
+            type='submit'
+            className='w-full rounded-xs bg-purple-600 uppercase'
+          >
+            Submit
+          </Button>
+        </form>
+      </Form>
 
       <div className='flex justify-center mt-5 text-white' />
     </div>

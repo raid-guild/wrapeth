@@ -14,7 +14,7 @@ const TokenInfo: React.FC<TokenInfoProps> = ({ deposit }) => {
   const symbol = chain?.nativeCurrency?.symbol;
 
   return (
-    <Button variant='ghost'>
+    <Button variant='secondary' className='uppercase rounded-xs pointer-events-none'>
       {`${deposit ? '' : 'W'}${symbol} Balance: ${deposit ? ethBalance?.slice(0, 6) || 0 : wethBalance?.slice(0, 6) || 0
         }`}
     </Button>

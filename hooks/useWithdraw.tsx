@@ -1,4 +1,4 @@
-import { useToast } from '@raidguild/design-system';
+import { toast } from 'sonner';
 import { useEffect, useRef } from 'react';
 import { useDebounceValue } from 'usehooks-ts';
 import { parseEther } from 'viem';
@@ -14,7 +14,6 @@ import { wethAddrs } from '../utils/contracts';
 
 const useWithdraw = (inputBalance: number) => {
   const { chain } = useAccount();
-  const toast = useToast();
   const [debouncedValue] = useDebounceValue(inputBalance, 500)
   const contractAddress = wethAddrs?.[chain?.name.toLowerCase() || 'homestead'];
 
@@ -35,16 +34,12 @@ const useWithdraw = (inputBalance: number) => {
   } = useWriteContract({
     mutation: {
       onSuccess() {
-        toast.success({
-          title: 'Transaction pending...',
-        });
+        toast.loading('Transaction pending...');
       },
       onError(error: any) {
         // eslint-disable-next-line no-console
         console.log(error);
-        toast.error({
-          title: 'Error... transaction reverted...',
-        });
+        toast.error('Error... transaction reverted...');
       },
     },
   });
@@ -67,16 +62,13 @@ const useWithdraw = (inputBalance: number) => {
     if (isConfirmed && receiptData && dataWithdraw) {
       // Check if we've already shown a toast for this transaction
       if (!hasShownToastRef.current[dataWithdraw]) {
-        toast.success({
-          title: `Success! Unwrapped ${chain?.nativeCurrency?.symbol || 'ETH'}`,
-          isClosable: true,
-        });
+        toast.success(`Success! Unwrapped ${chain?.nativeCurrency?.symbol || 'ETH'}`);
 
         // Mark this transaction as having shown a toast
         hasShownToastRef.current[dataWithdraw] = true;
       }
     }
-  }, [isConfirmed, receiptData, dataWithdraw, chain?.nativeCurrency?.symbol, toast]);
+  }, [isConfirmed, receiptData, dataWithdraw, chain?.nativeCurrency?.symbol]);
 
   // Function to execute the withdraw
   const executeWithdraw = () => {
