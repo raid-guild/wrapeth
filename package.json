@@ -10,20 +10,30 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@raidguild/design-system": "0.5.8",
+    "@hookform/resolvers": "^4.1.3",
+    "@radix-ui/react-label": "^2.1.2",
+    "@radix-ui/react-navigation-menu": "^1.2.5",
+    "@radix-ui/react-slot": "^1.1.2",
     "@rainbow-me/rainbowkit": "^2.2.3",
     "@tanstack/react-query": "^5.51.18",
     "@vercel/analytics": "^1.5.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.484.0",
     "next": "^14.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-hook-form": "^7.38.0",
+    "react-hook-form": "^7.54.2",
     "react-icons": "^4.6.0",
+    "tailwind-merge": "^3.0.2",
+    "tw-animate-css": "^1.2.4",
     "usehooks-ts": "^2.9.1",
     "viem": "^2.18.7",
-    "wagmi": "^2.12.2"
+    "wagmi": "^2.12.2",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.17",
     "@types/node": "18.11.5",
     "@types/react": "^18.0.21",
     "@typescript-eslint/eslint-plugin": "^5.40.1",
@@ -37,6 +47,8 @@
     "eslint-plugin-jsx-a11y": "6.5.1",
     "eslint-plugin-react": "7.29.4",
     "eslint-plugin-react-hooks": "4.5.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.17",
     "typescript": "^5.1.6"
   },
   "engines": {

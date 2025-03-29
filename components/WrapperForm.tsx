@@ -1,19 +1,19 @@
-import {
-  Box,
-  Button,
-  ChakraNumberInput,
-  Container,
-  Flex,
-  FormControl,
-  HStack,
-  Icon,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  // NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  Text,
-} from '@raidguild/design-system';
+// import {
+//   Box,
+//   Button,
+//   ChakraNumberInput,
+//   Container,
+//   Flex,
+//   FormControl,
+//   HStack,
+//   Icon,
+//   NumberDecrementStepper,
+//   NumberIncrementStepper,
+//   // NumberInput,
+//   NumberInputField,
+//   NumberInputStepper,
+//   Text,
+// } from '@raidguild/design-system';
 import React from 'react';
 import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { FiAlertTriangle } from 'react-icons/fi';
@@ -23,6 +23,9 @@ import useDeposit from '@/hooks/useDeposit';
 import useGasFee from '@/hooks/useGasFee';
 import useWithdraw from '@/hooks/useWithdraw';
 import TokenInfo from './TokenInfo';
+import { FormControl } from './ui/form';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
 
 export interface WrapperFormProps {
   /**
@@ -90,28 +93,27 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   };
 
   return (
-    <Container mt={6}>
-      <Flex justify='end' my={3}>
+    <div className='mt-6'>
+      <div className='flex justify-end my-3'>
         <TokenInfo deposit={action === 'deposit'} />
-      </Flex>
+      </div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <HStack marginBottom={8}>
-          <FormControl color='white'>
+        <div className='flex mb-8'>
+          <FormControl className='text-white'>
             <Controller
               control={control}
               name='amount'
               rules={customValidations}
               render={({ field: { ref, ...restField } }) => (
-                <ChakraNumberInput
-                  h='100%'
+                <Input
+                  className='h-full w-full border border-purple-400 rounded-md'
+                  type='number'
                   step={0.1}
-                  width='100%'
                   min={0}
                   max={action === 'deposit' ? +ethBalance : +wethBalance}
-                  variant='outline'
                   {...restField}
                 >
-                  <NumberInputField
+                  {/* <NumberInputField
                     ref={ref}
                     name={restField.name}
                     border='1px solid'
@@ -120,47 +122,42 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
                   <NumberInputStepper>
                     <NumberIncrementStepper />
                     <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </ChakraNumberInput>
+                  </NumberInputStepper> */}
+                </Input>
               )}
             />
           </FormControl>
-          <Box h='100%'>
+          <div className='h-full'>
             <Button
-              maxW='120px'
+              className='w-full max-w-30'
               variant='outline'
-              size='md'
-              w='100%'
+              size='sm'
               onClick={handleSetMax}
             >
               Set Max
             </Button>
-          </Box>
-        </HStack>
-        <Flex color='white' opacity='0.65' mt='-3' mb='5'>
+          </div>
+        </div>
+        <div className='text-white opacity-65 mt-[-3px] mb-5'>
           {errors.amount && (
-            <Flex as='span' alignItems='center' gap={4}>
-              <Icon as={FiAlertTriangle} mr='0.5' />
-              <Text fontFamily='spaceMono' fontWeight='medium' fontSize='sm'>
-                {errors.amount.message}
-              </Text>
-            </Flex>
+            <div className='flex items-center gap-4'>
+              <FiAlertTriangle className='mr-1' />
+              <p className='font-medium text-sm'>{String(errors.amount.message || '')}</p>
+            </div>
           )}
-        </Flex>
+        </div>
 
         <Button
-          as='button'
-          variant='solid'
+          variant='default'
           type='submit'
-          loadingText='Submitting'
-          width='100%'
+          className='w-full'
         >
           Submit
         </Button>
       </form>
 
-      <Flex color='white' justifyContent='center' mt='5' />
-    </Container>
+      <div className='flex justify-center mt-5 text-white' />
+    </div>
   );
 };
 

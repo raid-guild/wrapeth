@@ -1,24 +1,27 @@
 import chainMappings from '@/utils/chainMap';
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Icon,
-  Image,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-} from '@raidguild/design-system';
+// import {
+//   Box,
+//   Button,
+//   Flex,
+//   HStack,
+//   Icon,
+//   Image,
+//   Menu,
+//   MenuButton,
+//   MenuItem,
+//   MenuList,
+// } from '@raidguild/design-system';
 import { ConnectButton, useChainModal } from '@rainbow-me/rainbowkit';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import { FiChevronDown, FiKey, FiXCircle } from 'react-icons/fi';
 import { truncateAddress } from 'utils/general';
 import { useAccount, useChains, useDisconnect, useSwitchChain } from 'wagmi';
+import Image from 'next/image';
+import { Button } from './ui/button';
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from './ui/navigation-menu';
 
-export const ConnectWallet: React.FC = () => {
+const ConnectWallet: React.FC = () => {
   const { isConnecting, isConnected, chain: accountChain } = useAccount();
   const { disconnect } = useDisconnect();
   const { switchChain } = useSwitchChain();
@@ -118,20 +121,13 @@ export const ConnectWallet: React.FC = () => {
             if (!mounted || !account || !buttonChain) {
               return (
                 <Button
-                  color='brand.primary.600'
-                  backgroundColor='brand.primary.50'
-                  transition='all 100ms ease-in-out'
-                  _hover={{
-                    bgColor: 'brand.primary.100',
-                    borderWidth: '2px',
-                    borderColor: 'brand.primary.600',
-                  }}
-                  leftIcon={<FiKey />}
+                  className='bg-purple-600 text-purple-50 rounded-xs transition-all duration-100 ease-in-out hover:bg-purple-600 hover:border-2 hover:border-purple-50'
                   disabled={isConnecting}
                   onClick={openConnectModal}
                   data-cy='connect-wallet'
+                  variant='default'
                 >
-                  Connect
+                  <FiKey /> Connect
                 </Button>
               );
             }
@@ -139,17 +135,8 @@ export const ConnectWallet: React.FC = () => {
             if (buttonChain.unsupported) {
               return (
                 <Button
+                  className='bg-brand-primary-50 text-brand-primary-600 transition-all duration-100 ease-in-out hover:bg-brand-primary-100 hover:border-2 hover:border-brand-primary-600'
                   onClick={openChainModal}
-                  color='brand.primary.600'
-                  backgroundColor='brand.primary.50'
-                  transition='all 100ms ease-in-out'
-                  border='2px'
-                  borderColor='white'
-                  _hover={{
-                    bgColor: 'brand.primary.100',
-                    borderWidth: '2px',
-                    borderColor: 'brand.primary.600',
-                  }}
                 >
                   Unsupported network
                 </Button>
@@ -157,64 +144,62 @@ export const ConnectWallet: React.FC = () => {
             }
 
             return (
-              <Flex gap={3}>
-                <Menu offset={[0, 4]} placement='bottom-end' autoSelect={false}>
-                  <Button
-                    display='flex'
-                    flexDirection='row'
-                    variant='outline'
-                    width='fit'
-                    onClick={openChainModal}
-                  >
-                    <Image
-                      alt={buttonChain.name ?? 'Chain icon'}
-                      src={buttonChain.iconUrl}
-                      width={25}
-                      height={25}
-                      mr={2}
-                    />
-                    {buttonChain.name}
-                  </Button>
-
-                  <MenuButton
-                    as={Button}
-                    rightIcon={
-                      <Icon as={FiChevronDown} color='brand.primary.600' />
-                    }
-                    variant='outline'
-                    width='fit'
-                  >
-                    {account.ensName
-                      ? account.ensName
-                      : truncateAddress(account.address)}
-                  </MenuButton>
-                  <MenuList backgroundColor='gray.800' minWidth='none'>
-                    <MenuItem
-                      onClick={() => openAccountModal()}
-                      _hover={{ backgroundColor: 'gray.600' }}
-                    >
-                      <HStack>
-                        <Icon as={FiKey} color='white' />
-                        <Box color='white'>Wallet</Box>
-                      </HStack>
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => disconnect()}
-                      _hover={{ backgroundColor: 'gray.600' }}
-                    >
-                      <HStack spacing={2}>
-                        <Icon as={FiXCircle} color='red.300' />
-                        <Box color='red.300'>Sign Out</Box>
-                      </HStack>
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-              </Flex>
+              <div className='flex gap-2'>
+                <Button
+                  className='flex width-fit'
+                  onClick={openChainModal}
+                  variant='outline'
+                >
+                  <Image
+                    className='rounded-full'
+                    unoptimized
+                    alt={buttonChain.name ?? 'Chain icon'}
+                    src={buttonChain.iconUrl ?? ''}
+                    width={25}
+                    height={25}
+                  />
+                  {buttonChain.name}
+                </Button>
+                <NavigationMenu>
+                  <NavigationMenuList>
+                    <NavigationMenuItem>
+                      <NavigationMenuTrigger>
+                        {account.ensName
+                          ? account.ensName
+                          : truncateAddress(account.address)}
+                      </NavigationMenuTrigger>
+                      <NavigationMenuContent>
+                        <ul className="w-[150px]">
+                          <NavigationMenuLink
+                            onClick={() => openAccountModal()}
+                            className="hover:bg-gray-600"
+                          >
+                            <div className='flex items-center gap-2'>
+                              <FiKey className='text-white' />
+                              <p className='text-white'>Wallet</p>
+                            </div>
+                          </NavigationMenuLink>
+                          <NavigationMenuLink
+                            onClick={() => disconnect()}
+                            className="hover:bg-gray-600"
+                          >
+                            <div className='flex items-center gap-2'>
+                              <FiXCircle className='text-red-300' />
+                              <p className='text-red-300'>Sign Out</p>
+                            </div>
+                          </NavigationMenuLink>
+                        </ul>
+                      </NavigationMenuContent>
+                    </NavigationMenuItem>
+                  </NavigationMenuList>
+                </NavigationMenu>
+              </div>
             );
           })()}
         </div>
-      )}
-    </ConnectButton.Custom>
+      )
+      }
+    </ConnectButton.Custom >
   );
 };
 

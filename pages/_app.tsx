@@ -1,10 +1,11 @@
 import { wagmiConfig } from '@/utils/wagmiConfig';
-import {
-  ChakraProvider,
-  ColorModeScript,
-  Fonts,
-  defaultTheme,
-} from '@raidguild/design-system';
+// import {
+//   ChakraProvider,
+//   ColorModeScript,
+//   Fonts,
+//   defaultTheme,
+// } from '@raidguild/design-system';
+import '../styles/globals.css';
 import React from 'react';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
@@ -30,17 +31,17 @@ const App = ({ Component, pageProps }: AppProps) => (
       />
       <link rel='icon' href='/favicon.ico' />
     </Head>
-    <ChakraProvider theme={defaultTheme} resetCSS>
-      <ColorModeScript initialColorMode='dark' />
-      <Fonts />
-      <WagmiProvider config={wagmiConfig}>
-        <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider theme={darkTheme()}>
-            <Component {...pageProps} />
-          </RainbowKitProvider>
-        </QueryClientProvider>
-      </WagmiProvider>
-    </ChakraProvider>
+    {/* <ChakraProvider theme={defaultTheme} resetCSS> */}
+    {/* <ColorModeScript initialColorMode='dark' /> */}
+    {/* <Fonts /> */}
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider theme={darkTheme()}>
+          <Component {...pageProps} />
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+    {/* </ChakraProvider> */}
 
     <Analytics />
   </>

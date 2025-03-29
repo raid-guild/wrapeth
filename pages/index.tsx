@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
-import {
-  Heading,
-  Card,
-  Container,
-  Flex,
-  Spacer,
-  ButtonGroup,
-  BuiltByRaidGuild,
-} from '@raidguild/design-system';
+// import {
+//   Heading,
+//   Card,
+//   Container,
+//   Flex,
+//   Spacer,
+//   ButtonGroup,
+//   BuiltByRaidGuild,
+// } from '@raidguild/design-system';
 import '@rainbow-me/rainbowkit/styles.css';
 import { useAccount } from 'wagmi';
-import { WrapperForm, Header, ConnectWallet } from '@/components';
+import WrapperForm from '@/components/WrapperForm';
+import Header from '@/components/Header';
+import ConnectWallet from '@/components/ConnectWallet';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export interface AppProps {
   children?: any;
@@ -38,56 +43,52 @@ const App: React.FC<AppProps> = ({ children }: AppProps) => {
   };
 
   return (
-    <Flex
-      h='100vh'
-      w='100vw'
-      maxW='100%'
-      background='gray.800'
-      overflow='scroll'
-    >
-      <Container centerContent maxW='80ch'>
+    <div className='h-screen w-screen max-w-full bg-background overflow-auto'>
+      <div className='container mx-auto max-w-[80ch]'>
         <Header>
-          <Spacer />
           <ConnectWallet />
         </Header>
-        <Flex align='center' mt='10px'>
-          <Heading as='h1' size='4xl'>
-            Wrap Eth
-          </Heading>
-        </Flex>
-        <Container centerContent maxW='80ch'>
-          <Card mt='24px' p='64px' w='100%' background='gray.800'>
-            <ButtonGroup
-              buttons={[
-                `Wrap ${chain?.nativeCurrency?.symbol || 'ETH'}`,
-                `Unwrap w${chain?.nativeCurrency?.symbol || 'ETH'}`,
-              ]}
-              defaultSelected={deposit ? 0 : 1}
-              isAttached
-              onSelect={onButtonSelection}
-            />
+        <div className='flex items-center mt-10'>
+          <h1 className='font-uncial text-4xl'>Wrap Eth</h1>
+        </div>
+        <Card className='mt-24 p-32 w-full border-2 border-white rounded-xs'>
+          <div className="flex items-center justify-center">
+            <Button
+              onClick={() => onButtonSelection(0)}
+              className={cn(
+                'pointer rounded-r-none',
+                deposit ? 'bg-primary' : 'bg-secondary',
+              )}
+            >
+              Wrap ${chain?.nativeCurrency?.symbol || 'ETH'}
+            </Button>
+            <Button
+              onClick={() => onButtonSelection(1)}
+              className={cn(
+                'pointer rounded-l-none',
+                deposit ? 'bg-secondary' : 'bg-primary',
+              )}
+            >
+              Unwrap w${chain?.nativeCurrency?.symbol || 'ETH'}
+            </Button>
+          </div>
 
-            {isConnected ? (
-              <WrapperForm action={deposit ? 'deposit' : 'withdraw'} />
-            ) : (
-              <Heading
-                color='whiteAlpha.900'
-                variant='noShadow'
-                mt='5'
-                size='lg'
-              >
-                Connect to {deposit ? 'wrap' : 'unwrap'} ETH
-              </Heading>
-            )}
-          </Card>
-        </Container>
+          {isConnected ? (
+            // <WrapperForm action={deposit ? 'deposit' : 'withdraw'} />
+            <h1> Wrap ETH </h1>
+          ) : (
+            <h1 className='mt-5 text-lg text-white'>
+              Connect to {deposit ? 'wrap' : 'unwrap'} ETH
+            </h1>
+          )}
+        </Card>
 
-        <Flex justify='flex-end' width='100%' my='6' mr='48px'>
+        {/* <Flex justify='flex-end' width='100%' my='6' mr='48px'>
           <BuiltByRaidGuild />
-        </Flex>
-      </Container>
+        </Flex> */}
+      </div>
       {children}
-    </Flex>
+    </div>
   );
 };
 
