@@ -1,6 +1,5 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { FiAlertTriangle } from 'react-icons/fi';
 import { z } from 'zod';
 import useBalances from '@/hooks/useBalances';
 import useDeposit from '@/hooks/useDeposit';
@@ -42,7 +41,6 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
     setValue,
     watch,
     control,
-    formState: { errors },
   } = localForm;
 
   const { writeDeposit } = useDeposit(watch('amount'));

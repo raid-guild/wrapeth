@@ -7,6 +7,9 @@ const nextConfig = {
   swcMinify: true,
   transpilePackages: ['@raidguild/design-system'],
   output: 'export',
+  images: {
+    unoptimized: true,
+  },
 };
 
 module.exports = nextConfig;

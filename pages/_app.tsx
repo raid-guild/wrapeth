@@ -34,7 +34,7 @@ const App = ({ Component, pageProps }: AppProps) => (
       </QueryClientProvider>
     </WagmiProvider>
     <Toaster />
-    <Analytics />
+    <Analytics mode='production' />
   </>
 );
 

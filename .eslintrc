@@ -50,5 +50,6 @@
     "import/resolver": {
       "typescript": {}
     }
-  }
+  },
+  "ignorePatterns": ["components/ui/*"]
 }
