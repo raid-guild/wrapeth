@@ -40,7 +40,30 @@
     "moduleResolution": "node" /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */,
     "baseUrl": "." /* Base directory to resolve non-absolute module names. */,
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "*"
+      ],
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/lib/*": [
+        "lib/*"
+      ],
+      "@/app/*": [
+        "app/*"
+      ],
+      "@/public/*": [
+        "public/*"
+      ],
+      "@/hooks/*": [
+        "hooks/*"
+      ],
+      "@/styles/*": [
+        "styles/*"
+      ],
+      "@/utils/*": [
+        "utils/*"
+      ]
     } /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */,
     // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
     // "typeRoots": [],                       /* List of folders to include type definitions from. */
@@ -61,8 +84,23 @@
     "noEmit": true,
     "incremental": true,
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": ["pages", "components", "contexts", "utils", "*.d.ts"],
-  "exclude": ["assets"]
+  "include": [
+    "*.d.ts",
+    "app",
+    "components",
+    "contexts",
+    "utils",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "assets",
+    "node_modules"
+  ]
 }

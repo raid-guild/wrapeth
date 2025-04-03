@@ -49,7 +49,7 @@ const useBalances = () => {
       queryClient.invalidateQueries({ queryKey: ethQueryKey });
       queryClient.invalidateQueries({ queryKey: wethQueryKey });
     }
-  }, [blockNumber, queryClient, ethQueryKey, wethQueryKey]);
+  }, [blockNumber, queryClient]);
 
   const ethBalance = ethBalanceData
     ? formatUnits(ethBalanceData.value, ethBalanceData.decimals)

@@ -1,6 +1,5 @@
 import chainMappings from '@/utils/chainMap';
 import { ConnectButton, useChainModal } from '@rainbow-me/rainbowkit';
-import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import { FiKey, FiXCircle } from 'react-icons/fi';
 import { truncateAddress } from 'utils/general';
@@ -9,6 +8,7 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from './ui/navigation-menu';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const ConnectWallet: React.FC = () => {
   const { isConnecting, isConnected, chain: accountChain } = useAccount();
@@ -17,38 +17,35 @@ const ConnectWallet: React.FC = () => {
   const { openChainModal, chainModalOpen } = useChainModal();
   const chains = useChains();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const isSyncing = useRef(false);
   const [lastModalState, setLastModalState] = useState(false);
 
   useEffect(() => {
     if (lastModalState && !chainModalOpen && isConnected && accountChain) {
-      const chainName = chainMappings[accountChain.name];
+      const chainName = chainMappings[accountChain.id];
       if (chainName) {
         isSyncing.current = true;
-        router.push(
-          { pathname: router.pathname, query: { ...router.query, chain: chainName } },
-          undefined,
-          { shallow: true }
-        ).finally(() => {
-          setTimeout(() => {
-            isSyncing.current = false;
-          }, 500);
-        });
+        const params = new URLSearchParams(searchParams);
+        params.set('chain', chainName);
+        router.push(`?${params.toString()}`);
+        setTimeout(() => {
+          isSyncing.current = false;
+        }, 500);
       }
     }
     setLastModalState(chainModalOpen);
-  }, [chainModalOpen, accountChain, isConnected, router, lastModalState]);
+  }, [chainModalOpen, accountChain, isConnected, router, lastModalState, searchParams]);
 
   useEffect(() => {
-    if (!router.isReady || !isConnected || !accountChain || isSyncing.current || chainModalOpen) return;
-    async function asyncChainSwitch() {
-      const chainName = typeof router.query.chain === 'string'
-        ? router.query.chain.toLowerCase()
-        : null;
-      const currentChainName = chainMappings[accountChain?.name ?? ''];
-      if (chainName && chainMappings[chainName] && chainMappings[chainName] !== accountChain?.name) {
-        const targetChain = chains.find(c => c.name === chainMappings[chainName]);
+    if (!isConnected || !accountChain || isSyncing.current || chainModalOpen) return;
 
+    async function asyncChainSwitch() {
+      const chainName = searchParams.get('chain')?.toLowerCase() || null;
+      const currentChainName = chainMappings[accountChain?.id ?? ''];
+
+      if (chainName && chainMappings[chainName] && chainMappings[chainName] !== accountChain?.id) {
+        const targetChain = chains.find(c => c.id === chainMappings[chainName]);
         if (targetChain) {
           isSyncing.current = true;
           try {
@@ -59,28 +56,21 @@ const ConnectWallet: React.FC = () => {
             }, 500);
           }
         }
-      }
-
-      else if (currentChainName && chainName !== currentChainName) {
+      } else if (currentChainName && chainName !== currentChainName) {
         isSyncing.current = true;
-        router.push(
-          { pathname: router.pathname, query: { ...router.query, chain: currentChainName } },
-          undefined,
-          { shallow: true }
-        )
-          .finally(() => {
-            setTimeout(() => {
-              isSyncing.current = false;
-            }, 500);
-          });
+        const params = new URLSearchParams(searchParams);
+        params.set('chain', currentChainName);
+        router.push(`?${params.toString()}`);
+        setTimeout(() => {
+          isSyncing.current = false;
+        }, 500);
       }
     }
     asyncChainSwitch();
   }, [
-    router.isReady,
     isConnected,
     accountChain?.name,
-    router.query.chain,
+    searchParams,
     chains,
     switchChain,
     router,

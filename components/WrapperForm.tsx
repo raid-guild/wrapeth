@@ -17,18 +17,21 @@ export interface WrapperFormProps {
   action: string;
 }
 
-const formSchema = z.object({
-  amount: z.number().min(0, {
-    message: "Amount must be greater than 0.",
-  }),
-})
-
 /**
  * Interface for depositing ETH or native token and receiving wETH
  */
 const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const { ethBalance, wethBalance } = useBalances();
   const { txFeeEther } = useGasFee();
+
+  const formSchema = z.object({
+    amount: z.number({
+      required_error: "Amount is required",
+      invalid_type_error: "Amount must be a number",
+    })
+      .min(0, { message: "Amount must be greater than 0" })
+      .max(action === 'deposit' ? +ethBalance - +txFeeEther : +wethBalance, { message: "Input must be less than your full balance, plus transaction fees..." })
+  });
 
   const localForm = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
@@ -58,32 +61,31 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   };
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    if (action === 'deposit' && writeDeposit) writeDeposit();
-    else if (action === 'withdraw' && writeWithdraw) writeWithdraw();
-    console.log(data);
+    if (data.amount > 0 && action === 'deposit' && writeDeposit) writeDeposit();
+    else if (data.amount > 0 && action === 'withdraw' && writeWithdraw) writeWithdraw();
   };
 
-  const customValidations = {
-    required: 'Input cannot be blank',
-    validate: (value: number) => {
-      if (action === 'deposit') {
-        return value > 0 && value < +ethBalance - +txFeeEther;
-      }
-      return value > 0 && value <= +wethBalance;
-    },
-    max: {
-      value: action === 'deposit' ? +ethBalance - +txFeeEther : +wethBalance,
-      message: `Input must be less than your full balance, plus transaction fees...`,
-    },
-    min: {
-      value: 0,
-      message: 'Value must be greater than 0',
-    },
-  };
+  // const customValidations = {
+  //   required: 'Input cannot be blank',
+  //   validate: (value: number) => {
+  //     if (action === 'deposit') {
+  //       return value > 0 && value < +ethBalance - +txFeeEther;
+  //     }
+  //     return value > 0 && value <= +wethBalance;
+  //   },
+  //   max: {
+  //     value: action === 'deposit' ? +ethBalance - +txFeeEther : +wethBalance,
+  //     message: `Input must be less than your full balance, plus transaction fees...`,
+  //   },
+  //   min: {
+  //     value: 0,
+  //     message: 'Value must be greater than 0',
+  //   },
+  // };
 
   return (
     <div className='mt-6'>
-      <div className='flex justify-end my-3'>
+      <div className='flex justify-center md:justify-end my-3'>
         <TokenInfo deposit={action === 'deposit'} />
       </div>
       <Form {...localForm}>
@@ -91,11 +93,10 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
           <FormField
             control={control}
             name='amount'
-            rules={customValidations}
             render={({ field: { ref, ...restField } }) => (
               <FormItem>
                 <FormControl className='text-white'>
-                  <div className="flex w-full items-center space-x-2">
+                  <div className="flex flex-col md:flex-row w-full items-center space-y-2 md:space-y-0 md:space-x-2">
                     <Input
                       className='border border-purple-400 rounded-xs'
                       type='number'
