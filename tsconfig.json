@@ -97,6 +97,7 @@
     "components",
     "contexts",
     "utils",
+    "hooks",
     ".next/types/**/*.ts"
   ],
   "exclude": [

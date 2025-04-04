@@ -1,81 +1,42 @@
+'use client'
+
 import chainMappings from '@/utils/chainMap';
 import { ConnectButton, useChainModal } from '@rainbow-me/rainbowkit';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FiKey, FiXCircle } from 'react-icons/fi';
 import { truncateAddress } from 'utils/general';
-import { useAccount, useChains, useDisconnect, useSwitchChain } from 'wagmi';
+import { useAccount, useDisconnect } from 'wagmi';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from './ui/navigation-menu';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import useChainSwitch from '@/hooks/useChainSwitch';
 
 const ConnectWallet: React.FC = () => {
   const { isConnecting, isConnected, chain: accountChain } = useAccount();
   const { disconnect } = useDisconnect();
-  const { switchChain } = useSwitchChain();
   const { openChainModal, chainModalOpen } = useChainModal();
-  const chains = useChains();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const isSyncing = useRef(false);
+  const pathname = usePathname();
   const [lastModalState, setLastModalState] = useState(false);
+  const { handleChainUpdate } = useChainSwitch();
 
   useEffect(() => {
     if (lastModalState && !chainModalOpen && isConnected && accountChain) {
       const chainName = chainMappings[accountChain.id];
       if (chainName) {
-        isSyncing.current = true;
-        const params = new URLSearchParams(searchParams);
-        params.set('chain', chainName);
-        router.push(`?${params.toString()}`);
-        setTimeout(() => {
-          isSyncing.current = false;
-        }, 500);
+        const searchParams = new URLSearchParams(window.location.search);
+        searchParams.set('chain', chainName);
+        router.push(`${pathname}?${searchParams.toString()}`);
       }
     }
     setLastModalState(chainModalOpen);
-  }, [chainModalOpen, accountChain, isConnected, router, lastModalState, searchParams]);
+  }, [chainModalOpen, accountChain, isConnected, router, lastModalState, pathname]);
 
   useEffect(() => {
-    if (!isConnected || !accountChain || isSyncing.current || chainModalOpen) return;
-
-    async function asyncChainSwitch() {
-      const chainName = searchParams.get('chain')?.toLowerCase() || null;
-      const currentChainName = chainMappings[accountChain?.id ?? ''];
-
-      if (chainName && chainMappings[chainName] && chainMappings[chainName] !== accountChain?.id) {
-        const targetChain = chains.find(c => c.id === chainMappings[chainName]);
-        if (targetChain) {
-          isSyncing.current = true;
-          try {
-            await switchChain({ chainId: targetChain.id });
-          } finally {
-            setTimeout(() => {
-              isSyncing.current = false;
-            }, 500);
-          }
-        }
-      } else if (currentChainName && chainName !== currentChainName) {
-        isSyncing.current = true;
-        const params = new URLSearchParams(searchParams);
-        params.set('chain', currentChainName);
-        router.push(`?${params.toString()}`);
-        setTimeout(() => {
-          isSyncing.current = false;
-        }, 500);
-      }
-    }
-    asyncChainSwitch();
-  }, [
-    isConnected,
-    accountChain?.name,
-    searchParams,
-    chains,
-    switchChain,
-    router,
-    chainModalOpen
-  ]);
+    handleChainUpdate();
+  }, [handleChainUpdate]);
 
   return (
     <ConnectButton.Custom>
@@ -127,14 +88,16 @@ const ConnectWallet: React.FC = () => {
                   onClick={openChainModal}
                   variant='outline'
                 >
-                  <Image
-                    className='rounded-full'
-                    unoptimized
-                    alt={buttonChain.name ?? 'Chain icon'}
-                    src={buttonChain.iconUrl ?? ''}
-                    width={25}
-                    height={25}
-                  />
+                  {mounted && buttonChain.iconUrl && (
+                    <Image
+                      className='rounded-full'
+                      unoptimized
+                      alt={buttonChain.name ?? 'Chain icon'}
+                      src={buttonChain.iconUrl}
+                      width={25}
+                      height={25}
+                    />
+                  )}
                   {buttonChain.name}
                 </Button>
                 <NavigationMenu>
@@ -176,7 +139,7 @@ const ConnectWallet: React.FC = () => {
         </div>
       )
       }
-    </ConnectButton.Custom >
+    </ConnectButton.Custom>
   );
 };
 
