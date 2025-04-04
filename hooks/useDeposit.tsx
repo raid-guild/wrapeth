@@ -50,7 +50,7 @@ const useDeposit = (inputBalance: number) => {
     writeDeposit: executeDeposit,
     isWritePending,
     isWriteError,
-    canDeposit: Boolean(debouncedValue),
+    canDeposit: debouncedValue > 0,
   };
 };
 
