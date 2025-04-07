@@ -1,42 +1,102 @@
-'use client'
-
+import cn from '@/lib/utils';
 import chainMappings from '@/utils/chainMap';
 import { ConnectButton, useChainModal } from '@rainbow-me/rainbowkit';
-import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useRef, useState } from 'react';
 import { FiKey, FiXCircle } from 'react-icons/fi';
 import { truncateAddress } from 'utils/general';
-import { useAccount, useDisconnect } from 'wagmi';
-import Image from 'next/image';
-import { cn } from '@/lib/utils';
+import { useAccount, useChains, useDisconnect, useSwitchChain } from 'wagmi';
 import { Button } from './ui/button';
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from './ui/navigation-menu';
-import { useRouter, usePathname } from 'next/navigation';
-import useChainSwitch from '@/hooks/useChainSwitch';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger
+} from './ui/navigation-menu';
 
 const ConnectWallet: React.FC = () => {
   const { isConnecting, isConnected, chain: accountChain } = useAccount();
   const { disconnect } = useDisconnect();
+  const { switchChain } = useSwitchChain();
   const { openChainModal, chainModalOpen } = useChainModal();
+  const chains = useChains();
   const router = useRouter();
-  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const isSyncing = useRef(false);
   const [lastModalState, setLastModalState] = useState(false);
-  const { handleChainUpdate } = useChainSwitch();
 
   useEffect(() => {
     if (lastModalState && !chainModalOpen && isConnected && accountChain) {
       const chainName = chainMappings[accountChain.id];
       if (chainName) {
-        const searchParams = new URLSearchParams(window.location.search);
-        searchParams.set('chain', chainName);
-        router.push(`${pathname}?${searchParams.toString()}`);
+        isSyncing.current = true;
+        const params = new URLSearchParams(searchParams);
+        params.set('chain', chainName);
+        router.push(`?${params.toString()}`);
+        setTimeout(() => {
+          isSyncing.current = false;
+        }, 500);
       }
     }
     setLastModalState(chainModalOpen);
-  }, [chainModalOpen, accountChain, isConnected, router, lastModalState, pathname]);
+  }, [
+    chainModalOpen,
+    accountChain,
+    isConnected,
+    router,
+    lastModalState,
+    searchParams
+  ]);
 
   useEffect(() => {
-    handleChainUpdate();
-  }, [handleChainUpdate]);
+    if (!isConnected || !accountChain || isSyncing.current || chainModalOpen)
+      return;
+
+    async function asyncChainSwitch() {
+      const chainName = searchParams.get('chain')?.toLowerCase() || null;
+      const currentChainName = chainMappings[accountChain?.id ?? ''];
+
+      if (
+        chainName &&
+        chainMappings[chainName] &&
+        chainMappings[chainName] !== accountChain?.id
+      ) {
+        const targetChain = chains.find(
+          (c) => c.id === chainMappings[chainName]
+        );
+        if (targetChain) {
+          isSyncing.current = true;
+          try {
+            await switchChain({ chainId: targetChain.id });
+          } finally {
+            setTimeout(() => {
+              isSyncing.current = false;
+            }, 500);
+          }
+        }
+      } else if (currentChainName && chainName !== currentChainName) {
+        isSyncing.current = true;
+        const params = new URLSearchParams(searchParams);
+        params.set('chain', currentChainName);
+        router.push(`?${params.toString()}`);
+        setTimeout(() => {
+          isSyncing.current = false;
+        }, 500);
+      }
+    }
+    asyncChainSwitch();
+  }, [
+    isConnected,
+    accountChain?.name,
+    searchParams,
+    chains,
+    switchChain,
+    router,
+    chainModalOpen
+  ]);
 
   return (
     <ConnectButton.Custom>
@@ -45,21 +105,21 @@ const ConnectWallet: React.FC = () => {
         chain: buttonChain,
         openAccountModal,
         openConnectModal,
-        mounted,
+        mounted
       }) => (
         <div
           {...(!mounted && {
-            'aria-hidden': true,
+            'aria-hidden': true
           })}
           className={cn(
-            !mounted ? 'opacity-0 pointer-events-none select-none' : ''
+            !mounted ? 'pointer-events-none opacity-0 select-none' : ''
           )}
         >
           {(() => {
             if (!mounted || !account || !buttonChain) {
               return (
                 <Button
-                  className='bg-purple-600 text-purple-50 rounded-xs uppercase transition-all duration-100 ease-in-out hover:bg-purple-600 hover:border-2 hover:border-purple-50'
+                  className='rounded-xs bg-purple-600 text-purple-50 uppercase transition-all duration-100 ease-in-out hover:border-2 hover:border-purple-50 hover:bg-purple-600'
                   disabled={mounted ? isConnecting : false}
                   onClick={openConnectModal}
                   data-cy='connect-wallet'
@@ -73,7 +133,7 @@ const ConnectWallet: React.FC = () => {
             if (buttonChain.unsupported) {
               return (
                 <Button
-                  className='bg-brand-primary-50 text-brand-primary-600 rounded-xs uppercase transition-all duration-100 ease-in-out hover:bg-brand-primary-100 hover:border-2 hover:border-brand-primary-600'
+                  className='bg-brand-primary-50 text-brand-primary-600 hover:bg-brand-primary-100 hover:border-brand-primary-600 rounded-xs uppercase transition-all duration-100 ease-in-out hover:border-2'
                   onClick={openChainModal}
                 >
                   Unsupported network
@@ -84,16 +144,16 @@ const ConnectWallet: React.FC = () => {
             return (
               <div className='flex items-center gap-2'>
                 <Button
-                  className='flex width-fit uppercase'
+                  className='width-fit flex uppercase'
                   onClick={openChainModal}
                   variant='outline'
                 >
-                  {mounted && buttonChain.iconUrl && (
+                  {buttonChain.iconUrl && (
                     <Image
                       className='rounded-full'
                       unoptimized
                       alt={buttonChain.name ?? 'Chain icon'}
-                      src={buttonChain.iconUrl}
+                      src={buttonChain.iconUrl ?? ''}
                       width={25}
                       height={25}
                     />
@@ -109,10 +169,10 @@ const ConnectWallet: React.FC = () => {
                           : truncateAddress(account.address)}
                       </NavigationMenuTrigger>
                       <NavigationMenuContent>
-                        <ul className="w-[150px]">
+                        <ul className='w-[150px]'>
                           <NavigationMenuLink
                             onClick={() => openAccountModal()}
-                            className="hover:bg-gray-600 select-none"
+                            className='select-none hover:bg-gray-600'
                           >
                             <div className='flex items-center gap-2'>
                               <FiKey className='text-white' />
@@ -121,7 +181,7 @@ const ConnectWallet: React.FC = () => {
                           </NavigationMenuLink>
                           <NavigationMenuLink
                             onClick={() => disconnect()}
-                            className="hover:bg-gray-600 select-none"
+                            className='select-none hover:bg-gray-600'
                           >
                             <div className='flex items-center gap-2'>
                               <FiXCircle className='text-red-300' />
@@ -137,8 +197,7 @@ const ConnectWallet: React.FC = () => {
             );
           })()}
         </div>
-      )
-      }
+      )}
     </ConnectButton.Custom>
   );
 };

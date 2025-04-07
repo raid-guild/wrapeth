@@ -13,7 +13,7 @@ const useGasFee = () => {
     42161: 100000, // Arbitrum One
     10: 50000, // OP Mainnet
     5: 50000, // Goerli
-    11155111: 85000, // Sepolia
+    11155111: 85000 // Sepolia
   };
 
   const estimatedGasUsed = chain?.id ? gasUsedByChain[chain.id] : 0;

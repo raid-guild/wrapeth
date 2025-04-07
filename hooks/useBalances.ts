@@ -5,7 +5,7 @@ import {
   useAccount,
   useBalance,
   useBlockNumber,
-  useReadContracts,
+  useReadContracts
 } from 'wagmi';
 import { wethAddrs } from '../utils/contracts';
 
@@ -19,8 +19,8 @@ const useBalances = () => {
   const { data: ethBalanceData, queryKey: ethQueryKey } = useBalance({
     address,
     query: {
-      enabled: !!address && !!contractAddress,
-    },
+      enabled: !!address && !!contractAddress
+    }
   });
 
   const { data: wethBalanceData, queryKey: wethQueryKey } = useReadContracts({
@@ -30,18 +30,18 @@ const useBalances = () => {
             address: contractAddress || '',
             abi: erc20Abi,
             functionName: 'balanceOf',
-            args: [address],
+            args: [address]
           },
           {
             address: contractAddress || '',
             abi: erc20Abi,
-            functionName: 'decimals',
-          },
+            functionName: 'decimals'
+          }
         ]
       : [],
     query: {
-      enabled: !!address && !!contractAddress,
-    },
+      enabled: !!address && !!contractAddress
+    }
   });
 
   useEffect(() => {

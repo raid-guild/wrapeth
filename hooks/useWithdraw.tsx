@@ -1,12 +1,9 @@
+import wagmiConfig from '@/utils/wagmiConfig';
 import { toast } from 'sonner';
 import { useDebounceValue } from 'usehooks-ts';
 import { parseEther } from 'viem';
-import { waitForTransactionReceipt } from '@wagmi/core';
-import {
-  useAccount,
-  useWriteContract,
-} from 'wagmi';
-import { wagmiConfig } from '@/utils/wagmiConfig';
+import { useAccount, useWriteContract } from 'wagmi';
+import { waitForTransactionReceipt } from 'wagmi/actions';
 import WethAbi from '../contracts/wethAbi.json';
 import { wethAddrs } from '../utils/contracts';
 
@@ -18,7 +15,7 @@ const useWithdraw = (inputBalance: number) => {
   const {
     writeContractAsync,
     isPending: isWritePending,
-    isError: isWriteError,
+    isError: isWriteError
   } = useWriteContract();
 
   const executeWithdraw = async () => {
@@ -29,14 +26,17 @@ const useWithdraw = (inputBalance: number) => {
             address: contractAddress || '',
             abi: WethAbi,
             functionName: 'withdraw',
-            args: [BigInt(parseEther(debouncedValue.toString() || '0'))],
+            args: [BigInt(parseEther(debouncedValue.toString() || '0'))]
           });
-          const receipt = await waitForTransactionReceipt(wagmiConfig, { hash });
+          const receipt = await waitForTransactionReceipt(wagmiConfig, {
+            hash
+          });
           return receipt;
         })(),
         {
           loading: 'Unwrapping in progress...',
-          success: () => `Successfully unwrapped ${chain?.nativeCurrency?.symbol || 'ETH'}`,
+          success: () =>
+            `Successfully unwrapped ${chain?.nativeCurrency?.symbol || 'ETH'}`,
           error: 'Error... transaction reverted...'
         }
       );
@@ -49,7 +49,7 @@ const useWithdraw = (inputBalance: number) => {
     writeWithdraw: executeWithdraw,
     isWritePending,
     isWriteError,
-    canWithdraw: Boolean(debouncedValue),
+    canWithdraw: Boolean(debouncedValue)
   };
 };
 

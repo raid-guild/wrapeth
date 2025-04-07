@@ -1,13 +1,14 @@
-import { cn } from "@/lib/utils"
+/* eslint-disable react/prop-types */
+import * as React from 'react';
 
-function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="skeleton"
-      className={cn("bg-accent animate-pulse rounded-md", className)}
-      {...props}
-    />
-  )
-}
+import cn from '@/lib/utils';
 
-export { Skeleton }
+const Skeleton = ({ className, ...props }: React.ComponentProps<'div'>) => (
+  <div
+    data-slot='skeleton'
+    className={cn('bg-accent animate-pulse rounded-md', className)}
+    {...props}
+  />
+);
+
+export default Skeleton;

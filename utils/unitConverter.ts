@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { formatUnits } from 'viem';
 
 export const unitConverter = (input: number): object => {

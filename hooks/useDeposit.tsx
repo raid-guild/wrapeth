@@ -1,12 +1,9 @@
+import wagmiConfig from '@/utils/wagmiConfig';
 import { toast } from 'sonner';
 import { useDebounceValue } from 'usehooks-ts';
 import { parseEther } from 'viem';
-import { waitForTransactionReceipt } from '@wagmi/core'
-import {
-  useAccount,
-  useWriteContract,
-} from 'wagmi';
-import { wagmiConfig } from '@/utils/wagmiConfig'
+import { useAccount, useWriteContract } from 'wagmi';
+import { waitForTransactionReceipt } from 'wagmi/actions';
 import WethAbi from '../contracts/wethAbi.json';
 import { wethAddrs } from '../utils/contracts';
 
@@ -18,26 +15,35 @@ const useDeposit = (inputBalance: number) => {
   const {
     writeContractAsync,
     isPending: isWritePending,
-    isError: isWriteError,
+    isError: isWriteError
   } = useWriteContract();
 
   const executeDeposit = async () => {
     try {
+      if (!contractAddress) {
+        toast.error(
+          `No WETH contract found for ${chain?.name || 'this network'}`
+        );
+        return;
+      }
       toast.promise(
         (async () => {
           const hash = await writeContractAsync({
-            address: contractAddress || '',
+            address: contractAddress,
             abi: WethAbi,
             functionName: 'deposit',
             account: address,
-            value: BigInt(parseEther(debouncedValue.toString() || '0')),
+            value: BigInt(parseEther(debouncedValue.toString() || '0'))
           });
-          const receipt = await waitForTransactionReceipt(wagmiConfig, { hash });
+          const receipt = await waitForTransactionReceipt(wagmiConfig, {
+            hash
+          });
           return receipt;
         })(),
         {
           loading: 'Wrapping in progress...',
-          success: () => `Successfully wrapped ${chain?.nativeCurrency?.symbol || 'ETH'}`,
+          success: () =>
+            `Successfully wrapped ${chain?.nativeCurrency?.symbol || 'ETH'}`,
           error: 'Error... transaction reverted...'
         }
       );
@@ -50,7 +56,7 @@ const useDeposit = (inputBalance: number) => {
     writeDeposit: executeDeposit,
     isWritePending,
     isWriteError,
-    canDeposit: debouncedValue > 0,
+    canDeposit: debouncedValue > 0
   };
 };
 
