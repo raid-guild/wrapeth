@@ -82,6 +82,10 @@ const useFormField = () => {
     throw new Error('useFormField should be used within <FormField>');
   }
 
+  if (!itemContext) {
+    throw new Error('useFormField should be used within <FormItem>');
+  }
+
   const { id } = itemContext;
 
   return {
