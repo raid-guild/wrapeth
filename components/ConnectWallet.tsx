@@ -1,5 +1,4 @@
 import cn from '@/lib/utils';
-import chainMappings from '@/utils/chainMap';
 import { ConnectButton, useChainModal } from '@rainbow-me/rainbowkit';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -30,7 +29,7 @@ const ConnectWallet: React.FC = () => {
 
   useEffect(() => {
     if (lastModalState && !chainModalOpen && isConnected && accountChain) {
-      const chainName = chainMappings[accountChain.id];
+      const chainName = accountChain?.name?.toLowerCase() || 'homestead';
       if (chainName) {
         isSyncing.current = true;
         const params = new URLSearchParams(searchParams);
@@ -57,15 +56,11 @@ const ConnectWallet: React.FC = () => {
 
     async function asyncChainSwitch() {
       const chainName = searchParams.get('chain')?.toLowerCase() || null;
-      const currentChainName = chainMappings[accountChain?.id ?? ''];
+      const currentChainName = accountChain?.name?.toLowerCase() || 'homestead';
 
-      if (
-        chainName &&
-        chainMappings[chainName] &&
-        chainMappings[chainName] !== accountChain?.id
-      ) {
+      if (chainName && chainName !== currentChainName) {
         const targetChain = chains.find(
-          (c) => c.id === chainMappings[chainName]
+          (c) => c.name?.toLowerCase() === chainName
         );
         if (targetChain) {
           isSyncing.current = true;

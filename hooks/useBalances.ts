@@ -7,11 +7,11 @@ import {
   useBlockNumber,
   useReadContracts
 } from 'wagmi';
-import { wethAddrs } from '../utils/contracts';
+import getWethAddress from '../utils/contracts';
 
 const useBalances = () => {
   const { address, chain } = useAccount();
-  const contractAddress = wethAddrs?.[chain?.name.toLowerCase() || 'homestead'];
+  const contractAddress = getWethAddress(chain?.id || 1);
   const queryClient = useQueryClient();
 
   const { data: blockNumber } = useBlockNumber({ watch: true });

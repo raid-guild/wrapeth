@@ -1,24 +1,28 @@
 import { formatUnits } from 'viem';
-import { useAccount, useEstimateFeesPerGas } from 'wagmi';
+import { useEstimateFeesPerGas, useEstimateGas } from 'wagmi';
 
 const useGasFee = () => {
-  const { chain } = useAccount();
+  // const { chain } = useAccount();
   const { data } = useEstimateFeesPerGas();
+  const { data: estimatedGasUsed } = useEstimateGas({
+    maxFeePerGas: data?.maxFeePerGas,
+    maxPriorityFeePerGas: data?.maxPriorityFeePerGas
+  });
   const gasPrice = data?.gasPrice || 0;
 
-  const gasUsedByChain = {
-    1: 50000, // Ethereum
-    100: 70000, // Gnosis
-    137: 50000, // Polygon
-    42161: 100000, // Arbitrum One
-    10: 50000, // OP Mainnet
-    5: 50000, // Goerli
-    11155111: 85000 // Sepolia
-  };
+  // const gasUsedByChain = {
+  //   1: 50000, // Ethereum
+  //   100: 70000, // Gnosis
+  //   137: 50000, // Polygon
+  //   42161: 100000, // Arbitrum One
+  //   10: 50000, // OP Mainnet
+  //   5: 50000, // Goerli
+  //   11155111: 85000 // Sepolia
+  // };
 
-  const estimatedGasUsed = chain?.id ? gasUsedByChain[chain.id] : 0;
+  // const estimatedGasUsed = chain?.id ? gasUsedByChain[chain.id] : 0;
 
-  const txFeeWei = BigInt(gasPrice) * BigInt(estimatedGasUsed);
+  const txFeeWei = BigInt(gasPrice) * (estimatedGasUsed || BigInt(0));
   const txFeeEther = formatUnits(txFeeWei, 18) || 0;
 
   return { txFeeEther };

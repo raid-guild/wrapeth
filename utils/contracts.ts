@@ -1,4 +1,4 @@
-export const wethAddrs: any = {
+const wethAddrs: any = {
   // mainnet = homestead // rainbowkit syntax
   homestead: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
   gnosis: '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d',
@@ -11,3 +11,8 @@ export const wethAddrs: any = {
   goerli: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
   sepolia: '0xf531B8F309Be94191af87605CfBf600D71C2cFe0'
 };
+
+const getWethAddress = (chainId: number) =>
+  wethAddrs[chainId] || wethAddrs.homestead;
+
+export default getWethAddress;

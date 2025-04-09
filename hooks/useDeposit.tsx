@@ -5,12 +5,12 @@ import { parseEther } from 'viem';
 import { useAccount, useWriteContract } from 'wagmi';
 import { waitForTransactionReceipt } from 'wagmi/actions';
 import WethAbi from '../contracts/wethAbi.json';
-import { wethAddrs } from '../utils/contracts';
+import getWethAddress from '../utils/contracts';
 
 const useDeposit = (inputBalance: number) => {
   const { address, chain } = useAccount();
   const [debouncedValue] = useDebounceValue(inputBalance, 500);
-  const contractAddress = wethAddrs?.[chain?.name.toLowerCase() || 'homestead'];
+  const contractAddress = getWethAddress(chain?.id || 1);
 
   const {
     writeContractAsync,

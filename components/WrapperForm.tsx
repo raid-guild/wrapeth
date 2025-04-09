@@ -2,6 +2,7 @@ import useBalances from '@/hooks/useBalances';
 import useDeposit from '@/hooks/useDeposit';
 import useGasFee from '@/hooks/useGasFee';
 import useWithdraw from '@/hooks/useWithdraw';
+import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -14,7 +15,7 @@ export interface WrapperFormProps {
   /**
    * action is either 'deposit' or 'withdraw'
    */
-  action: string;
+  action: 'deposit' | 'withdraw';
 }
 
 /**
@@ -25,7 +26,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const { txFeeEther } = useGasFee();
 
   const formSchema = z.object({
-    amount: z
+    amount: z.coerce
       .number({
         required_error: 'Amount is required',
         invalid_type_error: 'Amount must be a number'
@@ -38,6 +39,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   });
 
   const localForm = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       amount: 0
     }
@@ -100,7 +102,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
                     <Input
                       className='rounded-xs border border-purple-400'
                       type='number'
-                      step={0.1}
+                      step={0.0001}
                       min={0}
                       max={action === 'deposit' ? +ethBalance : +wethBalance}
                       {...restField}
