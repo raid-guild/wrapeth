@@ -104,7 +104,7 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
                       type='number'
                       step={0.0001}
                       min={0}
-                      max={action === 'deposit' ? +ethBalance : +wethBalance}
+                      max={action === 'deposit' ? +ethBalance - +txFeeEther : +wethBalance}
                       {...restField}
                     />
                     <Button
