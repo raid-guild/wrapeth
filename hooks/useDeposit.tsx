@@ -10,7 +10,7 @@ import getWethAddress from '../utils/contracts';
 const useDeposit = (inputBalance: number) => {
   const { address, chain } = useAccount();
   const [debouncedValue] = useDebounceValue(inputBalance, 500);
-  const contractAddress = getWethAddress(chain?.id || 1);
+  const contractAddress = getWethAddress(chain?.name.toLowerCase() || 'homestead');
 
   const {
     writeContractAsync,

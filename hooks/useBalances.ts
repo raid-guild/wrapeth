@@ -11,7 +11,9 @@ import getWethAddress from '../utils/contracts';
 
 const useBalances = () => {
   const { address, chain } = useAccount();
-  const contractAddress = getWethAddress(chain?.id || 1);
+  const contractAddress = getWethAddress(
+    chain?.name.toLowerCase() || 'homestead'
+  );
   const queryClient = useQueryClient();
 
   const { data: blockNumber } = useBlockNumber({ watch: true });
@@ -49,7 +51,7 @@ const useBalances = () => {
       queryClient.invalidateQueries({ queryKey: ethQueryKey });
       queryClient.invalidateQueries({ queryKey: wethQueryKey });
     }
-  }, [blockNumber, queryClient]);
+  }, [blockNumber, queryClient, ethQueryKey, wethQueryKey]);
 
   const ethBalance = ethBalanceData
     ? formatUnits(ethBalanceData.value, ethBalanceData.decimals)

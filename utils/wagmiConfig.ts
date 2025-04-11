@@ -7,20 +7,15 @@ import {
 import { fallback, http } from 'wagmi';
 import {
   arbitrum,
-  arbitrumSepolia,
   base,
-  baseSepolia,
   blast,
-  blastSepolia,
   gnosis,
   mainnet,
   optimism,
-  optimismSepolia,
   polygon,
   polygonMumbai,
   sepolia,
-  zora,
-  zoraSepolia
+  zora
 } from 'wagmi/chains';
 
 if (!process.env.NEXT_PUBLIC_PROJECT_ID) {
@@ -57,15 +52,10 @@ const wagmiConfig = getDefaultConfig({
     polygon,
     polygonMumbai,
     arbitrum,
-    arbitrumSepolia,
     optimism,
-    optimismSepolia,
     base,
-    baseSepolia,
     zora,
-    zoraSepolia,
-    blast,
-    blastSepolia
+    blast
   ],
   transports: {
     [mainnet.id]: fallback([
@@ -99,29 +89,11 @@ const wagmiConfig = getDefaultConfig({
         `https://polygon-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
       )
     ]),
-    [arbitrumSepolia.id]: fallback([
-      http(),
-      http(
-        `https://arbitrum-sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`
-      ),
-      http(
-        `https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
-      )
-    ]),
     [arbitrum.id]: fallback([
       http(),
       http(`https://arbitrum.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`),
       http(
         `https://arb-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
-      )
-    ]),
-    [optimismSepolia.id]: fallback([
-      http(),
-      http(
-        `https://optimism-sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`
-      ),
-      http(
-        `https://opt-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
       )
     ]),
     [optimism.id]: fallback([
@@ -138,15 +110,6 @@ const wagmiConfig = getDefaultConfig({
         `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
       )
     ]),
-    [baseSepolia.id]: fallback([
-      http(),
-      http(
-        `https://base-sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`
-      ),
-      http(
-        `https://base-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
-      )
-    ]),
     [base.id]: fallback([
       http(),
       http(`https://base.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`),
@@ -154,29 +117,11 @@ const wagmiConfig = getDefaultConfig({
         `https://base-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
       )
     ]),
-    [zoraSepolia.id]: fallback([
-      http(),
-      http(
-        `https://zora-sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`
-      ),
-      http(
-        `https://zora-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
-      )
-    ]),
     [zora.id]: fallback([
       http(),
       http(`https://zora.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`),
       http(
         `https://zora-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
-      )
-    ]),
-    [blastSepolia.id]: fallback([
-      http(),
-      http(
-        `https://blast-sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`
-      ),
-      http(
-        `https://blast-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
       )
     ]),
     [blast.id]: fallback([
