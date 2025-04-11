@@ -1,28 +1,17 @@
 import React from 'react';
 
-import { Flex } from '@raidguild/design-system';
-
 export interface HeaderProps {
   children?: any;
 }
 
 const Header: React.FC<HeaderProps> = ({ children }) => (
-  <Flex
-    direction={['column', 'row']}
-    align='center'
-    justify={['space-between', 'center']}
-    wrap='wrap'
-    w='100vw'
-    maxW='70em'
-    mb={8}
-    p={8}
-  >
+  <div className='mb-8 flex w-full max-w-[70em] flex-col items-center justify-end p-8 md:flex-row'>
     {children}
-  </Flex>
+  </div>
 );
 
 Header.defaultProps = {
-  children: null,
+  children: null
 };
 
 export default Header;

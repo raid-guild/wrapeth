@@ -1,34 +1,21 @@
-import {
-  Box,
-  Button,
-  ChakraNumberInput,
-  Container,
-  Flex,
-  FormControl,
-  HStack,
-  Icon,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  // NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  Text,
-} from '@raidguild/design-system';
-import React from 'react';
-import { Controller, FieldValues, useForm } from 'react-hook-form';
-import { FiAlertTriangle } from 'react-icons/fi';
-
 import useBalances from '@/hooks/useBalances';
 import useDeposit from '@/hooks/useDeposit';
 import useGasFee from '@/hooks/useGasFee';
 import useWithdraw from '@/hooks/useWithdraw';
+import { zodResolver } from '@hookform/resolvers/zod';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import TokenInfo from './TokenInfo';
+import { Button } from './ui/button';
+import { Form, FormControl, FormField, FormItem, FormMessage } from './ui/form';
+import Input from './ui/input';
 
 export interface WrapperFormProps {
   /**
    * action is either 'deposit' or 'withdraw'
    */
-  action: string;
+  action: 'deposit' | 'withdraw';
 }
 
 /**
@@ -38,19 +25,27 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
   const { ethBalance, wethBalance } = useBalances();
   const { txFeeEther } = useGasFee();
 
-  const localForm = useForm<FieldValues>({
-    defaultValues: {
-      amount: 0,
-    },
+  const formSchema = z.object({
+    amount: z.coerce
+      .number({
+        required_error: 'Amount is required',
+        invalid_type_error: 'Amount must be a number'
+      })
+      .min(0, { message: 'Amount must be greater than 0' })
+      .max(action === 'deposit' ? +ethBalance - +txFeeEther : +wethBalance, {
+        message:
+          'Input must be less than your full balance, plus transaction fees...'
+      })
   });
 
-  const {
-    handleSubmit,
-    setValue,
-    watch,
-    control,
-    formState: { errors },
-  } = localForm;
+  const localForm = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      amount: 0
+    }
+  });
+
+  const { handleSubmit, setValue, watch, control } = localForm;
 
   const { writeDeposit } = useDeposit(watch('amount'));
   const { writeWithdraw } = useWithdraw(watch('amount'));
@@ -62,105 +57,82 @@ const WrapperForm: React.FC<WrapperFormProps> = ({ action }) => {
       'amount',
       action === 'deposit'
         ? parseFloat(eth.toFixed(4))
-        : parseFloat(weth.toFixed(4)),
+        : parseFloat(weth.toFixed(4))
     );
   };
 
-  const onSubmit = async () => {
-    if (action === 'deposit' && writeDeposit) writeDeposit();
-    else if (action === 'withdraw' && writeWithdraw) writeWithdraw();
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    if (data.amount > 0 && action === 'deposit' && writeDeposit) writeDeposit();
+    else if (data.amount > 0 && action === 'withdraw' && writeWithdraw)
+      writeWithdraw();
   };
 
-  const customValidations = {
-    required: 'Input cannot be blank',
-    validate: (value: number) => {
-      if (action === 'deposit') {
-        return value > 0 && value < +ethBalance - +txFeeEther;
-      }
-      return value > 0 && value <= +wethBalance;
-    },
-    max: {
-      value: action === 'deposit' ? +ethBalance - +txFeeEther : +wethBalance,
-      message: `Input must be less than your full balance, plus transaction fees...`,
-    },
-    min: {
-      value: 0,
-      message: 'Value must be greater than 0',
-    },
-  };
+  // const customValidations = {
+  //   required: 'Input cannot be blank',
+  //   validate: (value: number) => {
+  //     if (action === 'deposit') {
+  //       return value > 0 && value < +ethBalance - +txFeeEther;
+  //     }
+  //     return value > 0 && value <= +wethBalance;
+  //   },
+  //   max: {
+  //     value: action === 'deposit' ? +ethBalance - +txFeeEther : +wethBalance,
+  //     message: `Input must be less than your full balance, plus transaction fees...`,
+  //   },
+  //   min: {
+  //     value: 0,
+  //     message: 'Value must be greater than 0',
+  //   },
+  // };
 
   return (
-    <Container mt={6}>
-      <Flex justify='end' my={3}>
+    <div className='mt-6'>
+      <div className='my-3 flex justify-center md:justify-end'>
         <TokenInfo deposit={action === 'deposit'} />
-      </Flex>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <HStack marginBottom={8}>
-          <FormControl color='white'>
-            <Controller
-              control={control}
-              name='amount'
-              rules={customValidations}
-              render={({ field: { ref, ...restField } }) => (
-                <ChakraNumberInput
-                  h='100%'
-                  step={0.1}
-                  width='100%'
-                  min={0}
-                  max={action === 'deposit' ? +ethBalance : +wethBalance}
-                  variant='outline'
-                  {...restField}
-                >
-                  <NumberInputField
-                    ref={ref}
-                    name={restField.name}
-                    border='1px solid'
-                    borderColor='purple.400'
-                  />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </ChakraNumberInput>
-              )}
-            />
-          </FormControl>
-          <Box h='100%'>
-            <Button
-              maxW='120px'
-              variant='outline'
-              size='md'
-              w='100%'
-              onClick={handleSetMax}
-            >
-              Set Max
-            </Button>
-          </Box>
-        </HStack>
-        <Flex color='white' opacity='0.65' mt='-3' mb='5'>
-          {errors.amount && (
-            <Flex as='span' alignItems='center' gap={4}>
-              <Icon as={FiAlertTriangle} mr='0.5' />
-              <Text fontFamily='spaceMono' fontWeight='medium' fontSize='sm'>
-                {errors.amount.message}
-              </Text>
-            </Flex>
-          )}
-        </Flex>
+      </div>
+      <Form {...localForm}>
+        <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
+          <FormField
+            control={control}
+            name='amount'
+            render={({ field: { ref, ...restField } }) => (
+              <FormItem>
+                <FormControl className='text-white'>
+                  <div className='flex w-full flex-col items-center space-y-2 md:flex-row md:space-y-0 md:space-x-2'>
+                    <Input
+                      className='rounded-xs border border-purple-400'
+                      type='number'
+                      step={0.0001}
+                      min={0}
+                      max={action === 'deposit' ? +ethBalance - +txFeeEther : +wethBalance}
+                      {...restField}
+                    />
+                    <Button
+                      type='button'
+                      className='rounded-xs'
+                      variant='outline'
+                      onClick={handleSetMax}
+                    >
+                      Set Max
+                    </Button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button
+            variant='default'
+            type='submit'
+            className='w-full rounded-xs bg-purple-600 uppercase'
+          >
+            Submit
+          </Button>
+        </form>
+      </Form>
 
-        <Button
-          as='button'
-          variant='solid'
-          type='submit'
-          loadingText='Submitting'
-          width='100%'
-        >
-          Submit
-        </Button>
-      </form>
-
-      <Flex color='white' justifyContent='center' mt='5' />
-    </Container>
+      <div className='mt-5 flex justify-center text-white' />
+    </div>
   );
 };
 

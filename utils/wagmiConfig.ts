@@ -1,44 +1,138 @@
-/* eslint-disable import/prefer-default-export */
-import { connectorsForWallets } from '@rainbow-me/rainbowkit';
+import { getDefaultConfig, getDefaultWallets } from '@rainbow-me/rainbowkit';
 import {
   argentWallet,
-  braveWallet,
-  coinbaseWallet,
-  injectedWallet,
   ledgerWallet,
-  metaMaskWallet,
-  rainbowWallet,
-  walletConnectWallet,
+  trustWallet
 } from '@rainbow-me/rainbowkit/wallets';
-import { createConfig } from 'wagmi';
+import { fallback, http } from 'wagmi';
+import {
+  arbitrum,
+  base,
+  blast,
+  gnosis,
+  mainnet,
+  optimism,
+  polygon,
+  polygonMumbai,
+  sepolia,
+  zora
+} from 'wagmi/chains';
 
-import { chains, publicClient } from './chains';
+if (!process.env.NEXT_PUBLIC_PROJECT_ID) {
+  throw new Error(
+    'Missing NEXT_PUBLIC_PROJECT_ID. Please set it in your environment variables.'
+  );
+}
 
-const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || '';
+const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 
-const connectors = connectorsForWallets([
-  {
-    groupName: 'Popular',
-    wallets: [
-      injectedWallet({ chains }),
-      metaMaskWallet({
-        projectId,
-        chains,
-        shimDisconnect: false,
-      }),
-      walletConnectWallet({ projectId, chains }),
-      ledgerWallet({ projectId, chains }),
-    ],
+const { wallets } = getDefaultWallets();
+
+const customGnosis = {
+  ...gnosis,
+  hasIcon: true,
+  iconUrl: '/chains/gnosis.jpg',
+  iconBackground: 'none'
+};
+
+const wagmiConfig = getDefaultConfig({
+  appName: 'Wrapeth',
+  projectId,
+  wallets: [
+    ...wallets,
+    {
+      groupName: 'Other',
+      wallets: [argentWallet, trustWallet, ledgerWallet]
+    }
+  ],
+  chains: [
+    mainnet,
+    sepolia,
+    customGnosis,
+    polygon,
+    polygonMumbai,
+    arbitrum,
+    optimism,
+    base,
+    zora,
+    blast
+  ],
+  transports: {
+    [mainnet.id]: fallback([
+      http(),
+      http(`https://mainnet.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`),
+      http(
+        `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
+      )
+    ]),
+    [customGnosis.id]: fallback([
+      http(),
+      http(`https://gnosis.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`),
+      http(
+        `https://gnosis-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
+      )
+    ]),
+    [polygonMumbai.id]: fallback([
+      http(),
+      http(
+        `https://polygon-mumbai.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`
+      ),
+      http(
+        `https://polygon-mumbai.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
+      )
+    ]),
+
+    [polygon.id]: fallback([
+      http(),
+      http(`https://polygon.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`),
+      http(
+        `https://polygon-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
+      )
+    ]),
+    [arbitrum.id]: fallback([
+      http(),
+      http(`https://arbitrum.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`),
+      http(
+        `https://arb-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
+      )
+    ]),
+    [optimism.id]: fallback([
+      http(),
+      http(`https://optimism.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`),
+      http(
+        `https://opt-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
+      )
+    ]),
+    [sepolia.id]: fallback([
+      http(),
+      http(`https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`),
+      http(
+        `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
+      )
+    ]),
+    [base.id]: fallback([
+      http(),
+      http(`https://base.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`),
+      http(
+        `https://base-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
+      )
+    ]),
+    [zora.id]: fallback([
+      http(),
+      http(`https://zora.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`),
+      http(
+        `https://zora-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
+      )
+    ]),
+    [blast.id]: fallback([
+      http(),
+      http(`https://blast.infura.io/v3/${process.env.NEXT_PUBLIC_RPC_KEY}`),
+      http(
+        `https://blast-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
+      )
+    ])
   },
-  {
-    groupName: 'Others',
-    wallets: [
-      rainbowWallet({ projectId, chains }),
-      coinbaseWallet({ chains, appName: 'Wrap Eth' }),
-      argentWallet({ projectId, chains }),
-      braveWallet({ chains }),
-    ],
-  },
-]);
+  ssr: true
+});
 
-export const wagmiConfig = createConfig({ publicClient, connectors });
+export default wagmiConfig;

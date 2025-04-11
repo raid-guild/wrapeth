@@ -1,27 +1,68 @@
-import { useAccount, useBalance, useNetwork } from 'wagmi';
-import { wethAddrs } from '../utils/contracts';
+import { useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { erc20Abi, formatUnits } from 'viem';
+import {
+  useAccount,
+  useBalance,
+  useBlockNumber,
+  useReadContracts
+} from 'wagmi';
+import getWethAddress from '../utils/contracts';
 
 const useBalances = () => {
-  const { address } = useAccount();
-  const { chain } = useNetwork();
+  const { address, chain } = useAccount();
+  const contractAddress = getWethAddress(
+    chain?.name.toLowerCase() || 'homestead'
+  );
+  const queryClient = useQueryClient();
 
-  const contractAddress = wethAddrs?.[chain?.network || 'homestead'];
+  const { data: blockNumber } = useBlockNumber({ watch: true });
 
-  const getEthBalance = useBalance({
+  const { data: ethBalanceData, queryKey: ethQueryKey } = useBalance({
     address,
-    enabled: contractAddress?.length !== 0,
-    watch: true,
+    query: {
+      enabled: !!address && !!contractAddress
+    }
   });
 
-  const getWethBalance = useBalance({
-    address,
-    enabled: contractAddress?.length !== 0,
-    watch: true,
-    token: contractAddress,
+  const { data: wethBalanceData, queryKey: wethQueryKey } = useReadContracts({
+    contracts: address
+      ? [
+          {
+            address: contractAddress || '',
+            abi: erc20Abi,
+            functionName: 'balanceOf',
+            args: [address]
+          },
+          {
+            address: contractAddress || '',
+            abi: erc20Abi,
+            functionName: 'decimals'
+          }
+        ]
+      : [],
+    query: {
+      enabled: !!address && !!contractAddress
+    }
   });
 
-  const ethBalance = getEthBalance.data?.formatted || '0';
-  const wethBalance = getWethBalance.data?.formatted || '0';
+  useEffect(() => {
+    if (blockNumber) {
+      queryClient.invalidateQueries({ queryKey: ethQueryKey });
+      queryClient.invalidateQueries({ queryKey: wethQueryKey });
+    }
+  }, [blockNumber, queryClient, ethQueryKey, wethQueryKey]);
+
+  const ethBalance = ethBalanceData
+    ? formatUnits(ethBalanceData.value, ethBalanceData.decimals)
+    : '0';
+
+  const balanceResult = wethBalanceData?.[0]?.result as bigint | undefined;
+  const decimalsResult = wethBalanceData?.[1]?.result as number | undefined;
+  const wethBalance =
+    balanceResult && decimalsResult
+      ? formatUnits(balanceResult, decimalsResult)
+      : '0';
 
   return { ethBalance, wethBalance };
 };

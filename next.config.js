@@ -4,9 +4,7 @@
 const nextConfig = {
   trailingSlash: true,
   reactStrictMode: true,
-  swcMinify: true,
-  transpilePackages: ['@raidguild/design-system'],
-  output: 'export',
+  output: 'export'
 };
 
 module.exports = nextConfig;

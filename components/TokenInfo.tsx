@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button } from '@raidguild/design-system';
-import { useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
+import { Button } from './ui/button';
 import useBalances from '../hooks/useBalances';
 
 export interface TokenInfoProps {
@@ -8,13 +8,16 @@ export interface TokenInfoProps {
 }
 
 const TokenInfo: React.FC<TokenInfoProps> = ({ deposit }) => {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const { ethBalance, wethBalance } = useBalances();
 
   const symbol = chain?.nativeCurrency?.symbol;
 
   return (
-    <Button variant='ghost'>
+    <Button
+      variant='secondary'
+      className='pointer-events-none rounded-xs uppercase'
+    >
       {`${deposit ? '' : 'W'}${symbol} Balance: ${
         deposit ? ethBalance?.slice(0, 6) || 0 : wethBalance?.slice(0, 6) || 0
       }`}

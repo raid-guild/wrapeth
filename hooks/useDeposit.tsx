@@ -1,72 +1,62 @@
-import { useToast } from '@raidguild/design-system';
-import { useDebounce } from 'usehooks-ts';
+import wagmiConfig from '@/utils/wagmiConfig';
+import { toast } from 'sonner';
+import { useDebounceValue } from 'usehooks-ts';
 import { parseEther } from 'viem';
-import {
-  useAccount,
-  useContractWrite,
-  useNetwork,
-  usePrepareContractWrite,
-  useWaitForTransaction,
-} from 'wagmi';
-
+import { useAccount, useWriteContract } from 'wagmi';
+import { waitForTransactionReceipt } from 'wagmi/actions';
 import WethAbi from '../contracts/wethAbi.json';
-import { wethAddrs } from '../utils/contracts';
+import getWethAddress from '../utils/contracts';
 
 const useDeposit = (inputBalance: number) => {
-  const { address } = useAccount();
-  const { chain } = useNetwork();
-  const toast = useToast();
+  const { address, chain } = useAccount();
+  const [debouncedValue] = useDebounceValue(inputBalance, 500);
+  const contractAddress = getWethAddress(chain?.name.toLowerCase() || 'homestead');
 
-  const debouncedValue = useDebounce(inputBalance, 500);
+  const {
+    writeContractAsync,
+    isPending: isWritePending,
+    isError: isWriteError
+  } = useWriteContract();
 
-  const contractAddress = wethAddrs?.[chain?.network || 'homestead'];
-
-  const { config } = usePrepareContractWrite({
-    address: contractAddress || '',
-    abi: WethAbi,
-    functionName: 'deposit',
-    enabled: Boolean(debouncedValue),
-    account: address,
-    value: BigInt(parseEther(debouncedValue.toString() || '0')),
-    onSuccess(data: any) {
-      return data;
-    },
-    onError(error: any) {
-      return error;
-    },
-  });
-
-  const { write: writeDeposit, data: dataDeposit } = useContractWrite({
-    ...config,
-    request: config.request,
-    onSuccess() {
-      toast.success({
-        title: 'Pending Transaction...',
-        isClosable: true,
-      });
-    },
-    onError() {
-      toast.error({
-        title: 'Error... transaction reverted...',
-        isClosable: true,
-      });
-    },
-  });
-
-  const { status: statusDeposit } = useWaitForTransaction({
-    hash: dataDeposit?.hash,
-    onSuccess: () => {
-      toast.success({
-        title: `Success! Wrapped ${chain?.nativeCurrency?.symbol || 'ETH'}`,
-        isClosable: true,
-      });
-    },
-  });
+  const executeDeposit = async () => {
+    try {
+      if (!contractAddress) {
+        toast.error(
+          `No WETH contract found for ${chain?.name || 'this network'}`
+        );
+        return;
+      }
+      toast.promise(
+        (async () => {
+          const hash = await writeContractAsync({
+            address: contractAddress,
+            abi: WethAbi,
+            functionName: 'deposit',
+            account: address,
+            value: BigInt(parseEther(debouncedValue.toString() || '0'))
+          });
+          const receipt = await waitForTransactionReceipt(wagmiConfig, {
+            hash
+          });
+          return receipt;
+        })(),
+        {
+          loading: 'Wrapping in progress...',
+          success: () =>
+            `Successfully wrapped ${chain?.nativeCurrency?.symbol || 'ETH'}`,
+          error: 'Error... transaction reverted...'
+        }
+      );
+    } catch (error) {
+      console.error('Deposit error:', error);
+    }
+  };
 
   return {
-    writeDeposit,
-    dataDeposit,
-    statusDeposit,
+    writeDeposit: executeDeposit,
+    isWritePending,
+    isWriteError,
+    canDeposit: debouncedValue > 0
   };
 };
 

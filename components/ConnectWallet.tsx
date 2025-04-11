@@ -1,81 +1,135 @@
-import React from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount, useDisconnect } from 'wagmi';
-import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
-import {
-  Button,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Icon,
-  HStack,
-  Box,
-  Flex,
-  Image,
-} from '@raidguild/design-system';
+import cn from '@/lib/utils';
+import { ConnectButton, useChainModal } from '@rainbow-me/rainbowkit';
+import Image from 'next/image';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useRef, useState } from 'react';
+import { FiKey, FiXCircle } from 'react-icons/fi';
 import { truncateAddress } from 'utils/general';
+import { useAccount, useChains, useDisconnect, useSwitchChain } from 'wagmi';
+import { Button } from './ui/button';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger
+} from './ui/navigation-menu';
 
-export const ConnectWallet: React.FC = () => {
-  const { isConnecting } = useAccount();
+const ConnectWallet: React.FC = () => {
+  const { isConnecting, isConnected, chain: accountChain } = useAccount();
   const { disconnect } = useDisconnect();
+  const { switchChain } = useSwitchChain();
+  const { openChainModal, chainModalOpen } = useChainModal();
+  const chains = useChains();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const isSyncing = useRef(false);
+  const [lastModalState, setLastModalState] = useState(false);
+
+  useEffect(() => {
+    if (lastModalState && !chainModalOpen && isConnected && accountChain) {
+      const chainName = accountChain?.name?.toLowerCase() || 'homestead';
+      if (chainName) {
+        isSyncing.current = true;
+        const params = new URLSearchParams(searchParams);
+        params.set('chain', chainName);
+        router.push(`?${params.toString()}`);
+        setTimeout(() => {
+          isSyncing.current = false;
+        }, 500);
+      }
+    }
+    setLastModalState(chainModalOpen);
+  }, [
+    chainModalOpen,
+    accountChain,
+    isConnected,
+    router,
+    lastModalState,
+    searchParams
+  ]);
+
+  useEffect(() => {
+    if (!isConnected || !accountChain || isSyncing.current || chainModalOpen)
+      return;
+
+    async function asyncChainSwitch() {
+      const chainName = searchParams.get('chain')?.toLowerCase() || null;
+      const currentChainName = accountChain?.name?.toLowerCase() || 'homestead';
+
+      if (chainName && chainName !== currentChainName) {
+        const targetChain = chains.find(
+          (c) => c.name?.toLowerCase() === chainName
+        );
+        if (targetChain) {
+          isSyncing.current = true;
+          try {
+            await switchChain({ chainId: targetChain.id });
+          } finally {
+            setTimeout(() => {
+              isSyncing.current = false;
+            }, 500);
+          }
+        }
+      } else if (currentChainName && chainName !== currentChainName) {
+        isSyncing.current = true;
+        const params = new URLSearchParams(searchParams);
+        params.set('chain', currentChainName);
+        router.push(`?${params.toString()}`);
+        setTimeout(() => {
+          isSyncing.current = false;
+        }, 500);
+      }
+    }
+    asyncChainSwitch();
+  }, [
+    isConnected,
+    accountChain?.name,
+    searchParams,
+    chains,
+    switchChain,
+    router,
+    chainModalOpen
+  ]);
 
   return (
     <ConnectButton.Custom>
       {({
         account,
-        chain,
+        chain: buttonChain,
         openAccountModal,
-        openChainModal,
         openConnectModal,
-        mounted,
+        mounted
       }) => (
         <div
           {...(!mounted && {
-            'aria-hidden': true,
-            style: {
-              opacity: 0,
-              pointerEvents: 'none',
-              userSelect: 'none',
-            },
+            'aria-hidden': true
           })}
+          className={cn(
+            !mounted ? 'pointer-events-none opacity-0 select-none' : ''
+          )}
         >
           {(() => {
-            if (!mounted || !account || !chain) {
+            if (!mounted || !account || !buttonChain) {
               return (
                 <Button
-                  color='brand.primary.600'
-                  backgroundColor='brand.primary.50'
-                  transition='all 100ms ease-in-out'
-                  _hover={{
-                    bgColor: 'brand.primary.100',
-                    borderWidth: '2px',
-                    borderColor: 'brand.primary.600',
-                  }}
-                  leftIcon={<FiKey />}
-                  disabled={isConnecting}
+                  className='rounded-xs bg-purple-600 text-purple-50 uppercase transition-all duration-100 ease-in-out hover:border-2 hover:border-purple-50 hover:bg-purple-600'
+                  disabled={mounted ? isConnecting : false}
                   onClick={openConnectModal}
                   data-cy='connect-wallet'
+                  variant='default'
                 >
-                  Connect
+                  <FiKey /> Connect
                 </Button>
               );
             }
 
-            if (chain.unsupported) {
+            if (buttonChain.unsupported) {
               return (
                 <Button
+                  className='bg-brand-primary-50 text-brand-primary-600 hover:bg-brand-primary-100 hover:border-brand-primary-600 rounded-xs uppercase transition-all duration-100 ease-in-out hover:border-2'
                   onClick={openChainModal}
-                  color='brand.primary.600'
-                  backgroundColor='brand.primary.50'
-                  transition='all 100ms ease-in-out'
-                  border='2px'
-                  borderColor='white'
-                  _hover={{
-                    bgColor: 'brand.primary.100',
-                    borderWidth: '2px',
-                    borderColor: 'brand.primary.600',
-                  }}
                 >
                   Unsupported network
                 </Button>
@@ -83,59 +137,58 @@ export const ConnectWallet: React.FC = () => {
             }
 
             return (
-              <Flex gap={3}>
-                <Menu offset={[0, 4]} placement='bottom-end' autoSelect={false}>
-                  <Button
-                    display='flex'
-                    flexDirection='row'
-                    variant='outline'
-                    width='fit'
-                    onClick={openChainModal}
-                  >
+              <div className='flex items-center gap-2'>
+                <Button
+                  className='width-fit flex uppercase'
+                  onClick={openChainModal}
+                  variant='outline'
+                >
+                  {buttonChain.iconUrl && (
                     <Image
-                      alt={chain.name ?? 'Chain icon'}
-                      src={chain.iconUrl}
+                      className='rounded-full'
+                      unoptimized
+                      alt={buttonChain.name ?? 'Chain icon'}
+                      src={buttonChain.iconUrl ?? ''}
                       width={25}
                       height={25}
-                      mr={2}
                     />
-                    {chain.name}
-                  </Button>
-
-                  <MenuButton
-                    as={Button}
-                    rightIcon={
-                      <Icon as={FiChevronDown} color='brand.primary.600' />
-                    }
-                    variant='outline'
-                    width='fit'
-                  >
-                    {account.ensName
-                      ? account.ensName
-                      : truncateAddress(account.address)}
-                  </MenuButton>
-                  <MenuList backgroundColor='gray.800' minWidth='none'>
-                    <MenuItem
-                      onClick={() => openAccountModal()}
-                      _hover={{ backgroundColor: 'gray.600' }}
-                    >
-                      <HStack>
-                        <Icon as={FiKey} color='white' />
-                        <Box color='white'>Wallet</Box>
-                      </HStack>
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => disconnect()}
-                      _hover={{ backgroundColor: 'gray.600' }}
-                    >
-                      <HStack spacing={2}>
-                        <Icon as={FiXCircle} color='red.300' />
-                        <Box color='red.300'>Sign Out</Box>
-                      </HStack>
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-              </Flex>
+                  )}
+                  {buttonChain.name}
+                </Button>
+                <NavigationMenu>
+                  <NavigationMenuList>
+                    <NavigationMenuItem>
+                      <NavigationMenuTrigger className='uppercase'>
+                        {account.ensName
+                          ? account.ensName
+                          : truncateAddress(account.address)}
+                      </NavigationMenuTrigger>
+                      <NavigationMenuContent>
+                        <ul className='w-[150px]'>
+                          <NavigationMenuLink
+                            onClick={() => openAccountModal()}
+                            className='select-none hover:bg-gray-600'
+                          >
+                            <div className='flex items-center gap-2'>
+                              <FiKey className='text-white' />
+                              <p className='text-white'>Wallet</p>
+                            </div>
+                          </NavigationMenuLink>
+                          <NavigationMenuLink
+                            onClick={() => disconnect()}
+                            className='select-none hover:bg-gray-600'
+                          >
+                            <div className='flex items-center gap-2'>
+                              <FiXCircle className='text-red-300' />
+                              <p className='text-red-300'>Sign Out</p>
+                            </div>
+                          </NavigationMenuLink>
+                        </ul>
+                      </NavigationMenuContent>
+                    </NavigationMenuItem>
+                  </NavigationMenuList>
+                </NavigationMenu>
+              </div>
             );
           })()}
         </div>
