@@ -22,10 +22,16 @@ const useWithdraw = (inputBalance: number) => {
 
   const executeWithdraw = async () => {
     try {
+      if (!contractAddress) {
+        toast.error(
+          `No WETH contract found for ${chain?.name || 'this network'}`
+        );
+        return;
+      }
       toast.promise(
         (async () => {
           const hash = await writeContractAsync({
-            address: contractAddress || '',
+            address: contractAddress,
             abi: WethAbi,
             functionName: 'withdraw',
             args: [BigInt(parseEther(debouncedValue.toString() || '0'))]
@@ -51,7 +57,7 @@ const useWithdraw = (inputBalance: number) => {
     writeWithdraw: executeWithdraw,
     isWritePending,
     isWriteError,
-    canWithdraw: Boolean(debouncedValue)
+    canWithdraw: debouncedValue > 0
   };
 };
 
